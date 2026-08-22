@@ -11,7 +11,7 @@ year: 2026
 license: MIT
 repository-code: "https://github.com/andreibesleaga/sustainability-loop-eval"
 # Add the Zenodo DOI here once the repository is archived, and remove this comment.
-doi: TODO-after-zenodo
+doi: https://doi.org/10.5281/zenodo.22056634
 keywords:
   - sustainability
   - carbon-aware computing
