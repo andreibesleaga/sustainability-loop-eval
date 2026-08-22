@@ -236,9 +236,12 @@ the work by what runs.
 ## Citation and license
 
 Cite the article, and this package as its replication material. Machine-readable
-metadata is in `CITATION.cff`.
+metadata is in `CITATION.cff`. Archived release: v1.0.0, Zenodo DOI
+[10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634)
+(concept DOI, all versions: [10.5281/zenodo.22056633](https://doi.org/10.5281/zenodo.22056633)).
 
 Copyright © 2026 Andrei N. Besleaga. Code is MIT-licensed; all documentation,
 text, diagrams, figures and result write-ups in this repository are © Andrei N.
-Besleaga, all rights reserved — please cite the article (and the Zenodo DOI) when using them; carbon-intensity data © National Energy System Operator,
+Besleaga, all rights reserved — please cite the article and the Zenodo DOI when
+using them; carbon-intensity data © National Energy System Operator,
 CC BY 4.0.
