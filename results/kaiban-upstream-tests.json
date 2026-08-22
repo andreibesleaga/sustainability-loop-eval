@@ -1,0 +1,119 @@
+{
+  "description": "Evidence that the ladder/gate F1-F9 test against is itself implemented and unit-tested upstream, in kaiban-distributed@2.0.0's own repository (tests/unit/governance), run via vitest.",
+  "command": "npx vitest run tests/unit/governance --config vitest.config.mts",
+  "kaibanPackageVersion": "2.0.0",
+  "kaibanGitCommitSha": "17ad362632556a19ea6586f2ceea397ae8ceb6b8",
+  "kaibanGitCommitDate": "2026-07-30T14:02:42+03:00",
+  "ranOn": "2026-08-22",
+  "networkOrRedisOrKafkaRequired": false,
+  "notes": "npm ci installed cleanly (1036 packages, ~2min) and the governance unit tests ran with no Redis/Kafka/network dependency -- they are pure in-memory unit tests of ActionGate/AuditLog/PolicyEngine/AgentRegistry.",
+  "totals": {
+    "testFiles": 4,
+    "testFilesPassed": 4,
+    "tests": 71,
+    "testsPassed": 71,
+    "testsFailed": 0,
+    "durationMs": 648
+  },
+  "testFiles": [
+    {
+      "file": "tests/unit/governance/action-gate.test.ts",
+      "tests": 17,
+      "passed": 17,
+      "cases": [
+        "ActionGate.evaluate > disabled => allow with empty verdicts, consulting no validator and recording nothing",
+        "ActionGate.evaluate > enabled all-allow => allow + audit called once with the decision and injected timestamp",
+        "ActionGate.evaluate > mixed-severity => most-severe action with the deciding verdict first (no short-circuit)",
+        "ActionGate.evaluate > ties keep the FIRST-encountered verdict at the deciding severity first",
+        "ActionGate.evaluate > enabled with NO validators => allow (empty verdicts) and still records",
+        "ActionGate.evaluate > default clock => a string ISO timestamp reaches the audit",
+        "ActionGate.evaluate > FAILS CLOSED: a validator that throws yields a block verdict (not a propagated error)",
+        "ActionGate.evaluate > stringifies a non-Error validator rejection in the fail-closed reason",
+        "firewallValidator > allowed => allow, with the payload built from ctx (taskId from payload)",
+        "firewallValidator > blocked => block, reason from the verdict; taskId falls back to agentId",
+        "firewallValidator > blocked without a reason => a default reason string",
+        "breakerValidator > open => escalate",
+        "breakerValidator > closed => allow",
+        "costValidator > admit allow => allow; units default 0; default scope without tenantId",
+        "costValidator > admit degrade => degrade; uses estimatedCostUnits; default scope WITH tenantId",
+        "costValidator > admit reject => block",
+        "costValidator > scopeFor override is used instead of the default scope"
+      ]
+    },
+    {
+      "file": "tests/unit/governance/audit-log.test.ts",
+      "tests": 7,
+      "passed": 7,
+      "cases": [
+        "AuditLog > genesis record has empty prevHash and index 0",
+        "AuditLog > links a 3-record chain (prevHash === previous hash)",
+        "AuditLog > verifies an untampered chain as valid",
+        "AuditLog > verifies an empty log as valid",
+        "AuditLog > detects content tampering (mutated decision.action)",
+        "AuditLog > detects linkage tampering (mutated prevHash)",
+        "AuditLog > returns a readonly snapshot via records()"
+      ]
+    },
+    {
+      "file": "tests/unit/governance/policy-engine.test.ts",
+      "tests": 19,
+      "passed": 19,
+      "cases": [
+        "PolicyEngine > exposes the validator name 'policy'",
+        "PolicyEngine > returns the default action with a reason when no rule matches",
+        "PolicyEngine > matches a rule by operation alone",
+        "PolicyEngine > matches a rule by agentId alone",
+        "PolicyEngine > matches by matchAny as a case-insensitive substring of the JSON payload",
+        "PolicyEngine > requires ALL provided fields to match (combined operation + agentId)",
+        "PolicyEngine > requires ALL provided fields to match (combined matchAny + operation)",
+        "PolicyEngine > returns the FIRST matching rule (first-match-wins ordering)",
+        "PolicyEngine > uses rule.reason when present, else falls back to rule.id",
+        "PolicyEngine > hot-reloads via load() and changes behavior",
+        "loadPolicySet > parses a valid YAML string into a PolicySet",
+        "loadPolicySet > parses an empty rules array",
+        "loadPolicySet > throws when the parsed root is not an object",
+        "loadPolicySet > throws when 'default' is missing or not a valid GateAction",
+        "loadPolicySet > throws when 'rules' is not an array",
+        "loadPolicySet > throws when a rule is not an object",
+        "loadPolicySet > throws when a rule is missing a string 'id'",
+        "loadPolicySet > throws when a rule has an invalid 'effect'",
+        "loadPolicySet > accepts the shipped example policies.yml"
+      ]
+    },
+    {
+      "file": "tests/unit/governance/registry.test.ts",
+      "tests": 28,
+      "passed": 28,
+      "cases": [
+        "AgentRegistry.status > reports 'not registered' for an unknown agent",
+        "AgentRegistry.status > reports 'active' for a freshly registered agent",
+        "AgentRegistry.status > reports a revocation with its reason (kill-switch)",
+        "AgentRegistry.status > uses the default revoke reason 'revoked' when none is given",
+        "AgentRegistry.status > reports 'expired' when expiresAt is before the given now",
+        "AgentRegistry.status > is still active at-or-after registration when no now is supplied (skips expiry)",
+        "AgentRegistry.status > is active when expiresAt is after now",
+        "AgentRegistry.status > reports 'invocation limit reached' once the count meets the limit",
+        "AgentRegistry.status > treats invocationLimit 0 as unlimited",
+        "AgentRegistry.status > reports 'operation out of scope' when the operation is excluded",
+        "AgentRegistry.status > is active when the operation is within scope",
+        "AgentRegistry.status > ignores scope when no operation is supplied",
+        "AgentRegistry.status > records invocations independently per agent",
+        "AgentRegistry.status > ignores recordInvocation for an unregistered agent",
+        "AgentRegistry.status > ignores revoke for an unregistered agent",
+        "AgentRegistry.register (upsert) > clears a prior revocation on re-registration",
+        "AgentRegistry.register (upsert) > resets the invocation count on re-registration",
+        "AgentRegistry.mayInstantiate > is true for a registered, active agent with selfInstantiation",
+        "AgentRegistry.mayInstantiate > is false when selfInstantiation is disabled",
+        "AgentRegistry.mayInstantiate > is false for an unregistered agent",
+        "AgentRegistry.mayInstantiate > is false once the agent is revoked",
+        "AgentRegistry.asValidator > is named 'kill-switch'",
+        "AgentRegistry.asValidator > maps an active agent to allow",
+        "AgentRegistry.asValidator > maps a revoked agent to terminate",
+        "AgentRegistry.asValidator > maps an expired agent to block",
+        "AgentRegistry.asValidator > maps an out-of-scope operation to block",
+        "AgentRegistry.asValidator > maps an unregistered agent to block",
+        "AgentRegistry.asValidator > defaults now to the current ISO time when no opts are given"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+# Dependencies and local noise only.
+node_modules/
+*.log
+.DS_Store
+
+# Secrets: demo/agent.js reads OPENROUTER_API_KEY from the environment, optionally
+# via a local .env loaded by `npm run agent`. Never commit one.
+.env
+.env.*
+
+# NOTE: results/ and data/ are COMMITTED ON PURPOSE. They are the evidence the
+# article's numbers come from (cached carbon traces, saved gateway documents, raw
+# Railway log lines, and every results/*.json + *.md). Deleting or ignoring them
+# would make the package unreproducible offline.

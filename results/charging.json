@@ -1,0 +1,453 @@
+{
+  "experiment": "E3 — gated EV-charging shift",
+  "deterministic": true,
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505,
+    606,
+    707,
+    808,
+    909,
+    1010
+  ],
+  "fleet": {
+    "vehicles": 50,
+    "energyKWh": 20,
+    "chargerKW": 7,
+    "chargeSlots": 6,
+    "plugInSlotRange": [
+      34,
+      38
+    ],
+    "deadlineSlotOffset": 62,
+    "budgetFactor": 0.8,
+    "approvalRates": [
+      1,
+      0.8
+    ],
+    "note": "SYNTHETIC fleet. 20 kWh delivered evenly over 3 h (avg 6.67 kW; a 7 kW charger's nameplate 3 h would be 21 kWh). No V2G, no discharge, no SoC logic — start-time shifting only."
+  },
+  "safety": "start-time shifting only; no V2G/discharge/SoC logic; every vehicle always receives its full charge before the deadline",
+  "gate": "kaiban-distributed@2.0.0 ActionGate + hash-chained AuditLog (real code, in-process)",
+  "provenance": {
+    "W1": {
+      "label": "winter",
+      "from": "2026-01-05T00:00Z",
+      "to": "2026-02-02T00:00Z",
+      "nights": 27,
+      "provider": "UK National Grid ESO Carbon Intensity API",
+      "fetchedAt": "2026-08-22T08:06:42.696Z",
+      "units": "gCO2e/kWh",
+      "slots": 1344,
+      "nationalActualGapsCarriedForward": 0,
+      "nationalSourceUrls": [
+        "https://api.carbonintensity.org.uk/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z"
+      ],
+      "peers": [
+        {
+          "regionid": 1,
+          "name": "North Scotland",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z/regionid/1"
+          ]
+        },
+        {
+          "regionid": 13,
+          "name": "London",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z/regionid/13"
+          ]
+        },
+        {
+          "regionid": 8,
+          "name": "South Wales",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z/regionid/8"
+          ]
+        }
+      ]
+    },
+    "W2": {
+      "label": "summer",
+      "from": "2026-06-29T00:00Z",
+      "to": "2026-07-27T00:00Z",
+      "nights": 27,
+      "provider": "UK National Grid ESO Carbon Intensity API",
+      "fetchedAt": "2026-08-22T08:06:42.696Z",
+      "units": "gCO2e/kWh",
+      "slots": 1344,
+      "nationalActualGapsCarriedForward": 0,
+      "nationalSourceUrls": [
+        "https://api.carbonintensity.org.uk/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z"
+      ],
+      "peers": [
+        {
+          "regionid": 1,
+          "name": "North Scotland",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z/regionid/1"
+          ]
+        },
+        {
+          "regionid": 13,
+          "name": "London",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z/regionid/13"
+          ]
+        },
+        {
+          "regionid": 8,
+          "name": "South Wales",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z/regionid/8"
+          ]
+        }
+      ]
+    }
+  },
+  "results": {
+    "W1": {
+      "naive": {
+        "totalGCO2e": {
+          "mean": 4439083,
+          "sd": 8175
+        },
+        "gPerSession": {
+          "mean": 3288.2,
+          "sd": 6.1
+        },
+        "sessions": 1350
+      },
+      "governed_approval1.00": {
+        "totalGCO2e": {
+          "mean": 2995957,
+          "sd": 194
+        },
+        "gPerSession": {
+          "mean": 2219.2,
+          "sd": 0.1
+        },
+        "pctAvoidedVsNaive": {
+          "mean": 32.51,
+          "sd": 0.13
+        },
+        "sessionsShifted": {
+          "mean": 1299,
+          "sd": 0
+        },
+        "approvalsRequested": {
+          "mean": 1299,
+          "sd": 0
+        },
+        "approvalsGranted": {
+          "mean": 1299,
+          "sd": 0
+        },
+        "gateRefusedShift": {
+          "mean": 51,
+          "sd": 0
+        },
+        "meanShiftHours": {
+          "mean": 6.39,
+          "sd": 0.03
+        },
+        "gateActions": {
+          "allow": {
+            "mean": 1183,
+            "sd": 0
+          },
+          "degrade": {
+            "mean": 90.2,
+            "sd": 0.4
+          },
+          "escalate": {
+            "mean": 25.8,
+            "sd": 0.4
+          },
+          "block": {
+            "mean": 23.6,
+            "sd": 0.5
+          },
+          "terminate": {
+            "mean": 27.4,
+            "sd": 0.5
+          }
+        },
+        "dailyBudgetG": {
+          "mean": 137467,
+          "sd": 229
+        },
+        "nights": 27,
+        "nightsOverBudget": {
+          "mean": 7,
+          "sd": 0
+        },
+        "auditChainValidAllSeeds": true,
+        "auditRecordsPerSeed": {
+          "mean": 1350,
+          "sd": 0
+        }
+      },
+      "governed_approval0.80": {
+        "totalGCO2e": {
+          "mean": 3287987,
+          "sd": 17304
+        },
+        "gPerSession": {
+          "mean": 2435.5,
+          "sd": 12.8
+        },
+        "pctAvoidedVsNaive": {
+          "mean": 25.93,
+          "sd": 0.34
+        },
+        "sessionsShifted": {
+          "mean": 1034.9,
+          "sd": 10
+        },
+        "approvalsRequested": {
+          "mean": 1287.8,
+          "sd": 1.2
+        },
+        "approvalsGranted": {
+          "mean": 1034.9,
+          "sd": 10
+        },
+        "gateRefusedShift": {
+          "mean": 62.2,
+          "sd": 1.2
+        },
+        "meanShiftHours": {
+          "mean": 6.4,
+          "sd": 0.04
+        },
+        "gateActions": {
+          "allow": {
+            "mean": 1146.1,
+            "sd": 3.9
+          },
+          "degrade": {
+            "mean": 107.2,
+            "sd": 3.2
+          },
+          "escalate": {
+            "mean": 34.5,
+            "sd": 2.6
+          },
+          "block": {
+            "mean": 28.7,
+            "sd": 1.9
+          },
+          "terminate": {
+            "mean": 33.5,
+            "sd": 1.6
+          }
+        },
+        "dailyBudgetG": {
+          "mean": 137467,
+          "sd": 229
+        },
+        "nights": 27,
+        "nightsOverBudget": {
+          "mean": 9.8,
+          "sd": 0.63
+        },
+        "auditChainValidAllSeeds": true,
+        "auditRecordsPerSeed": {
+          "mean": 1350,
+          "sd": 0
+        }
+      }
+    },
+    "W2": {
+      "naive": {
+        "totalGCO2e": {
+          "mean": 4266697,
+          "sd": 3479
+        },
+        "gPerSession": {
+          "mean": 3160.5,
+          "sd": 2.6
+        },
+        "sessions": 1350
+      },
+      "governed_approval1.00": {
+        "totalGCO2e": {
+          "mean": 3582297,
+          "sd": 2227
+        },
+        "gPerSession": {
+          "mean": 2653.6,
+          "sd": 1.6
+        },
+        "pctAvoidedVsNaive": {
+          "mean": 16.04,
+          "sd": 0.04
+        },
+        "sessionsShifted": {
+          "mean": 989.2,
+          "sd": 5
+        },
+        "approvalsRequested": {
+          "mean": 1219,
+          "sd": 1.8
+        },
+        "approvalsGranted": {
+          "mean": 1219,
+          "sd": 1.8
+        },
+        "gateRefusedShift": {
+          "mean": 131,
+          "sd": 1.8
+        },
+        "meanShiftHours": {
+          "mean": 8.94,
+          "sd": 0.03
+        },
+        "gateActions": {
+          "allow": {
+            "mean": 1071.3,
+            "sd": 1.6
+          },
+          "degrade": {
+            "mean": 103.2,
+            "sd": 1.1
+          },
+          "escalate": {
+            "mean": 44.5,
+            "sd": 1.2
+          },
+          "block": {
+            "mean": 44.2,
+            "sd": 0.6
+          },
+          "terminate": {
+            "mean": 86.8,
+            "sd": 1.7
+          }
+        },
+        "dailyBudgetG": {
+          "mean": 129066,
+          "sd": 353
+        },
+        "nights": 27,
+        "nightsOverBudget": {
+          "mean": 13,
+          "sd": 0
+        },
+        "auditChainValidAllSeeds": true,
+        "auditRecordsPerSeed": {
+          "mean": 1350,
+          "sd": 0
+        }
+      },
+      "governed_approval0.80": {
+        "totalGCO2e": {
+          "mean": 3721787,
+          "sd": 6977
+        },
+        "gPerSession": {
+          "mean": 2756.9,
+          "sd": 5.2
+        },
+        "pctAvoidedVsNaive": {
+          "mean": 12.77,
+          "sd": 0.16
+        },
+        "sessionsShifted": {
+          "mean": 788.1,
+          "sd": 11.2
+        },
+        "approvalsRequested": {
+          "mean": 1212.9,
+          "sd": 2.7
+        },
+        "approvalsGranted": {
+          "mean": 972.9,
+          "sd": 11.6
+        },
+        "gateRefusedShift": {
+          "mean": 137.1,
+          "sd": 2.7
+        },
+        "meanShiftHours": {
+          "mean": 8.95,
+          "sd": 0.04
+        },
+        "gateActions": {
+          "allow": {
+            "mean": 1054.8,
+            "sd": 2.5
+          },
+          "degrade": {
+            "mean": 112.5,
+            "sd": 3.8
+          },
+          "escalate": {
+            "mean": 45.6,
+            "sd": 1.8
+          },
+          "block": {
+            "mean": 48.4,
+            "sd": 1.4
+          },
+          "terminate": {
+            "mean": 88.7,
+            "sd": 1.8
+          }
+        },
+        "dailyBudgetG": {
+          "mean": 129066,
+          "sd": 353
+        },
+        "nights": 27,
+        "nightsOverBudget": {
+          "mean": 13.7,
+          "sd": 0.48
+        },
+        "auditChainValidAllSeeds": true,
+        "auditRecordsPerSeed": {
+          "mean": 1350,
+          "sd": 0
+        }
+      }
+    }
+  }
+}

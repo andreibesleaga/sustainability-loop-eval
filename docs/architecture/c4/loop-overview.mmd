@@ -1,0 +1,10 @@
+flowchart TD
+  P["1 Publish<br/>a system posts its own figures at<br/>/.well-known/sustainability-data"]
+  S["2 Sense<br/>an agent reads peers' documents<br/>and grid carbon intensity"]
+  D["3 Decide<br/>the Carbon-Verdict Governor paces<br/>spend against a carbon budget"]
+  G["4 Gate<br/>one gate aggregates verdicts, fails closed,<br/>and writes an audit record"]
+  H["5 Human<br/>escalate goes to a person;<br/>block and terminate stop the action"]
+  A["6 Act<br/>run, run smaller, wait for a cleaner slot,<br/>or do not run"]
+
+  P --> S --> D --> G --> H --> A
+  A -- "consumption changes, so the next published document changes" --> P

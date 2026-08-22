@@ -1,0 +1,463 @@
+{
+  "fetchedAt": "2026-08-22T09:31:34.013Z",
+  "url": "https://sustainability.up.railway.app/index.json",
+  "status": 200,
+  "body": {
+    "service": "sustainability-data-gateway",
+    "specification": "https://datatracker.ietf.org/doc/draft-besleaga-sustainability-wellknown/",
+    "about": "This service is a reference deployment of the /.well-known/sustainability-data well-known URI defined in draft-besleaga-sustainability-wellknown. It serves one conformant JSON document per reporting subject, each at /{domain}/.well-known/sustainability-data, so that the convention can be exercised against real, sourced annual disclosures without waiting for each organization to deploy its own endpoint. In a real deployment the document lives on the subject's own origin; a gateway is only a way to demonstrate and test the format.",
+    "notice": "Documents served here about third parties are ILLUSTRATIVE MAPPINGS prepared by the gateway operator from those organizations' own published reports. They are NOT published, reviewed, authorized, or endorsed by their reporting subjects, and this gateway is not an authoritative origin for them. Every figure is traceable to the public source document named in that document's methodology-uri member; nothing is estimated, interpolated, or invented on the subjects' behalf. Documents whose subject is a reserved .example name are deliberately synthetic and describe nothing real.",
+    "capabilities": "basic",
+    "self": {
+      "path": "/.well-known/sustainability-data",
+      "target": "sustainability-data-gateway"
+    },
+    "count": 11,
+    "subjects": [
+      {
+        "domain": "akamai.com",
+        "path": "/akamai.com/.well-known/sustainability-data",
+        "target": "Akamai Technologies, Inc.",
+        "reporting-period": "2025",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://akasus-wp-objectstore.us-ord-1.linodeobjects.com/uploads/20260708171857/FY-2025-Climate-Related-Financial-Disclosure-Report-IFRS-S2-with-TCFD.pdf",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published FY 2025 Climate-Related Financial Disclosure Report (IFRS S2 with TCFD) and its key-metrics addendum; NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: carbon-footprint is the gross total row (\"Gross GHG emissions (Scopes 1 + 2 + 3) -- 353,420 t CO2e\", net market-based methodology) published in Akamai's FY25 Sustainability Report, and equals the sum of the three scope members. The market-based basis is declared; the location-based Scope 2 figure (322,800 mtCO2e) is not carried here. The 52% clean-energy figure is the 2025 row of the metrics addendum; the narrative report gives a differently-dated 59% figure.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://www.akamaisustainability.com/"
+      },
+      {
+        "domain": "automattic.com",
+        "path": "/automattic.com/.well-known/sustainability-data",
+        "target": "Automattic Inc. (data centre operations)",
+        "reporting-period": "2020",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://wordpress.com/blog/2020/09/21/toward-zero-reducing-and-offsetting-our-data-center-power-emissions/",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published sustainability page and its 2020 data-centre emissions methodology post; NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: DATA-CENTRE OPERATIONS ONLY, and 2020-vintage: this is the most recent figure Automattic publishes, six years old at the time of mapping. carbon-accounting is omitted because the source never states a basis. Scope 1, 2 and 3 are not published and are omitted. The reporting-period and updated members exist precisely so a consumer can see this staleness.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://automattic.com/sustainability/"
+      },
+      {
+        "domain": "cloudflare.com",
+        "path": "/cloudflare.com/.well-known/sustainability-data",
+        "target": "Cloudflare, Inc.",
+        "reporting-period": "2024",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://cf-assets.www.cloudflare.com/slt3lc6tev37/2lg914L21Lyfpcya6weavX/6ded4e6ca673dbc1197c6b772a92aa29/Emission_inventory_PDF__2024.pdf",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published emission inventory; NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: carbon-footprint is the sum of the three published scope members on the location-based basis declared here; the inventory's only printed total row is 43,071 mtCO2e market-based. energy-consumption is omitted because the source report carries two conflicting totals (182.89 and 177.89 GWh); renewable-energy is omitted because Cloudflare's 100% claim is market-based matching, not a measured renewable share.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://www.cloudflare.com/impact/"
+      },
+      {
+        "domain": "fastly.com",
+        "path": "/fastly.com/.well-known/sustainability-data",
+        "target": "Fastly, Inc.",
+        "reporting-period": "2024",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://investors.fastly.com/files/doc_governance/2025/Nov/26/2024-Fastly-Sustainability-Report-290db1.pdf",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published 2024 Sustainability Report; NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: Location-based basis, as published; the market-based total is 37,506 mtCO2e. energy-consumption covers equipment across the global PoP network and offices, which is the report's stated boundary. disclosure-uri is omitted: Fastly's former social-impact page no longer exists (404, no archive captures) and no replacement sustainability hub is published; the report itself is the methodology-uri document.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization"
+      },
+      {
+        "domain": "hetzner.com",
+        "path": "/hetzner.com/.well-known/sustainability-data",
+        "target": "Hetzner Online GmbH",
+        "reporting-period": "2024",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://cdn.hetzner.com/assets/Uploads/downloads/Umwelterklaerung.pdf",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published EMAS-validated Umwelterklaerung 2025 (environmental statement), validated by EMAS environmental verifier DE-V-0404; NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: German sites only (Gunzenhausen, Falkenstein, Nuernberg). carbon-footprint is the COMBINED Scope 1 + Scope 2 market-based figure; no split is published, so scope-1, scope-2 and scope-3 are all omitted. Scope 3 is not yet reported (planned end of 2027). energy-consumption is datacentre electricity only; company-wide consumption adds about 1.8 GWh of conventional supply, giving a company-wide renewable share above 99.5%.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://www.hetzner.com/unternehmen/nachhaltigkeit/"
+      },
+      {
+        "domain": "microsoft.com",
+        "path": "/microsoft.com/.well-known/sustainability-data",
+        "target": "Microsoft Corporation",
+        "reporting-period": "2025",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://aka.ms/SustainabilityFactsheet2026",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published 2026 Environmental Data Fact Sheet (Section 1 reviewed by Deloitte & Touche LLP); NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: The figures are for Microsoft's FISCAL year FY25 (1 July 2024 - 30 June 2025), NOT the 2025 calendar year; reporting-period carries the fiscal year's ending calendar year and the machine-readable member io.github.andreibesleaga.reporting-period-basis states the exact boundary. Market-based basis; the location-based Scope 2 figure (12,030,556 mtCO2e) is not carried here. Scope 3 and the total are the GHG-Protocol figures, not the management's-criteria variant. GitHub, Inc. and other subsidiaries are consolidated inside this operational-control boundary and publish no separate inventory.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://www.microsoft.com/en-us/corporate-responsibility/sustainability"
+      },
+      {
+        "domain": "mozilla.org",
+        "path": "/mozilla.org/.well-known/sustainability-data",
+        "target": "Mozilla Foundation and Mozilla Corporation",
+        "reporting-period": "2025",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://assets.mozilla.net/pdf/Mozilla_Impact_Report_2026.pdf",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published 2026 Social & Environmental Impact Fact Sheet (inventories prepared by Watershed); NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: Market-based basis, as published; Mozilla publishes no location-based total (the location-based purchased-electricity line for 2025 is 91 mtCO2e). renewable-energy is the 100% figure the source scopes to global leased office and data-centre spaces. No absolute energy figure is published, so energy-consumption is omitted.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://www.mozilla.org/en-US/impact/"
+      },
+      {
+        "domain": "ovhcloud.com",
+        "path": "/ovhcloud.com/.well-known/sustainability-data",
+        "target": "OVH Groupe SA (OVHcloud)",
+        "reporting-period": "2025",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://corporate.ovhcloud.com/sites/default/files/2025-11/ovh_urd_2025_en_mel_25_11_14.pdf",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published 2025 Universal Registration Document (GHG table, ESRS E1-6; energy, ESRS E1-5); NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: The figures are for OVHcloud's FISCAL year FY2025 (1 September 2024 - 31 August 2025), NOT the 2025 calendar year; reporting-period carries the fiscal year's ending calendar year and the machine-readable member io.github.andreibesleaga.reporting-period-basis states the exact boundary. Market-based basis; the location-based totals (158,748 mtCO2e total, 58,087 Scope 2, 99,336 Scope 3) are not carried here. energy-consumption covers directly held datacentres only; the URD estimates a further 28 GWh for datacentres OVHcloud does not operate.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://corporate.ovhcloud.com/en/sustainability/"
+      },
+      {
+        "domain": "retailer.example",
+        "path": "/retailer.example/.well-known/sustainability-data",
+        "target": "retailer.example",
+        "reporting-period": "2025",
+        "measurement-method": "third-party-modeled",
+        "methodology-uri": "https://github.com/andreibesleaga/rfc-sustainability-wellknown/blob/main/gateway/METHODOLOGY.md",
+        "provider": "SYNTHETIC EXAMPLE — not a real organization and not a real inventory. Published by the gateway operator, Andrei Besleaga, as a reserved-name (RFC 2606 .example) test vector exercising the full optional member set. Every number below is invented and describes nothing real.",
+        "updated": "2026-02-01T00:00:00Z",
+        "synthetic": true,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://github.com/andreibesleaga/rfc-sustainability-wellknown/blob/main/gateway/data/README.md"
+      },
+      {
+        "domain": "saas-platform.example",
+        "path": "/saas-platform.example/.well-known/sustainability-data",
+        "target": "saas-platform.example",
+        "reporting-period": "2025",
+        "measurement-method": "hardware-metered",
+        "methodology-uri": "https://github.com/andreibesleaga/rfc-sustainability-wellknown/blob/main/gateway/METHODOLOGY.md",
+        "provider": "SYNTHETIC EXAMPLE — not a real service and not a real measurement. Published by the gateway operator, Andrei Besleaga, as a reserved-name (RFC 2606 .example) test vector for a software service reporting a Software Carbon Intensity score. Every number below is invented and describes nothing real.",
+        "updated": "2026-02-01T00:00:00Z",
+        "synthetic": true,
+        "source": "curated data file",
+        "target-type": "service",
+        "disclosure-uri": "https://github.com/andreibesleaga/rfc-sustainability-wellknown/blob/main/gateway/data/README.md"
+      },
+      {
+        "domain": "wikimedia.org",
+        "path": "/wikimedia.org/.well-known/sustainability-data",
+        "target": "Wikimedia Foundation",
+        "reporting-period": "2024",
+        "measurement-method": "hardware-estimated",
+        "methodology-uri": "https://upload.wikimedia.org/wikipedia/commons/d/d7/Wikimedia_Foundation_Environmental_Sustainability_Metrics_2024.pdf",
+        "provider": "Illustrative mapping prepared by the gateway operator, Andrei Besleaga, from the reporting subject's own published Environmental Sustainability Metrics 2024; NOT published, reviewed, authorized, or endorsed by the reporting subject. Every figure is read from the source document named in methodology-uri. Scope caveats: carbon-accounting is omitted because the source does not label the Scope 2 basis, although since 2021 the Foundation states it uses grid emission factors rather than vendor procurement decisions. No renewable-energy share is published, so that member is omitted.",
+        "updated": "2026-07-29T00:00:00Z",
+        "synthetic": false,
+        "source": "curated data file",
+        "target-type": "organization",
+        "disclosure-uri": "https://meta.wikimedia.org/wiki/Sustainability"
+      }
+    ],
+    "consumer-cross-validation": {
+      "validator": "sustainability-wellknown-consumer@0.5.2",
+      "documents-validated": 36,
+      "note": "At boot, every document this gateway serves was fetched through the published publisher pipeline and validated with the published consumer library — the same code a third party would run. A validation failure aborts startup."
+    },
+    "adapter-demonstrations": {
+      "note": "One demonstration subject per adapter shipped by the published sustainability-wellknown-publisher package, so every adapter runs end to end in this gateway. Subjects marked live fetch a real upstream daily (only upstreams whose licenses permit attributed republication; the attribution is carried in band). Subjects marked replay run the SAME adapter code against a recorded upstream response, because no legal free live access to that upstream exists; their figures are synthetic and say so in band. All sit under reserved .example names: they demonstrate the format and describe no real organization.",
+      "count": 8,
+      "entries": [
+        {
+          "domain": "carbontxt-demo.example",
+          "path": "/carbontxt-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:carbontxt-api (LIVE GWF validator API, daily)",
+          "mode": "live",
+          "upstream": "GWF carbon.txt validator API (free key) / recorded carbon.txt",
+          "attribution": "carbon.txt self-published by its organization; validator by GWF",
+          "refreshed": "2026-08-20T14:33:02.538Z",
+          "target": "thegreenwebfoundation.org carbon.txt (disclosures relay)",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "climatiq-demo.example",
+          "path": "/climatiq-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:climatiq (recorded response shape, replay)",
+          "mode": "replay",
+          "upstream": "Climatiq estimate API (replay by default; see terms note)",
+          "attribution": "replay default: Climatiq 2026 terms restrict redistribution",
+          "refreshed": "2026-08-07T14:32:59.983Z",
+          "target": "climatiq-demo.example",
+          "reporting-period": "2026-07",
+          "upstream-error": "HTTP 400 Bad Request for https://api.climatiq.io/data/v1/estimate {\"error\":\"bad_request\",\"error_code\":\"invalid_input\",\"message\":\"Activity ID Selector requires a 'data_version', the latest 'data_version' is '36' at line 1 column 80\"}"
+        },
+        {
+          "domain": "co2js-demo.example",
+          "path": "/co2js-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:co2js (local SWD model, live Greencheck, daily)",
+          "mode": "live",
+          "upstream": "CO2.js locally (Ember data) + GWF Greencheck",
+          "attribution": "CO2.js Apache-2.0; Ember CC BY 4.0; GWF Green Domains ODbL",
+          "refreshed": "2026-08-20T14:33:01.610Z",
+          "target": "co2js-demo.example",
+          "reporting-period": "2026-07"
+        },
+        {
+          "domain": "grid-intensity-demo.example",
+          "path": "/grid-intensity-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:computed (LIVE NESO grid intensity, daily)",
+          "mode": "live",
+          "upstream": "NESO Carbon Intensity API (api.carbonintensity.org.uk)",
+          "attribution": "NESO Carbon Intensity API, CC BY 4.0",
+          "refreshed": "2026-08-20T14:33:00.889Z",
+          "target": "grid-intensity-demo.example",
+          "reporting-period": "2026-07"
+        },
+        {
+          "domain": "kepler-demo.example",
+          "path": "/kepler-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:kepler-prometheus (recorded fixture, replay mode)",
+          "mode": "replay",
+          "upstream": "Kepler energy counters via Prometheus (no public instance; replay)",
+          "attribution": "synthetic figures; recorded Prometheus query response",
+          "refreshed": "2026-08-07T14:32:58.551Z",
+          "target": "kepler-demo.example",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "ms-sustainability-demo.example",
+          "path": "/ms-sustainability-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:ms-sustainability (retired OData shape, replay)",
+          "mode": "replay",
+          "upstream": "MS Cloud for Sustainability (preview API retired 2025-05-30; replay)",
+          "attribution": "synthetic figures; shape per the retired tenantemissions API",
+          "refreshed": "2026-08-07T14:32:59.984Z",
+          "target": "ms-sustainability-demo.example",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "salesforce-nzc-demo.example",
+          "path": "/salesforce-nzc-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:salesforce-nzc (documented SOQL shape, replay)",
+          "mode": "replay",
+          "upstream": "Salesforce Net Zero Cloud (30-day trial orgs exist; replay here)",
+          "attribution": "synthetic figures; field names per NZC developer guide",
+          "refreshed": "2026-08-07T14:32:59.984Z",
+          "target": "salesforce-nzc-demo.example",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "watershed-demo.example",
+          "path": "/watershed-demo.example/.well-known/sustainability-data",
+          "adapter": "adapter:watershed (documented footprint shape, replay)",
+          "mode": "replay",
+          "upstream": "Watershed API (customer-only keys, no sandbox; replay)",
+          "attribution": "synthetic figures; shape per api-docs.watershed.com",
+          "refreshed": "2026-08-07T14:32:59.985Z",
+          "target": "watershed-demo.example",
+          "reporting-period": "2025"
+        }
+      ]
+    },
+    "wire-format-examples": {
+      "note": "Every case from the specification repository's canonical example-responses set, served live. Array (trend) cases follow the draft's rule: the parameterless Basic response collapses to the most recent entry, and the full sorted array is returned only for ?granularity= requests on documents that themselves declare capabilities:extended. All figures are synthetic; the subjects are reserved .example names.",
+      "count": 14,
+      "entries": [
+        {
+          "domain": "basic.example",
+          "path": "/basic.example/.well-known/sustainability-data",
+          "case": "Basic response",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response.json",
+          "note": "The draft's worked Basic example: an origin-wide monthly report.",
+          "target": "example.com",
+          "reporting-period": "2026-02"
+        },
+        {
+          "domain": "minimal.example",
+          "path": "/minimal.example/.well-known/sustainability-data",
+          "case": "Minimal document",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-minimal.json",
+          "note": "Mandatory members only — every metric omitted, methodology-uri carries the disclosure.",
+          "target": "minimal.example",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "extended.example",
+          "path": "/extended.example/.well-known/sustainability-data",
+          "case": "Daily report, path target",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-extended.json",
+          "note": "A daily reporting period for a path-scoped target with extended capabilities declared.",
+          "target": "/app/storage",
+          "reporting-period": "2026-03-20"
+        },
+        {
+          "domain": "partial.example",
+          "path": "/partial.example/.well-known/sustainability-data",
+          "case": "Partial reporting",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-unreported.json",
+          "note": "Omission as the only not-reported mechanism. The source file omits carbon-unit; the served document carries the materialized default (gCO2e) — the pipeline resolving the draft's default-unit rule.",
+          "target": "partial.example",
+          "reporting-period": "2026-03"
+        },
+        {
+          "domain": "origin-annual.example",
+          "path": "/origin-annual.example/.well-known/sustainability-data",
+          "case": "Origin-wide annual report",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-origin-annual.json",
+          "note": "A calendar-year report for a whole origin, from cloud-billing data.",
+          "target": "example.com",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "organization.example",
+          "path": "/organization.example/.well-known/sustainability-data",
+          "case": "Organization report",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-organization.json",
+          "note": "An organization-level mapping in the shape the draft's organization example uses.",
+          "target": "Cloudflare, Inc.",
+          "reporting-period": "2024"
+        },
+        {
+          "domain": "organization-trend.example",
+          "path": "/organization-trend.example/.well-known/sustainability-data",
+          "case": "Yearly trend, Basic service",
+          "shape": "array",
+          "entries": 4,
+          "file": "example-response-organization-trend.json",
+          "note": "A multi-year trend file whose document declares capabilities:basic — the Basic response therefore collapses to the most recent year, exactly as the draft requires.",
+          "target": "Example Annual Corp (example.org)",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "product.example",
+          "path": "/product.example/.well-known/sustainability-data",
+          "case": "Product",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-product.json",
+          "note": "A physical product as the reporting subject (per-unit footprint).",
+          "target": "Example Router Model RX-100 (GTIN 04012345678901)",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "service.example",
+          "path": "/service.example/.well-known/sustainability-data",
+          "case": "Service",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-service.json",
+          "note": "A hosted application service as the reporting subject.",
+          "target": "app.saas.example",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "tenant.example",
+          "path": "/tenant.example/.well-known/sustainability-data",
+          "case": "Cloud tenant",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-tenant.json",
+          "note": "A single cloud tenant as the reporting subject.",
+          "target": "tenant-acme-01.cloud.example",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "device.example",
+          "path": "/device.example/.well-known/sustainability-data",
+          "case": "Hardware device",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-device.json",
+          "note": "A metered edge device as the reporting subject.",
+          "target": "edge-node-014.edge.example",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "data-source.example",
+          "path": "/data-source.example/.well-known/sustainability-data",
+          "case": "Data source / feed",
+          "shape": "object",
+          "entries": 1,
+          "file": "example-response-data-source.json",
+          "note": "A published data feed as the reporting subject.",
+          "target": "https://metrics.example/feeds/grid-sensor-network",
+          "reporting-period": "2025"
+        },
+        {
+          "domain": "yearly.example",
+          "path": "/yearly.example/.well-known/sustainability-data",
+          "case": "Monthly series (Extended)",
+          "shape": "array",
+          "entries": 12,
+          "file": "example-response_yearly.json",
+          "note": "Twelve monthly entries; Basic collapses to the latest month, ?granularity=monthly returns the sorted year.",
+          "target": "example.com",
+          "reporting-period": "2025-12",
+          "granularity": "monthly"
+        },
+        {
+          "domain": "yearly-monthly-target.example",
+          "path": "/yearly-monthly-target.example/.well-known/sustainability-data",
+          "case": "Monthly series, path target (Extended)",
+          "shape": "array",
+          "entries": 2,
+          "file": "example-response-yearly-monthly-target.json",
+          "note": "A short monthly series for a path-scoped target; Basic collapses, ?granularity=monthly returns the array.",
+          "target": "/api/v1",
+          "reporting-period": "2026-02",
+          "granularity": "monthly"
+        }
+      ]
+    },
+    "no-machine-readable-data": {
+      "note": "These subjects were looked for and could not honestly be published: the operator found no primary source carrying the figures this format needs. They are listed rather than quietly omitted, because a registry that showed only the organizations that do publish would overstate how much of the web is actually measurable — the gap is the evidence. Requesting one of their documents returns 404, the specification's no-data rule.",
+      "count": 2,
+      "subjects": [
+        {
+          "domain": "digitalocean.com",
+          "entity": "DigitalOcean Holdings, Inc.",
+          "status": "publishes-no-quantitative-data",
+          "finding": "No Scope 1/2/3, energy, or renewable figures exist in any primary source. The FY2025 Form 10-K (filed February 2026) contains zero occurrences of climate, greenhouse, carbon, emission, scope or sustainab. The investor ESG environmental page is qualitative only ('a relatively light environmental footprint'). A 2022 blog post says the company was 'currently working to determine our carbon baseline'; no baseline has been published since. The widely-quoted 'PUE averaging 1.15' is a community-forum answer by a user, not a company statement, and is not used here.",
+          "evidence": [
+            "https://investors.digitalocean.com/esg/environmental/",
+            "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001582961&type=10-K"
+          ],
+          "checked": "2026-07-29"
+        },
+        {
+          "domain": "github.com",
+          "entity": "GitHub, Inc.",
+          "status": "consolidated-into-parent",
+          "finding": "GitHub publishes no standalone GHG inventory. Its only company-environmental blog post (2021-04-22) states commitments with no Scope 1/2/3 figures and links no inventory document. GitHub is a wholly owned Microsoft subsidiary and falls inside Microsoft's consolidated operational-control reporting boundary, so its emissions are reported within Microsoft Corporation's inventory. Deriving GitHub-specific figures by apportioning Microsoft's totals would be an invention and is not done.",
+          "evidence": [
+            "https://github.blog/news-insights/company-news/environmental-sustainability-github/",
+            "https://aka.ms/SustainabilityFactsheet2026"
+          ],
+          "see": "microsoft.com",
+          "checked": "2026-07-29"
+        }
+      ]
+    }
+  }
+}

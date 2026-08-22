@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "updated": "2026-08-01T00:00:00Z",
+  "capabilities": "basic",
+  "provider": "Andrei Besleaga, operator of this reference gateway",
+  "measurement-method": "third-party-modeled",
+  "methodology-uri": "https://github.com/andreibesleaga/rfc-sustainability-wellknown/blob/main/gateway/METHODOLOGY.md",
+  "reporting-period": "2026-07",
+  "target": "sustainability-data-gateway",
+  "energy-consumption": 2.232,
+  "energy-unit": "kWh",
+  "carbon-footprint": 832.536,
+  "carbon-unit": "gCO2e",
+  "carbon-accounting": "location-based",
+  "carbon-intensity-gCO2e-per-kWh": 373,
+  "disclosure-uri": "https://github.com/andreibesleaga/rfc-sustainability-wellknown/tree/main/gateway",
+  "target-type": "service"
+}

@@ -1,0 +1,33 @@
+%% C4 level 2 - containers. Flowchart form: the native C4Container renderer is unreadable here.
+flowchart TB
+  subgraph PKG["sustainability-loop-eval (this repository)"]
+    direction TB
+    CORE["<b>Governor core</b><br/><i>plain JS, imports nothing</i><br/>carbon budget and the five-rung ladder"]
+    ADP["<b>Gate adapter</b><br/><i>plain JS</i><br/>plugs the governor into the real gate"]
+    FIT["<b>Fitness functions</b><br/><i>node:test</i><br/>nine checks of architecture properties"]
+    SIM["<b>Simulation</b><br/><i>plain JS</i><br/>agent workload and EV charging on real traces"]
+    DP["<b>Data-plane measurement</b><br/><i>plain JS</i><br/>fetches and checks every live document"]
+    RUN["<b>Demo and agent runs</b><br/><i>plain JS</i><br/>one document, one decision, one verdict"]
+  end
+
+  GATE["<b>kaiban-distributed 2.0.0</b><br/><i>external</i><br/>shipped ActionGate + hash-chained AuditLog"]
+  GW["<b>Reference gateway</b><br/><i>external</i><br/>serves the well-known documents"]
+  GD["<b>NESO Carbon Intensity API</b><br/><i>external</i><br/>real half-hourly grid data"]
+  H(["<b>Human approver</b><br/><i>person</i>"])
+
+  ADP --> CORE
+  FIT --> ADP
+  SIM --> ADP
+  RUN --> ADP
+  ADP -->|evaluate| GATE
+  DP -->|HTTP GET| GW
+  RUN -->|one document| GW
+  SIM -->|cached traces from| GD
+  GATE -->|escalates to| H
+
+  classDef person fill:#08427b,stroke:#052e56,color:#fff
+  classDef cont fill:#438dd5,stroke:#2e6295,color:#fff
+  classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
+  class H person
+  class CORE,ADP,FIT,SIM,DP,RUN cont
+  class GATE,GW,GD ext

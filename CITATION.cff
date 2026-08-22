@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this evaluation package, please cite it as below."
+title: "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane — evaluation package"
+abstract: "Reproducible evaluation package for the article: architecture fitness functions against the shipped kaiban-distributed ActionGate, live measurements of a sustainability data-plane gateway, and trace-driven simulations of the Carbon-Verdict Governor on real UK grid-carbon data."
+type: software
+authors:
+  - family-names: Besleaga
+    given-names: Andrei N.
+    orcid: "https://orcid.org/0009-0001-3464-5283"
+year: 2026
+license: MIT
+repository-code: "https://github.com/andreibesleaga/sustainability-loop-eval"
+# Add the Zenodo DOI here once the repository is archived, and remove this comment.
+doi: TODO-after-zenodo
+keywords:
+  - sustainability
+  - carbon-aware computing
+  - agentic AI
+  - AI governance
+  - architecture fitness functions

@@ -1,0 +1,24 @@
+%% C4 level 1 - system context.
+%% Mermaid's native C4Context renderer stacks every box into one column here,
+%% so this is drawn as a flowchart with the same C4 roles spelled out in each label.
+flowchart TB
+  H(["<b>Human approver</b><br/><i>person</i><br/>says yes or no at the top rungs"])
+  S["<b>Governed service</b><br/><i>the system this package evaluates</i><br/>runs work, spends a carbon budget,<br/>publishes its own figures"]
+  P["<b>Peer systems</b><br/><i>external</i><br/>publish /.well-known/sustainability-data"]
+  GW["<b>Reference gateway</b><br/><i>external</i><br/>serves 12 documents"]
+  GD["<b>NESO Carbon Intensity API</b><br/><i>external</i><br/>Great Britain, every 30 minutes, CC BY 4.0"]
+  RT["<b>kaiban-distributed runtime</b><br/><i>external</i><br/>ships the action gate and the audit log"]
+
+  S -->|reads carbon signals from| P
+  S -->|discovers documents through| GW
+  S -->|reads grid carbon intensity from| GD
+  S -->|sends every decision through| RT
+  RT -->|escalates anything above degrade to| H
+  P -.->|read its document in turn| S
+
+  classDef person fill:#08427b,stroke:#052e56,color:#fff
+  classDef sys fill:#1168bd,stroke:#0b4884,color:#fff
+  classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
+  class H person
+  class S sys
+  class P,GW,GD,RT ext

@@ -1,0 +1,125 @@
+# Dependency-graph check (madge)
+
+Generated with `npx --yes madge` (dev tooling only — madge is NOT a dependency of this
+package) on 2026-08-22, Node 24. Reproduce the first check with `npm run arch`.
+
+Graphviz `dot` is NOT installed on the machine that produced this file, so no
+`dependency-graph.svg` image was rendered; the text graph below is the artifact.
+With graphviz available, `npx --yes madge --image docs/architecture/dependency-graph.svg
+--extensions js governor fitness simulation dataplane demo shared` produces the picture.
+
+The graph is the machine-checkable form of the hexagonal claim, and fitness function F7
+asserts the same rules from inside the test suite: `governor/carbon-governor.js` imports
+nothing, `governor/gate.js` imports only `kaiban-distributed` and the core, `shared/*` are
+leaves, and the adapters (`simulation/`, `dataplane/`, `demo/`) import only `governor/`,
+`shared/` and their own folder — never each other.
+
+"Orphans" below are the entry points: runnable scripts (`npm run …`) and test files.
+Nothing imports them, which is what an entry point is.
+
+=== madge --circular ===
+Processed 31 files (1.3s) 
+✔ No circular dependency found!
+
+=== madge --orphans ===
+Processed 31 files (1.2s) 
+dataplane/measure.js
+dataplane/measure.test.js
+demo/agent.js
+demo/demo.js
+fitness/f1.test.js
+fitness/f2.test.js
+fitness/f3.test.js
+fitness/f4.test.js
+fitness/f5.test.js
+fitness/f6.test.js
+fitness/f7.test.js
+fitness/f8.test.js
+fitness/f9.test.js
+fitness/report.js
+simulation/fetch-traces.js
+simulation/lib.test.js
+simulation/policies.test.js
+
+=== madge (dependency graph, text) ===
+
+dataplane/doc-check.js
+dataplane/logs.js
+  dataplane/report.js
+  shared/stats.js
+dataplane/measure.js
+  dataplane/doc-check.js
+  dataplane/report.js
+  shared/stats.js
+dataplane/measure.test.js
+  dataplane/doc-check.js
+  dataplane/logs.js
+  shared/stats.js
+dataplane/report.js
+  dataplane/doc-check.js
+demo/agent.js
+  governor/carbon-governor.js
+  governor/gate.js
+demo/demo.js
+  governor/carbon-governor.js
+  governor/gate.js
+fitness/f1.test.js
+  fitness/props.js
+fitness/f2.test.js
+  fitness/props.js
+fitness/f3.test.js
+  fitness/props.js
+fitness/f4.test.js
+  fitness/props.js
+fitness/f5.test.js
+  fitness/props.js
+fitness/f6.test.js
+  fitness/props.js
+fitness/f7.test.js
+  fitness/props.js
+fitness/f8.test.js
+  fitness/props.js
+fitness/f9.test.js
+  fitness/props.js
+fitness/harness.js
+fitness/import-graph.js
+fitness/props.js
+  fitness/harness.js
+  fitness/import-graph.js
+  governor/carbon-governor.js
+  governor/gate.js
+  shared/prng.js
+fitness/report.js
+  fitness/props.js
+governor/carbon-governor.js
+governor/gate.js
+  governor/carbon-governor.js
+shared/prng.js
+shared/stats.js
+simulation/charging.js
+  governor/carbon-governor.js
+  governor/gate.js
+  shared/prng.js
+  shared/stats.js
+  simulation/lib.js
+  simulation/report.js
+simulation/fetch-traces.js
+simulation/lib.js
+  shared/prng.js
+simulation/lib.test.js
+  shared/prng.js
+  shared/stats.js
+  simulation/lib.js
+simulation/policies.test.js
+  shared/stats.js
+  simulation/charging.js
+  simulation/lib.js
+  simulation/run.js
+simulation/report.js
+simulation/run.js
+  governor/carbon-governor.js
+  governor/gate.js
+  shared/stats.js
+  simulation/lib.js
+  simulation/report.js
+

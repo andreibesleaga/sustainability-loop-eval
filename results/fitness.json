@@ -1,0 +1,73 @@
+{
+  "functions": [
+    {
+      "id": "F1",
+      "property": "Total order / most-severe-wins: gate decision == max GATE_ACTION_SEVERITY, deciding verdict first",
+      "cases": 2000,
+      "passed": true,
+      "notes": "all 2000 random verdict multisets resolved to the reference mostSevere() with it listed first"
+    },
+    {
+      "id": "F2",
+      "property": "Fail-closed: throwing validator / invalid estimate -> block; disabled -> documented all-or-nothing passthrough",
+      "cases": 75,
+      "passed": true,
+      "notes": "all 75 cases fail-closed correctly (25 throw, 25 invalid-estimate, 25 disabled-passthrough)"
+    },
+    {
+      "id": "F3",
+      "property": "Monotonicity: non-decreasing committed ratio -> non-decreasing severity; exact default rung boundaries",
+      "cases": 2004,
+      "passed": true,
+      "notes": "all 2000 monotone sequences held severity + all 4 default rung boundaries mapped exactly"
+    },
+    {
+      "id": "F4",
+      "property": "Human binding: escalate/block/terminate never execute without an explicit approved HumanPort approval",
+      "cases": 2000,
+      "passed": true,
+      "notes": "all 2000 random decisions obeyed the human-binding rule in fitness/harness.js"
+    },
+    {
+      "id": "F5",
+      "property": "Gate-on-path: every attempted operation produces exactly one audit record, in order, with its own operation type; nothing runs unaudited",
+      "cases": 2100,
+      "passed": true,
+      "notes": "2100 audit records match the 2100 attempts one-for-one (operation + verdict); executed 1612, refused 488; all 3 operation types routed"
+    },
+    {
+      "id": "F6",
+      "property": "Audit-chain integrity: verify() valid over N decisions; tampering one record's field breaks verify() at that index",
+      "cases": 500,
+      "passed": true,
+      "notes": "500 decisions verified valid; tampering record 82 was detected (brokenAt=82)"
+    },
+    {
+      "id": "F7",
+      "property": "Port isolation (hexagonal): core imports nothing, gate.js imports only kaiban-distributed+core, shared/ is a leaf, adapters never import each other",
+      "cases": 15,
+      "passed": true,
+      "notes": "core (carbon-governor.js) imports nothing; gate.js imports only kaiban-distributed + the core; 2 shared/ module(s) import nothing; 11 adapter file(s) in simulation/dataplane/demo import only governor/, shared/ and their own folder"
+    },
+    {
+      "id": "F8",
+      "property": "Determinism: the same estimate sequence yields byte-identical decisions and audit records across two fresh gates",
+      "cases": 300,
+      "passed": true,
+      "notes": "300-step sequence byte-identical across two fresh gates (decisions + audit chain)"
+    },
+    {
+      "id": "F9",
+      "property": "Aggregation equivalence: governor.mostSevere() (reference rule) agrees with the shipped gate's aggregation",
+      "cases": 2000,
+      "passed": true,
+      "notes": "all 2000 random verdict sets (varying carbon action + extras) agreed with mostSevere()"
+    }
+  ],
+  "totals": {
+    "functions": 9,
+    "allPassed": true,
+    "totalCases": 10994
+  },
+  "kaibanVersion": "2.0.0"
+}

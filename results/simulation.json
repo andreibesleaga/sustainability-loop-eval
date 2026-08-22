@@ -1,0 +1,1074 @@
+{
+  "experiment": "E2 — carbon-verdict governor vs baselines",
+  "deterministic": true,
+  "seeds": [
+    101,
+    202,
+    303,
+    404,
+    505,
+    606,
+    707,
+    808,
+    909,
+    1010
+  ],
+  "budgetFactors": [
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1
+  ],
+  "workload": {
+    "arrivalsPerSlot": "Poisson(lambda=6)",
+    "lambda": 6,
+    "energyPerTaskKWh": 0.05,
+    "deferrableFraction": 0.5,
+    "deferralHorizonHours": 6,
+    "degradedEnergyFraction": 0.4,
+    "note": "SYNTHETIC. An agentic service running LLM-inference-style jobs; parameters are stipulated, not measured."
+  },
+  "gate": "kaiban-distributed@2.0.0 ActionGate + hash-chained AuditLog (real code, in-process)",
+  "ladder": "allow < degrade < escalate < block < terminate (rungs 0.8/1.0/1.1/1.25 of daily budget committed)",
+  "correlations": {
+    "W1": {
+      "peerMeanVsNationalActual": 0.96,
+      "peerMaxVsNationalActual": 0.965,
+      "meanPeerMeanGPerKWh": 126.8,
+      "meanNationalActualGPerKWh": 152.9
+    },
+    "W2": {
+      "peerMeanVsNationalActual": 0.986,
+      "peerMaxVsNationalActual": 0.958,
+      "meanPeerMeanGPerKWh": 83.7,
+      "meanNationalActualGPerKWh": 124.2
+    }
+  },
+  "provenance": {
+    "W1": {
+      "label": "winter",
+      "from": "2026-01-05T00:00Z",
+      "to": "2026-02-02T00:00Z",
+      "days": 28,
+      "provider": "UK National Grid ESO Carbon Intensity API",
+      "fetchedAt": "2026-08-22T08:06:42.696Z",
+      "units": "gCO2e/kWh",
+      "slots": 1344,
+      "nationalActualGapsCarriedForward": 0,
+      "nationalSourceUrls": [
+        "https://api.carbonintensity.org.uk/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z"
+      ],
+      "peers": [
+        {
+          "regionid": 1,
+          "name": "North Scotland",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z/regionid/1"
+          ]
+        },
+        {
+          "regionid": 13,
+          "name": "London",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z/regionid/13"
+          ]
+        },
+        {
+          "regionid": 8,
+          "name": "South Wales",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-05T00:00Z/2026-01-18T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-18T00:00Z/2026-01-31T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-01-31T00:00Z/2026-02-02T00:00Z/regionid/8"
+          ]
+        }
+      ]
+    },
+    "W2": {
+      "label": "summer",
+      "from": "2026-06-29T00:00Z",
+      "to": "2026-07-27T00:00Z",
+      "days": 28,
+      "provider": "UK National Grid ESO Carbon Intensity API",
+      "fetchedAt": "2026-08-22T08:06:42.696Z",
+      "units": "gCO2e/kWh",
+      "slots": 1344,
+      "nationalActualGapsCarriedForward": 0,
+      "nationalSourceUrls": [
+        "https://api.carbonintensity.org.uk/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z",
+        "https://api.carbonintensity.org.uk/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z"
+      ],
+      "peers": [
+        {
+          "regionid": 1,
+          "name": "North Scotland",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z/regionid/1",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z/regionid/1"
+          ]
+        },
+        {
+          "regionid": 13,
+          "name": "London",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z/regionid/13",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z/regionid/13"
+          ]
+        },
+        {
+          "regionid": 8,
+          "name": "South Wales",
+          "series": "forecast",
+          "note": "regional endpoint is forecast-only",
+          "gapsCarriedForward": 0,
+          "sourceUrls": [
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-06-29T00:00Z/2026-07-12T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-12T00:00Z/2026-07-25T00:00Z/regionid/8",
+            "https://api.carbonintensity.org.uk/regional/intensity/2026-07-25T00:00Z/2026-07-27T00:00Z/regionid/8"
+          ]
+        }
+      ]
+    }
+  },
+  "results": {
+    "W1": {
+      "peerMedianThresholdG": 123.5,
+      "tasksPerSeed": {
+        "mean": 8075.1,
+        "sd": 57.5
+      },
+      "policies": {
+        "P0": {
+          "totalGCO2e": {
+            "mean": 61868,
+            "sd": 524
+          },
+          "pctVsP0": {
+            "mean": 0,
+            "sd": 0
+          },
+          "tasksCompleted": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "completedOnTime": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "dropped": {
+            "mean": 0,
+            "sd": 0
+          },
+          "degraded": {
+            "mean": 0,
+            "sd": 0
+          },
+          "deferred": {
+            "mean": 0,
+            "sd": 0
+          },
+          "meanDelayMin": {
+            "mean": 0,
+            "sd": 0
+          },
+          "p95DelayMin": {
+            "mean": 0,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 0,
+            "sd": 0
+          },
+          "humanDecisions": {
+            "mean": 0,
+            "sd": 0
+          },
+          "blocks": {
+            "mean": 0,
+            "sd": 0
+          },
+          "terminations": {
+            "mean": 0,
+            "sd": 0
+          }
+        },
+        "P1": {
+          "totalGCO2e": {
+            "mean": 60916,
+            "sd": 522
+          },
+          "pctVsP0": {
+            "mean": -1.54,
+            "sd": 0.13
+          },
+          "tasksCompleted": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "completedOnTime": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "dropped": {
+            "mean": 0,
+            "sd": 0
+          },
+          "degraded": {
+            "mean": 0,
+            "sd": 0
+          },
+          "deferred": {
+            "mean": 2028,
+            "sd": 61
+          },
+          "meanDelayMin": {
+            "mean": 315.9,
+            "sd": 1.4
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 0,
+            "sd": 0
+          },
+          "humanDecisions": {
+            "mean": 0,
+            "sd": 0
+          },
+          "blocks": {
+            "mean": 0,
+            "sd": 0
+          },
+          "terminations": {
+            "mean": 0,
+            "sd": 0
+          }
+        },
+        "P2_f0.6": {
+          "totalGCO2e": {
+            "mean": 46264,
+            "sd": 553
+          },
+          "pctVsP0": {
+            "mean": -25.22,
+            "sd": 0.68
+          },
+          "tasksCompleted": {
+            "mean": 7481.9,
+            "sd": 73.7
+          },
+          "completedOnTime": {
+            "mean": 7481.9,
+            "sd": 73.7
+          },
+          "dropped": {
+            "mean": 593.2,
+            "sd": 57.5
+          },
+          "degraded": {
+            "mean": 1491.7,
+            "sd": 56.5
+          },
+          "deferred": {
+            "mean": 1340.4,
+            "sd": 45.5
+          },
+          "meanDelayMin": {
+            "mean": 268.4,
+            "sd": 4.4
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 549.3,
+            "sd": 58.7
+          },
+          "humanDecisions": {
+            "mean": 1212.6,
+            "sd": 34.5
+          },
+          "blocks": {
+            "mean": 663.3,
+            "sd": 42.5
+          },
+          "terminations": {
+            "mean": 593.2,
+            "sd": 57.5
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 20.3,
+            "sd": 0.82
+          },
+          "dailyBudgetG": {
+            "mean": 1406,
+            "sd": 28
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f0.7": {
+          "totalGCO2e": {
+            "mean": 49492,
+            "sd": 479
+          },
+          "pctVsP0": {
+            "mean": -20,
+            "sd": 0.55
+          },
+          "tasksCompleted": {
+            "mean": 7846.1,
+            "sd": 71.4
+          },
+          "completedOnTime": {
+            "mean": 7846.1,
+            "sd": 71.4
+          },
+          "dropped": {
+            "mean": 229,
+            "sd": 46.2
+          },
+          "degraded": {
+            "mean": 1401,
+            "sd": 63.9
+          },
+          "deferred": {
+            "mean": 1290.7,
+            "sd": 51.7
+          },
+          "meanDelayMin": {
+            "mean": 278.9,
+            "sd": 5
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 521.7,
+            "sd": 38.9
+          },
+          "humanDecisions": {
+            "mean": 952.6,
+            "sd": 66.8
+          },
+          "blocks": {
+            "mean": 430.9,
+            "sd": 42.2
+          },
+          "terminations": {
+            "mean": 229,
+            "sd": 46.2
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 17.8,
+            "sd": 0.79
+          },
+          "dailyBudgetG": {
+            "mean": 1641,
+            "sd": 32
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f0.8": {
+          "totalGCO2e": {
+            "mean": 51691,
+            "sd": 517
+          },
+          "pctVsP0": {
+            "mean": -16.45,
+            "sd": 0.48
+          },
+          "tasksCompleted": {
+            "mean": 7996.6,
+            "sd": 61.7
+          },
+          "completedOnTime": {
+            "mean": 7996.6,
+            "sd": 61.7
+          },
+          "dropped": {
+            "mean": 78.5,
+            "sd": 30.1
+          },
+          "degraded": {
+            "mean": 1238.2,
+            "sd": 48.5
+          },
+          "deferred": {
+            "mean": 1163.6,
+            "sd": 58
+          },
+          "meanDelayMin": {
+            "mean": 286.1,
+            "sd": 5.8
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 337.5,
+            "sd": 44.5
+          },
+          "humanDecisions": {
+            "mean": 545.7,
+            "sd": 67.7
+          },
+          "blocks": {
+            "mean": 208.2,
+            "sd": 31.4
+          },
+          "terminations": {
+            "mean": 78.5,
+            "sd": 30.1
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14,
+            "sd": 0.67
+          },
+          "dailyBudgetG": {
+            "mean": 1875,
+            "sd": 37
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f0.9": {
+          "totalGCO2e": {
+            "mean": 53587,
+            "sd": 414
+          },
+          "pctVsP0": {
+            "mean": -13.38,
+            "sd": 0.42
+          },
+          "tasksCompleted": {
+            "mean": 8061.6,
+            "sd": 59.5
+          },
+          "completedOnTime": {
+            "mean": 8061.6,
+            "sd": 59.5
+          },
+          "dropped": {
+            "mean": 13.5,
+            "sd": 12.6
+          },
+          "degraded": {
+            "mean": 1047,
+            "sd": 46.9
+          },
+          "deferred": {
+            "mean": 1004.6,
+            "sd": 52.1
+          },
+          "meanDelayMin": {
+            "mean": 285.8,
+            "sd": 4.5
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 184.1,
+            "sd": 37.9
+          },
+          "humanDecisions": {
+            "mean": 287.1,
+            "sd": 45.4
+          },
+          "blocks": {
+            "mean": 103,
+            "sd": 25.3
+          },
+          "terminations": {
+            "mean": 13.5,
+            "sd": 12.6
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 9.2,
+            "sd": 1.23
+          },
+          "dailyBudgetG": {
+            "mean": 2109,
+            "sd": 41
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f1.0": {
+          "totalGCO2e": {
+            "mean": 55147,
+            "sd": 420
+          },
+          "pctVsP0": {
+            "mean": -10.86,
+            "sd": 0.4
+          },
+          "tasksCompleted": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "completedOnTime": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "dropped": {
+            "mean": 0,
+            "sd": 0
+          },
+          "degraded": {
+            "mean": 846.2,
+            "sd": 34.3
+          },
+          "deferred": {
+            "mean": 821.3,
+            "sd": 53.9
+          },
+          "meanDelayMin": {
+            "mean": 282.8,
+            "sd": 4.4
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 102.9,
+            "sd": 14.2
+          },
+          "humanDecisions": {
+            "mean": 137.7,
+            "sd": 28.5
+          },
+          "blocks": {
+            "mean": 34.8,
+            "sd": 22.8
+          },
+          "terminations": {
+            "mean": 0,
+            "sd": 0
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 5.2,
+            "sd": 0.63
+          },
+          "dailyBudgetG": {
+            "mean": 2344,
+            "sd": 46
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        }
+      }
+    },
+    "W2": {
+      "peerMedianThresholdG": 74.3,
+      "tasksPerSeed": {
+        "mean": 8075.1,
+        "sd": 57.5
+      },
+      "policies": {
+        "P0": {
+          "totalGCO2e": {
+            "mean": 50045,
+            "sd": 349
+          },
+          "pctVsP0": {
+            "mean": 0,
+            "sd": 0
+          },
+          "tasksCompleted": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "completedOnTime": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "dropped": {
+            "mean": 0,
+            "sd": 0
+          },
+          "degraded": {
+            "mean": 0,
+            "sd": 0
+          },
+          "deferred": {
+            "mean": 0,
+            "sd": 0
+          },
+          "meanDelayMin": {
+            "mean": 0,
+            "sd": 0
+          },
+          "p95DelayMin": {
+            "mean": 0,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 0,
+            "sd": 0
+          },
+          "humanDecisions": {
+            "mean": 0,
+            "sd": 0
+          },
+          "blocks": {
+            "mean": 0,
+            "sd": 0
+          },
+          "terminations": {
+            "mean": 0,
+            "sd": 0
+          }
+        },
+        "P1": {
+          "totalGCO2e": {
+            "mean": 48559,
+            "sd": 383
+          },
+          "pctVsP0": {
+            "mean": -2.97,
+            "sd": 0.24
+          },
+          "tasksCompleted": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "completedOnTime": {
+            "mean": 8075.1,
+            "sd": 57.5
+          },
+          "dropped": {
+            "mean": 0,
+            "sd": 0
+          },
+          "degraded": {
+            "mean": 0,
+            "sd": 0
+          },
+          "deferred": {
+            "mean": 2009,
+            "sd": 50
+          },
+          "meanDelayMin": {
+            "mean": 298,
+            "sd": 2.1
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 0,
+            "sd": 0
+          },
+          "humanDecisions": {
+            "mean": 0,
+            "sd": 0
+          },
+          "blocks": {
+            "mean": 0,
+            "sd": 0
+          },
+          "terminations": {
+            "mean": 0,
+            "sd": 0
+          }
+        },
+        "P2_f0.6": {
+          "totalGCO2e": {
+            "mean": 33346,
+            "sd": 571
+          },
+          "pctVsP0": {
+            "mean": -33.37,
+            "sd": 1.07
+          },
+          "tasksCompleted": {
+            "mean": 6994.7,
+            "sd": 88.6
+          },
+          "completedOnTime": {
+            "mean": 6994.7,
+            "sd": 88.6
+          },
+          "dropped": {
+            "mean": 1080.4,
+            "sd": 59.6
+          },
+          "degraded": {
+            "mean": 1478.9,
+            "sd": 35.7
+          },
+          "deferred": {
+            "mean": 1066.7,
+            "sd": 33.8
+          },
+          "meanDelayMin": {
+            "mean": 224.9,
+            "sd": 4.1
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 397.9,
+            "sd": 46.5
+          },
+          "humanDecisions": {
+            "mean": 994.3,
+            "sd": 33
+          },
+          "blocks": {
+            "mean": 596.4,
+            "sd": 45.7
+          },
+          "terminations": {
+            "mean": 1080.4,
+            "sd": 59.6
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 19.2,
+            "sd": 1.03
+          },
+          "dailyBudgetG": {
+            "mean": 1053,
+            "sd": 24
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f0.7": {
+          "totalGCO2e": {
+            "mean": 36867,
+            "sd": 604
+          },
+          "pctVsP0": {
+            "mean": -26.33,
+            "sd": 1.21
+          },
+          "tasksCompleted": {
+            "mean": 7402.4,
+            "sd": 98
+          },
+          "completedOnTime": {
+            "mean": 7402.4,
+            "sd": 98
+          },
+          "dropped": {
+            "mean": 672.7,
+            "sd": 79.3
+          },
+          "degraded": {
+            "mean": 1374.5,
+            "sd": 22.5
+          },
+          "deferred": {
+            "mean": 950.3,
+            "sd": 38.3
+          },
+          "meanDelayMin": {
+            "mean": 231.3,
+            "sd": 5.1
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 454.8,
+            "sd": 35.5
+          },
+          "humanDecisions": {
+            "mean": 981.6,
+            "sd": 48.4
+          },
+          "blocks": {
+            "mean": 526.8,
+            "sd": 49.1
+          },
+          "terminations": {
+            "mean": 672.7,
+            "sd": 79.3
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 17.3,
+            "sd": 0.95
+          },
+          "dailyBudgetG": {
+            "mean": 1229,
+            "sd": 28
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f0.8": {
+          "totalGCO2e": {
+            "mean": 39899,
+            "sd": 651
+          },
+          "pctVsP0": {
+            "mean": -20.27,
+            "sd": 1.3
+          },
+          "tasksCompleted": {
+            "mean": 7698.8,
+            "sd": 99.7
+          },
+          "completedOnTime": {
+            "mean": 7698.8,
+            "sd": 99.7
+          },
+          "dropped": {
+            "mean": 376.3,
+            "sd": 76.1
+          },
+          "degraded": {
+            "mean": 1220.9,
+            "sd": 30.8
+          },
+          "deferred": {
+            "mean": 816.9,
+            "sd": 39
+          },
+          "meanDelayMin": {
+            "mean": 232.5,
+            "sd": 5.7
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 414.2,
+            "sd": 48.2
+          },
+          "humanDecisions": {
+            "mean": 853,
+            "sd": 52.4
+          },
+          "blocks": {
+            "mean": 438.8,
+            "sd": 41.5
+          },
+          "terminations": {
+            "mean": 376.3,
+            "sd": 76.1
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14.4,
+            "sd": 0.84
+          },
+          "dailyBudgetG": {
+            "mean": 1405,
+            "sd": 32
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f0.9": {
+          "totalGCO2e": {
+            "mean": 42338,
+            "sd": 512
+          },
+          "pctVsP0": {
+            "mean": -15.4,
+            "sd": 0.98
+          },
+          "tasksCompleted": {
+            "mean": 7864.9,
+            "sd": 79.4
+          },
+          "completedOnTime": {
+            "mean": 7864.9,
+            "sd": 79.4
+          },
+          "dropped": {
+            "mean": 210.2,
+            "sd": 47.7
+          },
+          "degraded": {
+            "mean": 997.9,
+            "sd": 42.8
+          },
+          "deferred": {
+            "mean": 636.4,
+            "sd": 47.8
+          },
+          "meanDelayMin": {
+            "mean": 234.5,
+            "sd": 7
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 367.5,
+            "sd": 38.5
+          },
+          "humanDecisions": {
+            "mean": 648.2,
+            "sd": 69.9
+          },
+          "blocks": {
+            "mean": 280.7,
+            "sd": 56.8
+          },
+          "terminations": {
+            "mean": 210.2,
+            "sd": 47.7
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 11.6,
+            "sd": 0.97
+          },
+          "dailyBudgetG": {
+            "mean": 1580,
+            "sd": 36
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        },
+        "P2_f1.0": {
+          "totalGCO2e": {
+            "mean": 44180,
+            "sd": 461
+          },
+          "pctVsP0": {
+            "mean": -11.72,
+            "sd": 0.83
+          },
+          "tasksCompleted": {
+            "mean": 7971.9,
+            "sd": 73.3
+          },
+          "completedOnTime": {
+            "mean": 7971.9,
+            "sd": 73.3
+          },
+          "dropped": {
+            "mean": 103.2,
+            "sd": 40.1
+          },
+          "degraded": {
+            "mean": 812.4,
+            "sd": 36.1
+          },
+          "deferred": {
+            "mean": 499.4,
+            "sd": 34.2
+          },
+          "meanDelayMin": {
+            "mean": 246.2,
+            "sd": 8.7
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 251.5,
+            "sd": 40
+          },
+          "humanDecisions": {
+            "mean": 433.4,
+            "sd": 70.7
+          },
+          "blocks": {
+            "mean": 181.9,
+            "sd": 44.5
+          },
+          "terminations": {
+            "mean": 103.2,
+            "sd": 40.1
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 9,
+            "sd": 0.67
+          },
+          "dailyBudgetG": {
+            "mean": 1756,
+            "sd": 40
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        }
+      }
+    }
+  }
+}

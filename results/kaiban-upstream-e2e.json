@@ -1,0 +1,78 @@
+{
+  "description": "Evidence that kaiban-distributed's distributed runtime \u2014 the gate, board/HITL, A2A and routing paths the article's architecture relies on \u2014 passes its own end-to-end suite against a REAL message broker, not a mock.",
+  "command": "npx vitest run --config vitest.e2e.config.mts",
+  "config": "vitest.e2e.config.mts in the kaiban-distributed checkout; its globalSetup starts and stops a Docker Redis container for the run",
+  "broker": "real Redis in Docker (BullMQ transport), started and stopped by the suite's own globalSetup",
+  "exclusions": "the e2e config excludes the kafka, live and chaos suites; they were deliberately not run",
+  "kaibanPackageVersion": "2.0.0",
+  "kaibanGitCommitSha": "17ad362632556a19ea6586f2ceea397ae8ceb6b8",
+  "ranOn": "2026-08-22",
+  "totals": {
+    "testFiles": 11,
+    "testFilesPassed": 11,
+    "tests": 69,
+    "testsPassed": 69,
+    "testsFailed": 0,
+    "success": true
+  },
+  "perFile": [
+    {
+      "file": "a2a-protocol.test.ts",
+      "tests": 5,
+      "status": "passed"
+    },
+    {
+      "file": "blog-team-flow.test.ts",
+      "tests": 6,
+      "status": "passed"
+    },
+    {
+      "file": "board-hitl-integration.test.ts",
+      "tests": 10,
+      "status": "passed"
+    },
+    {
+      "file": "completion-router-routing.test.ts",
+      "tests": 3,
+      "status": "passed"
+    },
+    {
+      "file": "distributed-execution.test.ts",
+      "tests": 3,
+      "status": "passed"
+    },
+    {
+      "file": "event-isolation.test.ts",
+      "tests": 4,
+      "status": "passed"
+    },
+    {
+      "file": "fan-out-fan-in.test.ts",
+      "tests": 7,
+      "status": "passed"
+    },
+    {
+      "file": "global-research-flow.test.ts",
+      "tests": 6,
+      "status": "passed"
+    },
+    {
+      "file": "global-research.test.ts",
+      "tests": 7,
+      "status": "passed"
+    },
+    {
+      "file": "horizontal-scaling-bullmq.test.ts",
+      "tests": 1,
+      "status": "passed"
+    },
+    {
+      "file": "security-integration.test.ts",
+      "tests": 17,
+      "status": "passed"
+    }
+  ],
+  "whatThisShows": "The shipped runtime's end-to-end paths work with a real broker: board and human-in-the-loop integration, agent-to-agent protocol, completion routing, distributed execution, event isolation, fan-out/fan-in, horizontal scaling over BullMQ, and the security/governance integration suite.",
+  "whatThisDoesNotShow": "It does NOT run the Carbon-Verdict Governor inside that runtime (this package plugs the governor into the same ActionGate in-process \u2014 see fitness/ and simulation/), it is NOT a deployment, and it says nothing about carbon behaviour. A full Docker stack (Kafka + Zookeeper, board and agent services) was deliberately not run: no claim in the article depends on it. That is future work.",
+  "rawFile": "results/kaiban-upstream-e2e-raw.json (vitest --reporter=json output, verbatim)"
+}

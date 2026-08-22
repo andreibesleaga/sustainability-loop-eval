@@ -1,0 +1,856 @@
+{
+  "provenance": {
+    "generatedBy": "dataplane/measure.js",
+    "gateway": "https://sustainability.up.railway.app",
+    "draftSource": "draft-besleaga-sustainability-wellknown-05 (member lists identical in -06), rfc-sustainability-wellknown repository",
+    "schemaValidator": "sustainability-wellknown-consumer (file:///home/andrei/work/rfc-sustainability-wellknown/consumer/dist/index.js) — real JTD schema validation via ajv, not hand-rolled",
+    "fetchedAt": "2026-08-22T09:31:34.013Z"
+  },
+  "summary": {
+    "fetchedAt": "2026-08-22T09:31:34.013Z",
+    "gateway": "https://sustainability.up.railway.app",
+    "referenceDate": "2026-08-21T00:00:00.000Z",
+    "subjectsTotal": 11,
+    "subjectsReal": 9,
+    "subjectsSynthetic": 2,
+    "documentsMeasured": 12,
+    "documentsAnalyzed": 12,
+    "getsPerDocument": 5,
+    "getsTotal": 60,
+    "statusesObserved": [
+      200
+    ],
+    "allGetsReturned200": true,
+    "schemaValidationAvailable": true,
+    "conformantCount": 12,
+    "conformanceRate": 100,
+    "latencyMedianMsOverall": 44.6,
+    "latencyP95MsOverall": 60.6,
+    "latencySampleCount": 60,
+    "bytesMedianOverall": 1296.5,
+    "mandatoryMemberCount": 8,
+    "mandatoryCoverageComplete": true,
+    "disclaimerCoverage": "9/9",
+    "freshnessUpdatedAgeDaysMedian": 23,
+    "freshnessReportingPeriodAgeDaysMedian": 233,
+    "carbonIntensityPresentCount": 3,
+    "sciPresentCount": 1,
+    "negativeFindingsCount": 2,
+    "negativeFindingsOrgs": [
+      "digitalocean.com",
+      "github.com"
+    ]
+  },
+  "perSubject": [
+    {
+      "subject": "_gateway-root",
+      "url": "https://sustainability.up.railway.app/.well-known/sustainability-data",
+      "synthetic": null,
+      "isGatewaySelf": true,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        48.4,
+        43.2,
+        43.5,
+        49.8,
+        43.2
+      ],
+      "medianLatencyMs": 43.5,
+      "bytes": [
+        724,
+        724,
+        724,
+        724,
+        724
+      ],
+      "medianBytes": 724,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 8,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "carbon-intensity-gCO2e-per-kWh",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 20,
+      "reportingPeriodAgeDays": 21,
+      "hasCarbonIntensity": true,
+      "hasSci": false,
+      "isRealOrg": false,
+      "hasDisclaimer": false
+    },
+    {
+      "subject": "akamai.com",
+      "url": "https://sustainability.up.railway.app/akamai.com/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        44.8,
+        50.5,
+        42.3,
+        39.7,
+        39.8
+      ],
+      "medianLatencyMs": 42.3,
+      "bytes": [
+        1733,
+        1733,
+        1733,
+        1733,
+        1733
+      ],
+      "medianBytes": 1733,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 12,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "renewable-energy",
+        "verifiable-attestation-uri",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 233,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "automattic.com",
+      "url": "https://sustainability.up.railway.app/automattic.com/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        41.2,
+        42.2,
+        45.1,
+        41.8,
+        42.1
+      ],
+      "medianLatencyMs": 42.1,
+      "bytes": [
+        1247,
+        1247,
+        1247,
+        1247,
+        1247
+      ],
+      "medianBytes": 1247,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 5,
+      "optionalPresent": [
+        "carbon-footprint",
+        "carbon-unit",
+        "renewable-energy",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 2059,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "cloudflare.com",
+      "url": "https://sustainability.up.railway.app/cloudflare.com/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        42.2,
+        55.2,
+        42,
+        42.8,
+        43.2
+      ],
+      "medianLatencyMs": 42.8,
+      "bytes": [
+        1326,
+        1326,
+        1326,
+        1326,
+        1326
+      ],
+      "medianBytes": 1326,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 8,
+      "optionalPresent": [
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 598,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "fastly.com",
+      "url": "https://sustainability.up.railway.app/fastly.com/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        45.5,
+        42.6,
+        43.5,
+        44,
+        42.1
+      ],
+      "medianLatencyMs": 43.5,
+      "bytes": [
+        1318,
+        1318,
+        1318,
+        1318,
+        1318
+      ],
+      "medianBytes": 1318,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 10,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "renewable-energy",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 598,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "hetzner.com",
+      "url": "https://sustainability.up.railway.app/hetzner.com/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        40,
+        41.3,
+        60.2,
+        46,
+        41.6
+      ],
+      "medianLatencyMs": 41.6,
+      "bytes": [
+        1407,
+        1407,
+        1407,
+        1407,
+        1407
+      ],
+      "medianBytes": 1407,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 8,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "renewable-energy",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 598,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "microsoft.com",
+      "url": "https://sustainability.up.railway.app/microsoft.com/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        45.1,
+        52.2,
+        73.5,
+        49,
+        45.6
+      ],
+      "medianLatencyMs": 49,
+      "bytes": [
+        1697,
+        1697,
+        1697,
+        1697,
+        1697
+      ],
+      "medianBytes": 1697,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 11,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "renewable-energy",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 233,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "mozilla.org",
+      "url": "https://sustainability.up.railway.app/mozilla.org/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        48,
+        44.4,
+        47.9,
+        47.5,
+        59.8
+      ],
+      "medianLatencyMs": 47.9,
+      "bytes": [
+        1275,
+        1275,
+        1275,
+        1275,
+        1275
+      ],
+      "medianBytes": 1275,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 9,
+      "optionalPresent": [
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "renewable-energy",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 233,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "ovhcloud.com",
+      "url": "https://sustainability.up.railway.app/ovhcloud.com/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        43.9,
+        46.2,
+        51.8,
+        72.6,
+        45.2
+      ],
+      "medianLatencyMs": 46.2,
+      "bytes": [
+        1663,
+        1663,
+        1663,
+        1663,
+        1663
+      ],
+      "medianBytes": 1663,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 11,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "renewable-energy",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 233,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    },
+    {
+      "subject": "retailer.example",
+      "url": "https://sustainability.up.railway.app/retailer.example/.well-known/sustainability-data",
+      "synthetic": true,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        47.1,
+        42.9,
+        44.4,
+        46.5,
+        43.1
+      ],
+      "medianLatencyMs": 44.4,
+      "bytes": [
+        1120,
+        1120,
+        1120,
+        1120,
+        1120
+      ],
+      "medianBytes": 1120,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 13,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "carbon-intensity-gCO2e-per-kWh",
+        "estimated-annual-emissions-kgCO2e",
+        "renewable-energy",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 201,
+      "reportingPeriodAgeDays": 233,
+      "hasCarbonIntensity": true,
+      "hasSci": false,
+      "isRealOrg": false,
+      "hasDisclaimer": false
+    },
+    {
+      "subject": "saas-platform.example",
+      "url": "https://sustainability.up.railway.app/saas-platform.example/.well-known/sustainability-data",
+      "synthetic": true,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        45.7,
+        67.4,
+        46,
+        47.4,
+        48.3
+      ],
+      "medianLatencyMs": 47.4,
+      "bytes": [
+        1091,
+        1091,
+        1091,
+        1091,
+        1091
+      ],
+      "medianBytes": 1091,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 12,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "carbon-accounting",
+        "scope-2",
+        "sci-score",
+        "functional-unit",
+        "carbon-intensity-gCO2e-per-kWh",
+        "renewable-energy",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 201,
+      "reportingPeriodAgeDays": 233,
+      "hasCarbonIntensity": true,
+      "hasSci": true,
+      "isRealOrg": false,
+      "hasDisclaimer": false
+    },
+    {
+      "subject": "wikimedia.org",
+      "url": "https://sustainability.up.railway.app/wikimedia.org/.well-known/sustainability-data",
+      "synthetic": false,
+      "isGatewaySelf": false,
+      "httpStatuses": [
+        200
+      ],
+      "rawLatenciesMs": [
+        44.4,
+        40.8,
+        44,
+        43.8,
+        52.7
+      ],
+      "medianLatencyMs": 44,
+      "bytes": [
+        1217,
+        1217,
+        1217,
+        1217,
+        1217
+      ],
+      "medianBytes": 1217,
+      "contentType": "application/json",
+      "parseError": null,
+      "schemaValid": true,
+      "schemaErrors": [],
+      "analyzable": true,
+      "mandatoryPresentCount": 8,
+      "mandatoryMissing": [],
+      "mandatoryComplete": true,
+      "optionalPresentCount": 9,
+      "optionalPresent": [
+        "energy-consumption",
+        "energy-unit",
+        "carbon-footprint",
+        "carbon-unit",
+        "scope-1",
+        "scope-2",
+        "scope-3",
+        "disclosure-uri",
+        "target-type"
+      ],
+      "updatedAgeDays": 23,
+      "reportingPeriodAgeDays": 598,
+      "hasCarbonIntensity": false,
+      "hasSci": false,
+      "isRealOrg": true,
+      "hasDisclaimer": true
+    }
+  ],
+  "consumerTiming": {
+    "available": true,
+    "subjects": [
+      {
+        "domain": "cloudflare.com",
+        "timesMs": [
+          47.4,
+          53.2,
+          45.3,
+          44.1,
+          49.1
+        ],
+        "medianMs": 47.4
+      },
+      {
+        "domain": "microsoft.com",
+        "timesMs": [
+          45.3,
+          47.7,
+          67.7,
+          69.7,
+          72.2
+        ],
+        "medianMs": 67.7
+      },
+      {
+        "domain": "wikimedia.org",
+        "timesMs": [
+          58.8,
+          55.5,
+          45.2,
+          44.2,
+          62.3
+        ],
+        "medianMs": 55.5
+      }
+    ],
+    "error": null
+  },
+  "negativeFindingsRegister": {
+    "note": "These subjects were looked for and could not honestly be published: the operator found no primary source carrying the figures this format needs. They are listed rather than quietly omitted, because a registry that showed only the organizations that do publish would overstate how much of the web is actually measurable — the gap is the evidence. Requesting one of their documents returns 404, the specification's no-data rule.",
+    "count": 2,
+    "subjects": [
+      {
+        "domain": "digitalocean.com",
+        "entity": "DigitalOcean Holdings, Inc.",
+        "status": "publishes-no-quantitative-data",
+        "finding": "No Scope 1/2/3, energy, or renewable figures exist in any primary source. The FY2025 Form 10-K (filed February 2026) contains zero occurrences of climate, greenhouse, carbon, emission, scope or sustainab. The investor ESG environmental page is qualitative only ('a relatively light environmental footprint'). A 2022 blog post says the company was 'currently working to determine our carbon baseline'; no baseline has been published since. The widely-quoted 'PUE averaging 1.15' is a community-forum answer by a user, not a company statement, and is not used here.",
+        "evidence": [
+          "https://investors.digitalocean.com/esg/environmental/",
+          "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001582961&type=10-K"
+        ],
+        "checked": "2026-07-29"
+      },
+      {
+        "domain": "github.com",
+        "entity": "GitHub, Inc.",
+        "status": "consolidated-into-parent",
+        "finding": "GitHub publishes no standalone GHG inventory. Its only company-environmental blog post (2021-04-22) states commitments with no Scope 1/2/3 figures and links no inventory document. GitHub is a wholly owned Microsoft subsidiary and falls inside Microsoft's consolidated operational-control reporting boundary, so its emissions are reported within Microsoft Corporation's inventory. Deriving GitHub-specific figures by apportioning Microsoft's totals would be an invention and is not done.",
+        "evidence": [
+          "https://github.blog/news-insights/company-news/environmental-sustainability-github/",
+          "https://aka.ms/SustainabilityFactsheet2026"
+        ],
+        "see": "microsoft.com",
+        "checked": "2026-07-29"
+      }
+    ]
+  },
+  "railwayLogs": {
+    "rawFile": "data/dataplane/railway-logs.jsonl",
+    "logKind": "HTTP access logs (edge/proxy level: railway logs --http --json), one JSON object per request",
+    "linesRead": 120,
+    "parseErrors": 0,
+    "spanStart": "2026-08-15T08:48:21.944Z",
+    "spanEnd": "2026-08-22T08:11:25.390Z",
+    "totalRequests": 120,
+    "wellKnownRequests": 58,
+    "distinctSubjectsRequested": 35,
+    "subjectsRequestedList": [
+      "_gateway-root",
+      "akamai.com",
+      "automattic.com",
+      "basic.example",
+      "carbontxt-demo.example",
+      "climatiq-demo.example",
+      "cloudflare.com",
+      "co2js-demo.example",
+      "data-source.example",
+      "device.example",
+      "digitalocean.com",
+      "extended.example",
+      "fastly.com",
+      "grid-intensity-demo.example",
+      "hetzner.com",
+      "kepler-demo.example",
+      "microsoft.com",
+      "minimal.example",
+      "mozilla.org",
+      "ms-sustainability-demo.example",
+      "organization-trend.example",
+      "organization.example",
+      "origin-annual.example",
+      "ovhcloud.com",
+      "partial.example",
+      "product.example",
+      "retailer.example",
+      "saas-platform.example",
+      "salesforce-nzc-demo.example",
+      "service.example",
+      "tenant.example",
+      "watershed-demo.example",
+      "wikimedia.org",
+      "yearly-monthly-target.example",
+      "yearly.example"
+    ],
+    "distinctClientIps": 26,
+    "distinctUserAgents": 13,
+    "statusSplit": {
+      "2xx": 79,
+      "4xx": 41,
+      "5xx": 0,
+      "other": 0
+    },
+    "healthcheckCount": 2,
+    "healthcheckShare": 1.7,
+    "totalDurationMsMedian": 7,
+    "topPaths": [
+      {
+        "path": "/robots.txt",
+        "count": 23
+      },
+      {
+        "path": "/",
+        "count": 16
+      },
+      {
+        "path": "/favicon.ico",
+        "count": 7
+      },
+      {
+        "path": "/.well-known/sustainability-data",
+        "count": 6
+      },
+      {
+        "path": "/index.json",
+        "count": 5
+      },
+      {
+        "path": "/cloudflare.com/.well-known/sustainability-data",
+        "count": 5
+      },
+      {
+        "path": "/carbon.txt",
+        "count": 4
+      },
+      {
+        "path": "/.well-known/carbon.txt",
+        "count": 4
+      },
+      {
+        "path": "/yearly.example/.well-known/sustainability-data",
+        "count": 3
+      },
+      {
+        "path": "/healthz",
+        "count": 2
+      },
+      {
+        "path": "/carbontxt-demo.example/.well-known/sustainability-data",
+        "count": 2
+      },
+      {
+        "path": "/ovhcloud.com/.well-known/sustainability-data",
+        "count": 2
+      },
+      {
+        "path": "/hetzner.com/.well-known/sustainability-data",
+        "count": 2
+      },
+      {
+        "path": "/akamai.com/.well-known/sustainability-data",
+        "count": 2
+      },
+      {
+        "path": "/saas-platform.example/.well-known/sustainability-data",
+        "count": 2
+      }
+    ],
+    "caveat": "This capture includes this evaluation run's own traffic (curl probes and dataplane/measure.js's GETs against the live gateway), visible as clientUa \"curl/*\" and \"node\". It is not filtered out because that would itself be a form of cherry-picking; it is real traffic the gateway actually served."
+  }
+}

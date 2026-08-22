@@ -1,0 +1,28 @@
+%% C4 level 3 - components inside the hexagon. Flowchart form, same reason.
+flowchart TB
+  CORE["<b>createCarbonGovernor</b><br/><i>governor/carbon-governor.js</i><br/>budget, pacing ratio, verdict ladder<br/>imports nothing"]
+  VAL["<b>carbonValidator</b><br/><i>signal port adapter</i><br/>turns a verdict into a gate validator"]
+  MG["<b>makeGate / gated</b><br/><i>governor/gate.js, actuation port</i><br/>wires the validator into the real gate"]
+  HAR["<b>execute</b><br/><i>fitness/harness.js, human port</i><br/>nothing above degrade runs unapproved"]
+  PROPS["<b>F1-F9 properties</b><br/><i>fitness/props.js</i><br/>one property per architectural claim"]
+  POL["<b>P0 / P1 / P2 policies</b><br/><i>simulation/run.js</i><br/>always-run, threshold deferral, governed"]
+  CHG["<b>Charging shift</b><br/><i>simulation/charging.js</i><br/>start-time shift only, never a discharge"]
+  MEA["<b>measure and logs</b><br/><i>dataplane/</i><br/>live documents and real request logs"]
+  DEMO["<b>demo and agent</b><br/><i>demo/, agent/</i><br/>one real document to one verdict"]
+  GATE["<b>ActionGate + AuditLog</b><br/><i>kaiban-distributed 2.0.0, external</i>"]
+
+  VAL --> CORE
+  MG --> VAL
+  MG --> GATE
+  PROPS --> MG
+  PROPS --> HAR
+  POL --> MG
+  POL --> HAR
+  CHG --> MG
+  DEMO --> MG
+  MEA -.->|documents feed the signal| DEMO
+
+  classDef comp fill:#85bbf0,stroke:#5d82a8,color:#000
+  classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
+  class CORE,VAL,MG,HAR,PROPS,POL,CHG,MEA,DEMO comp
+  class GATE ext

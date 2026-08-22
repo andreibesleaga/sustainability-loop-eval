@@ -1,0 +1,19 @@
+sequenceDiagram
+  autonumber
+  participant S as Simulation loop (run.js)
+  participant W as Cached trace (48 slots per day)
+  participant C as Governor core
+  participant G as Real gate + audit log
+
+  S->>C: reset() at midnight - new daily budget
+  loop every 30-minute slot
+    S->>W: peer signal for this slot
+    S->>G: evaluate(task energy x peer signal)
+    G->>C: decide(estimate)
+    G-->>S: verdict
+    S->>S: run now, run degraded, defer to cleanest slot, or drop
+    S->>W: national actual for the slot it ran in
+    S->>C: commit(actual grams)
+  end
+  S->>G: audit.verify() at the end of the arm
+  G-->>S: chain valid
