@@ -47,6 +47,13 @@ npm run demo     # one real document -> one real verdict
 npm run agent    # optional: a real model proposes, the real gate decides (OPENROUTER_API_KEY in .env)
 ```
 
+`npm install` prints advisories: they are in transitive dependencies of
+`kaiban-distributed` (its kaibanjs / LangChain tree, 21 as of 2026-08-22), not in
+this package. This package uses only `ActionGate`, `AuditLog` and the severity
+table from it; no script here calls LangChain, a model through it, or parses
+untrusted input with those libraries. Bumping them is upstream's job and is
+tracked there.
+
 ## What happens when you run it
 
 | Command | What it does | Headline result |

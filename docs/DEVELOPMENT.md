@@ -146,3 +146,13 @@ Two licences apply and they are not the same:
 
 - **Code** — MIT. See `LICENSE`.
 - **Carbon-intensity data** — © National Energy System Operator, CC BY 4.0. The attribution travels with the data: it is in the cached trace files and copied into every simulation results JSON. Carry it forward in anything derived from these results.
+
+## Dependency advisories
+
+`npm audit` reports advisories (21 on 2026-08-22: 12 moderate, 9 high) that all
+sit in transitive dependencies of the one direct dependency, `kaiban-distributed`
+(kaibanjs → LangChain / langsmith / OpenTelemetry / uuid / fast-xml-parser). None
+is in code this package exercises — the evaluation imports `ActionGate`,
+`AuditLog` and `GATE_ACTION_SEVERITY` and nothing else — and none is fixable
+here without forking the runtime. They are resolved upstream when
+kaiban-distributed bumps kaibanjs; re-run `npm audit` after any version bump.
