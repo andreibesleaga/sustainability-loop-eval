@@ -139,8 +139,8 @@ Cite the article, and cite this package as its replication material:
 > A. N. Besleaga, "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane," 2026. Replication package: `sustainability-loop-eval`.
 
 Machine-readable metadata is in `CITATION.cff` at the repository root; GitHub
-renders a ready-made citation from it. A Zenodo DOI will be added there once it is
-minted.
+renders a ready-made citation from it. Release v1.0.0 is archived on Zenodo as
+doi:10.5281/zenodo.22056634 (concept DOI 10.5281/zenodo.22056633 for all versions).
 
 Two licences apply and they are not the same:
 
