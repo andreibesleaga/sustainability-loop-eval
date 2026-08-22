@@ -136,7 +136,7 @@ result file. If a number needs to change, change what produced it.
 
 Cite the article, and cite this package as its replication material:
 
-> A. N. Besleaga, "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane," 2026. Replication package: `sustainability-loop-eval`.
+> A. N. Besleaga, "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane," submitted to *IEEE Software*, 22 August 2026; preprint doi:10.5281/zenodo.22056747. Replication package: `sustainability-loop-eval` v1.0.0, doi:10.5281/zenodo.22056634.
 
 Machine-readable metadata is in `CITATION.cff` at the repository root; GitHub
 renders a ready-made citation from it. Release v1.0.0 is archived on Zenodo as

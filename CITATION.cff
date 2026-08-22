@@ -19,3 +19,14 @@ keywords:
   - agentic AI
   - AI governance
   - architecture fitness functions
+references:
+  - type: article
+    title: "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane"
+    authors:
+      - family-names: Besleaga
+        given-names: Andrei N.
+        orcid: "https://orcid.org/0009-0001-3464-5283"
+    year: 2026
+    status: preprint
+    doi: 10.5281/zenodo.22056747
+    notes: "Submitted to IEEE Software on 2026-08-22; this package is its replication material."

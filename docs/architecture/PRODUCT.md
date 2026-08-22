@@ -182,7 +182,7 @@ replication package that hides them is not one.
 
 ## 8. References
 
-- **Article.** A. N. Besleaga, "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane," submitted to *IEEE Software*, 2026.
+- **Article.** A. N. Besleaga, "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane," submitted to *IEEE Software*, 22 August 2026. Preprint (submitted version): https://doi.org/10.5281/zenodo.22056747. This package: https://doi.org/10.5281/zenodo.22056634
 - **IETF Internet-Draft.** A. N. Besleaga, "The `sustainability-data` well-known URI," `draft-besleaga-sustainability-wellknown`. https://datatracker.ietf.org/doc/draft-besleaga-sustainability-wellknown/
 - **kaiban-distributed.** Open-source distributed agent runtime; ships the `ActionGate` and hash-chained `AuditLog` this package imports at npm version 2.0.0. https://github.com/andreibesleaga/kaiban-distributed
 - **NESO Carbon Intensity API.** National Energy System Operator, Great Britain, 30-minute resolution, CC BY 4.0. https://carbonintensity.org.uk

@@ -4,7 +4,8 @@
 
 This is the evaluation package for the article *The Cybernetic Sustainability
 Loop: Governed Agentic Systems on a Sustainability Data Plane* (Andrei N.
-Besleaga, 2026). It contains the code, the data and the results behind every
+Besleaga, 2026; submitted to *IEEE Software* on 22 August 2026 — preprint DOI
+[10.5281/zenodo.22056747](https://doi.org/10.5281/zenodo.22056747), record restricted until the editorial decision). It contains the code, the data and the results behind every
 number the article states, so you can check them or re-run them yourself. It is a
 reference architecture with an early evaluation — work in progress, not something
 running in production anywhere.
@@ -236,9 +237,13 @@ the work by what runs.
 ## Citation and license
 
 Cite the article, and this package as its replication material. Machine-readable
-metadata is in `CITATION.cff`. Archived release: v1.0.0, Zenodo DOI
-[10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634)
-(concept DOI, all versions: [10.5281/zenodo.22056633](https://doi.org/10.5281/zenodo.22056633)).
+metadata is in `CITATION.cff`.
+
+- **Article (preprint, submitted version):** A. N. Besleaga, "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane," submitted to *IEEE Software*, 22 August 2026. Zenodo DOI [10.5281/zenodo.22056747](https://doi.org/10.5281/zenodo.22056747) (restricted until the editorial decision; replaced by the IEEE citation on acceptance).
+- **This package:** archived release v1.0.0, Zenodo DOI
+  [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634)
+  (concept DOI, all versions:
+  [10.5281/zenodo.22056633](https://doi.org/10.5281/zenodo.22056633)).
 
 Copyright © 2026 Andrei N. Besleaga. Code is MIT-licensed; all documentation,
 text, diagrams, figures and result write-ups in this repository are © Andrei N.
