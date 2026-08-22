@@ -2,7 +2,7 @@
 
 ## What this is
 
-This is the open evaluation package for the article *The Cybernetic Sustainability
+This is the evaluation package for the article *The Cybernetic Sustainability
 Loop: Governed Agentic Systems on a Sustainability Data Plane* (Andrei N.
 Besleaga, 2026). It contains the code, the data and the results behind every
 number the article states, so you can check them or re-run them yourself. It is a
@@ -236,10 +236,9 @@ the work by what runs.
 ## Citation and license
 
 Cite the article, and this package as its replication material. Machine-readable
-metadata is in `CITATION.cff`; a Zenodo DOI will be added there once minted.
+metadata is in `CITATION.cff`.
 
 Copyright © 2026 Andrei N. Besleaga. Code is MIT-licensed; all documentation,
 text, diagrams, figures and result write-ups in this repository are © Andrei N.
-Besleaga, all rights reserved — please cite the article (and the Zenodo DOI once
-minted) when using them; carbon-intensity data © National Energy System Operator,
+Besleaga, all rights reserved — please cite the article (and the Zenodo DOI) when using them; carbon-intensity data © National Energy System Operator,
 CC BY 4.0.
