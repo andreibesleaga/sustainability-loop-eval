@@ -175,7 +175,7 @@
     },
     "adapter-demonstrations": {
       "note": "One demonstration subject per adapter shipped by the published sustainability-wellknown-publisher package, so every adapter runs end to end in this gateway. Subjects marked live fetch a real upstream daily (only upstreams whose licenses permit attributed republication; the attribution is carried in band). Subjects marked replay run the SAME adapter code against a recorded upstream response, because no legal free live access to that upstream exists; their figures are synthetic and say so in band. All sit under reserved .example names: they demonstrate the format and describe no real organization.",
-      "count": 10,
+      "count": 8,
       "entries": [
         {
           "domain": "carbontxt-demo.example",
