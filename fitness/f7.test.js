@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F7 — Port isolation (hexagonal) — why it matters
 // architecturally: the paper's architectural claim is that the governance core
 // is a pure, portable hexagon with adapters at the edges. This is a static

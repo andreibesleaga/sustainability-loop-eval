@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F8 — Determinism — why it matters architecturally: a
 // governance decision that can't be reproduced from the same inputs can't be
 // replayed, tested, or trusted in an incident review. This proves two

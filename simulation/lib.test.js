@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Unit tests for the numeric plumbing the simulations stand on: the seeded PRNG and
  * Poisson draws (shared/prng.js), the statistics every reported number is computed

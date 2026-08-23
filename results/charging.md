@@ -27,8 +27,8 @@ Gate verdicts at approval rate 1.00 (nightly budget 129066 ± 353 gCO2e = 0.8 x 
 
 ## Notes
 
-- A refused gate verdict (block/terminate) or a declined approval does **not** withhold charge; it withholds the *optimisation*, and the car charges naively. That is why a stricter budget cannot make this scenario unsafe, only less effective.
-- The nightly budget is deliberately tight (0.8 x the median naive night), so the cars that plug in late in the evening find the budget largely committed and lose their shift. This is the visible cost of pacing a budget that a must-serve load cannot actually respect — the nights-over-budget column shows it never respects it.
+- A refused gate verdict (block/terminate) or a declined owner consent does **not** withhold charge; it withholds the *optimisation*, and the car charges naively. That is why a stricter budget cannot make this scenario unsafe, only less effective.
+- The nightly budget is deliberately tight (0.8 x the median naive night), so the cars that plug in late in the evening find the budget largely committed and lose their shift. This is the visible cost of pacing a budget that a must-serve load cannot actually respect: at full approval the fleet still ends over budget on 7 ± 0 of 27 in winter and 13 ± 0 of 27 in summer. Pacing shapes the spend; it does not cap it.
 - Sensitivity: dropping human approval from 100% to 80% is a direct, near-linear haircut on the saving — the human is the bottleneck in the loop, not the model.
 - The gate is asked about the *proposed* clean window, and the budget is then charged with the grams actually emitted by whatever window was used.
 - Synthetic: fleet size, plug-in distribution, energy per session, and the approver. Real: the carbon intensity.

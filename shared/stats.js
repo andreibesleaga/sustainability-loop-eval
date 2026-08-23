@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * shared/stats.js — the one set of summary statistics used across this package.
  *

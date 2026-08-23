@@ -22,11 +22,8 @@ GETs `/index.json`, then GETs every subject document (plus the gateway's own
 root document) 5 times sequentially each, checks each document against the
 mandatory/optional member lists of `draft-besleaga-sustainability-wellknown-05`,
 validates each document with the reference consumer library
-(`sustainability-wellknown-consumer`, imported by absolute path from a local
-build of the sibling RFC repository — real JTD-schema validation via `ajv`, not
-a hand-rolled check; override the path with `SUSTAINABILITY_CONSUMER_URL`, and
-if it cannot be imported the run reports schema validation as **not measured**
-rather than as failed, and makes no conformance claim), times
+(`sustainability-wellknown-consumer` — real JTD-schema validation via `ajv`, not
+a hand-rolled check), times
 discover+fetch+parse for 3 subjects through that same library, and reads the
 live negative-findings register served at `index.json["no-machine-readable-data"]`.
 
@@ -45,6 +42,21 @@ files. Latency numbers will differ between runs; member presence, schema
 validity, and freshness (computed against the fixed reference date
 2026-08-21, not wall-clock) are stable as long as the gateway's underlying
 data hasn't changed.
+
+### The consumer library is optional, and resolved at run time (ADR-017)
+
+It is deliberately **not** a dependency of this package — "one dependency" is an
+architectural claim fitness function F7 checks. `measure.js` resolves it in this order:
+
+1. `SUSTAINABILITY_CONSUMER_URL`, if set — any URL a local build can be imported from;
+2. the bare specifier `sustainability-wellknown-consumer`, if it happens to be installed:
+   `npm i --no-save sustainability-wellknown-consumer@0.5.2`;
+3. neither → schema conformance is reported as **not measured**, never as 0%, and no
+   conformance claim is made.
+
+Conformance is counted over the documents actually *analysed*: a body that never parsed
+is not a failed schema check, it is a document with no schema claim to make. Both counts
+are in `results/dataplane.json`.
 
 ## Part B — real Railway request logs
 
@@ -65,10 +77,21 @@ node dataplane/logs.js
 
 `dataplane/logs.js` does not shell out to `railway` itself — it only reads
 the already-pulled `data/dataplane/railway-logs.jsonl` (one JSON object per
-HTTP request: method, path, httpStatus, totalDuration, clientUa, srcIp, ...)
+HTTP request: method, path, httpStatus, totalDuration, clientUa, `srcIpHash`, ...)
 and computes: time span covered, total requests, requests to
-`*/.well-known/sustainability-data` paths, distinct subjects/IPs/UAs
+`*/.well-known/sustainability-data` paths, distinct subjects/clients/UAs
 requested, 2xx/4xx/5xx split, and healthcheck share.
+
+**Privacy.** The committed capture carries **no client IP addresses**. Each `srcIp` was
+replaced once by `srcIpHash` — the first 16 hex characters of `sha256(salt + ip)` under a
+random salt that was never written down — so the mapping is irreversible and only
+"same client / different client" survives. That is what the reported 26 distinct clients
+is a count of. Railway's `deploymentId`, `deploymentInstanceId` and `upstreamAddress` (an
+internal IPv6 address) were dropped for the same reason. `clientUa` is **kept**: the
+user-agent strings are not personal data here, and the crawler caveat in the write-up
+depends on them. `logs.js` applies the same treatment to any future capture at ingest,
+with a fresh salt per run; an entry that already carries `srcIpHash` passes through
+untouched, so re-running is idempotent and the count is stable.
 
 At capture time, `--since 7d`, `--since 30d`, and `--since 45d` all returned
 the identical set of log lines — the plan's actual log retention is roughly
@@ -78,10 +101,10 @@ traffic (the `curl` probes used during investigation and `measure.js`'s own
 GETs); it is left in, not filtered out, because filtering it would be a form
 of cherry-picking real server traffic.
 
-**Read-only guarantee**: only `railway list`, `railway status`,
-`railway link` (read-only association), and `railway logs` were run. No
-`deploy`/`up`/`down`/`variables set`/`variables delete`/`unlink` command was
-ever issued against this or any other Railway project.
+**What was actually run**: `railway list`, `railway status`, `railway link` (a
+read-only association) and `railway logs`, and nothing else — no `deploy`, `up`, `down`,
+`variables set`, `variables delete` or `unlink`. That is a statement about the commands
+used, not a guarantee the CLI enforces.
 
 ## Files
 
@@ -98,7 +121,8 @@ article cites) and revision 06 of `draft-besleaga-sustainability-wellknown`, whi
 the same 8 mandatory and 16 optional members, and cross-checked against the draft's own
 `schemas-validators/response-schema.json`.
 
-No extra npm dependencies: Node built-ins, `shared/stats.js` for the median/p95
-definitions used everywhere else in this package, plus the already-built
-`sustainability-wellknown-consumer` package from the sibling `rfc-sustainability-wellknown`
-repo (imported by absolute path, read-only, optional).
+No extra npm dependencies: Node built-ins and `shared/stats.js` for the median/p95
+definitions used everywhere else in this package. The reference consumer library is
+optional and resolved at run time (see above); it is the one external library fitness
+function F7 permits an adapter to import, and it is named there explicitly so a second
+one cannot slip in unnoticed.

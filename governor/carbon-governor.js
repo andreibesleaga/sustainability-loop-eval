@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Carbon-Verdict Governor — the reference core evaluated in this package.
  *
@@ -52,8 +53,18 @@ export function createCarbonGovernor({ budgetG, rungs: overrides } = {}) {
       const action = verdictFor(ratio);
       return { action, ratio, reason: `committed ${(ratio * 100).toFixed(1)}% of carbon budget` };
     },
-    /** Record that an action ran and emitted `actualG` grams. */
-    commit(actualG) { if (Number.isFinite(actualG) && actualG >= 0) spentG += actualG; },
+    /**
+     * Record that an action ran and emitted `actualG` grams.
+     * Throws on a non-finite or negative value: a bad number must never be
+     * absorbed as a silent zero, because that would under-count the budget and
+     * make the ladder fire later than it should (fail closed, ADR-005).
+     */
+    commit(actualG) {
+      if (!(Number.isFinite(actualG) && actualG >= 0)) {
+        throw new Error(`commit(actualG) requires a finite, non-negative number, got: ${String(actualG)}`);
+      }
+      spentG += actualG;
+    },
     /** New period (e.g. a new day): spent resets. */
     reset() { spentG = 0; },
     get spentG() { return spentG; },
@@ -74,7 +85,20 @@ export function carbonValidator(governor, { name = "carbon-verdict-governor" } =
   };
 }
 
+/**
+ * Severity of one action on the ladder. An action that is not on the ladder at all
+ * is ranked as `block` severity rather than -1: an unrecognised verdict is a bug or
+ * a rogue validator, and neither may make the aggregate LESS severe (fail closed).
+ */
+export function severityOf(action) {
+  const i = LADDER.indexOf(action);
+  return i === -1 ? LADDER.indexOf("block") : i;
+}
+
 /** Most-severe-wins aggregation over verdicts — the same rule the real gate applies. */
 export function mostSevere(actions) {
-  return actions.reduce((worst, a) => (LADDER.indexOf(a) > LADDER.indexOf(worst) ? a : worst), "allow");
+  return actions.reduce(
+    (worst, a) => (severityOf(a) > severityOf(worst) ? (LADDER.includes(a) ? a : "block") : worst),
+    "allow",
+  );
 }

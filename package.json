@@ -1,10 +1,10 @@
 {
   "name": "sustainability-loop-eval",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Evaluation package for 'The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane' (IEEE Software submission, 2026): architecture fitness functions, live data-plane measurements, and trace-driven simulation of the Carbon-Verdict Governor.",
   "author": "Andrei N. Besleaga (https://orcid.org/0009-0001-3464-5283)",
-  "license": "MIT",
+  "license": "GPL-3.0-only",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/andreibesleaga/sustainability-loop-eval.git"
@@ -23,11 +23,14 @@
     "reproducible-research"
   ],
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22.9"
+  },
   "scripts": {
-    "test": "node --test simulation/*.test.js dataplane/*.test.js && npm run fitness",
+    "test": "node --test simulation/*.test.js dataplane/*.test.js && npm run fitness && npm run check:docs",
     "fitness": "node --test fitness/*.test.js",
     "fitness:report": "node fitness/report.js",
+    "check:docs": "node tools/check-numbers.js",
     "dataplane": "node dataplane/measure.js && node dataplane/logs.js",
     "fetch-traces": "node simulation/fetch-traces.js",
     "simulate": "node simulation/run.js",
@@ -35,7 +38,8 @@
     "demo": "node demo/demo.js",
     "agent": "node --env-file-if-exists=.env demo/agent.js",
     "arch": "npx --yes madge --circular --extensions js governor fitness simulation dataplane demo shared",
-    "all": "npm run fitness && npm run simulate && npm run charging && npm run dataplane"
+    "arch:graph": "npx --yes madge --extensions js governor fitness simulation dataplane demo shared",
+    "all": "npm run fitness:report && npm run simulate && npm run charging && npm run dataplane"
   },
   "dependencies": {
     "kaiban-distributed": "2.0.0"

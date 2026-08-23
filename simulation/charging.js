@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * E3 — Gated EV-charging shift on REAL grid-carbon traces.
  *
@@ -22,23 +23,28 @@ import { writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { createCarbonGovernor } from "../governor/carbon-governor.js";
 import { makeGate, gated } from "../governor/gate.js";
+import { execute } from "../governor/harness.js";
 import { mulberry32, randInt } from "../shared/prng.js";
 import { mean, median, ms, sum } from "../shared/stats.js";
 import { loadWindow } from "./lib.js";
 import { renderChargingMd } from "./report.js";
 
+const SLOTS_PER_DAY = 48, SEEDS = [101, 202, 303, 404, 505, 606, 707, 808, 909, 1010];
+const SLOT_HOURS = 24 / SLOTS_PER_DAY;
+
 export const FLEET = {
   vehicles: 50,
   energyKWh: 20,
-  chargerKW: 7,
   chargeSlots: 6,                       // 3 h of 30-min slots
+  // The charge rate is not a free parameter: it is energy / duration. There is no
+  // separate nameplate charger rating in this model, and nothing reads one.
+  impliedRateKW: Math.round((20 / (6 * SLOT_HOURS)) * 100) / 100, // 6.67 kW
   plugInSlotRange: [34, 38],            // 17:00–19:00 UTC, i.e. 18:00 ± 1 h
   deadlineSlotOffset: 62,               // 07:00 next morning, measured from midnight
   budgetFactor: 0.8,                    // daily budget = 0.8 x median naive daily fleet emissions
   approvalRates: [1.0, 0.8],
-  note: "SYNTHETIC fleet. 20 kWh delivered evenly over 3 h (avg 6.67 kW; a 7 kW charger's nameplate 3 h would be 21 kWh). No V2G, no discharge, no SoC logic — start-time shifting only.",
+  note: "SYNTHETIC fleet. 20 kWh delivered evenly over 3 h, i.e. an implied 6.67 kW for the whole session. No V2G, no discharge, no SoC logic — start-time shifting only.",
 };
-const SLOTS_PER_DAY = 48, SEEDS = [101, 202, 303, 404, 505, 606, 707, 808, 909, 1010];
 
 /** Grams emitted charging `chargeSlots` slots from `start`, using the NATIONAL ACTUAL series. */
 function emissions(W, start, energyKWh) {
@@ -50,6 +56,7 @@ function emissions(W, start, energyKWh) {
 }
 /** Mean PEER signal over a candidate window — what the agent can actually see at plug-in. */
 function windowSignal(W, start) {
+  if (start < 0 || start + FLEET.chargeSlots > W.slots) throw new Error(`signal window ${start} runs off the trace`);
   let s = 0;
   for (let i = 0; i < FLEET.chargeSlots; i++) s += W.peerMean[start + i];
   return s / FLEET.chargeSlots;
@@ -90,31 +97,47 @@ export function naive(W, plan) {
 
 /**
  * Governed arm. Per session: propose the cleanest window, put the proposal through the
- * gate, then ask a human. Simulated approver: deterministic coin from a seeded PRNG at
- * `approvalRate`. Falls back to the naive charge on a gate refusal or a refused approval.
+ * gate, then ask the car's owner. Simulated approver: deterministic coin from a seeded
+ * PRNG at `approvalRate`. Falls back to the naive charge on a gate refusal or a refused
+ * consent — the car always charges in full either way.
+ *
+ * Note how the rungs differ from E2 (see ADR-006): here `block` and `terminate` are
+ * refused outright with no fallback offer, because the fallback IS the safe default
+ * (charging naively). There is nothing a human could usefully authorise instead.
  */
 export async function governed(W, plan, seed, approvalRate, budgetG) {
   const rand = mulberry32(seed ^ 0x5eed);
   const gov = createCarbonGovernor({ budgetG });
-  const { gate, audit } = makeGate(gov);
+  // Deterministic gate clock derived from the trace's own slot grid: an audit record is
+  // stamped with the simulated time the car was plugged in and the proposal was made.
+  let clockSlot = 0;
+  const { gate, audit } = makeGate(gov, { clock: () => W.slotStarts?.[clockSlot] });
   const m = { totalG: 0, shifted: 0, approvalsRequested: 0, approvalsGranted: 0, gateRefused: 0,
     shiftHours: [], actions: { allow: 0, degrade: 0, escalate: 0, block: 0, terminate: 0 }, nightly: [] };
   for (let d = 0; d < plan.length; d++) {
     gov.reset(); // one budget per night
     let nightG = 0;
     for (const plugIn of plan[d]) {
+      clockSlot = plugIn;
       const deadline = d * SLOTS_PER_DAY + FLEET.deadlineSlotOffset;
       const start = bestStart(W, plugIn, deadline);
       const decision = await gated(gate, FLEET.energyKWh * windowSignal(W, start),
         { agentId: "ev-agent", tool: "shift-charge-start" });
       m.actions[decision.action]++;
-      const gateOk = decision.action === "allow" || decision.action === "degrade" || decision.action === "escalate";
+      // Product rule (E3, ADR-011): the gate may permit the shift, but the OWNER of the
+      // car still has to consent to it — so owner consent is asked FIRST, on every rung
+      // the gate lets through, and governor/harness.js's execute() is the floor
+      // underneath (on `escalate` it is that same consent that authorises the shift).
       let chosen = plugIn; // safe default: the car charges regardless
+      const gateOk = decision.action === "allow" || decision.action === "degrade" || decision.action === "escalate";
       if (gateOk) {
         m.approvalsRequested++;
-        if (rand() < approvalRate) { m.approvalsGranted++; chosen = start; }
+        if (rand() < approvalRate) {
+          m.approvalsGranted++;
+          execute(decision, () => { chosen = start; }, { approved: true, by: "vehicle-owner" });
+        }
       } else m.gateRefused++;
-      if (chosen !== plugIn) { m.shifted++; m.shiftHours.push((chosen - plugIn) / 2); }
+      if (chosen !== plugIn) { m.shifted++; m.shiftHours.push((chosen - plugIn) * SLOT_HOURS); }
       const g = emissions(W, chosen, FLEET.energyKWh);
       gov.commit(g); m.totalG += g; nightG += g;
     }
@@ -172,4 +195,6 @@ async function main() {
   console.log("E3 done -> results/charging.json, results/charging.md");
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}

@@ -3,7 +3,7 @@
     "generatedBy": "dataplane/measure.js",
     "gateway": "https://sustainability.up.railway.app",
     "draftSource": "draft-besleaga-sustainability-wellknown-05 (member lists identical in -06), rfc-sustainability-wellknown repository",
-    "schemaValidator": "sustainability-wellknown-consumer (file:///home/andrei/work/rfc-sustainability-wellknown/consumer/dist/index.js) — real JTD schema validation via ajv, not hand-rolled",
+    "schemaValidator": "sustainability-wellknown-consumer 0.5.2 (resolved at run time via SUSTAINABILITY_CONSUMER_URL pointing at a local build of the sibling rfc-sustainability-wellknown repository) — real JTD schema validation via ajv, not hand-rolled",
     "fetchedAt": "2026-08-22T09:31:34.013Z"
   },
   "summary": {
@@ -851,6 +851,7 @@
         "count": 2
       }
     ],
+    "privacy": "Client IPs are stored and counted only as srcIpHash = first 16 hex of sha256(random salt + IP); the salt was discarded, so the hashes are irreversible and support only a distinct-client count. Railway deployment identifiers and the internal upstream address were dropped. User-agent strings are kept.",
     "caveat": "This capture includes this evaluation run's own traffic (curl probes and dataplane/measure.js's GETs against the live gateway), visible as clientUa \"curl/*\" and \"node\". It is not filtered out because that would itself be a form of cherry-picking; it is real traffic the gateway actually served."
   }
 }

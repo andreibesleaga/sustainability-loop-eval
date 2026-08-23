@@ -17,7 +17,7 @@ The package's code is MIT. The two are not the same thing and must not be blurre
 State both licences, separately and in every place a reader might start:
 
 - The repository README: code MIT; carbon-intensity data © National Energy System Operator, CC BY 4.0.
-- The cached trace files carry `provider`, `units` and the exact source URLs used to fetch each chunk.
+- The cached trace files carry `provider`, `units` and the exact source URLs used to fetch each chunk. The `provider` string is the operator's full name — **"National Energy System Operator (NESO) Carbon Intensity API"** — not an abbreviation, so an attribution copied out of a results file is complete on its own.
 - Every simulation results JSON copies that provenance through, so a downstream reader of one file has the attribution too.
 - The article cites the API as a reference.
 

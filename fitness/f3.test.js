@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F3 — Monotonicity — why it matters architecturally:
 // operators reason about the ladder as "worse consumption -> never a
 // lighter-touch verdict". If severity could dip as commitment rose, the

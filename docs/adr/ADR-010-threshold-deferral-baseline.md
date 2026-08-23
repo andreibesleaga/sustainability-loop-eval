@@ -16,7 +16,18 @@ them is a policy difference and not sampling noise:
 
 - **P0, always run.** Every task runs the moment it arrives. The zero line.
 - **P1, threshold deferral.** The ordinary carbon-aware-scheduling baseline: defer deferrable work while the peer signal is above its own 28-day median; fall back to the deadline if it never gets clean enough.
+- **P1t, threshold deferral without lookahead.** The same rule with a *trailing* 7-day median of the peer signal instead of the whole-window one. Reported as an extra row.
 - **P2, the governor.** Every task is a gated action; the returned rung is executed.
+
+**Disclosure about the threshold.** P1's threshold is the median of the peer
+signal over the *entire* 28-day window. That is a small piece of lookahead: on day
+one, P1 is using a number that depends on day twenty-eight. It is the standard way
+this baseline is written up, and it flatters the baseline rather than the
+governor, so it was left in place — but it is lookahead, and a reader should not
+have to discover that by reading the code. P1t exists so the reader can see what
+the baseline does with information it could actually have had. P2, the governor,
+uses no lookahead at all: it reads only the current slot's signal and the
+forward-looking forecast the peer signal itself publishes.
 
 ## Consequences
 
@@ -28,3 +39,4 @@ them is a policy difference and not sampling noise:
 
 - **No baseline.** Any number would look impressive and mean nothing.
 - **A perfect-foresight optimum.** A useful upper bound, but it needs the national actual in advance, which no agent has.
+- **Dropping P1 in favour of P1t only.** P1 is the version other work reports, so removing it would make the comparison harder to place. Both are reported.

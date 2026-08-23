@@ -4,14 +4,20 @@ sequenceDiagram
   participant W as Cached trace (48 slots per day)
   participant C as Governor core
   participant G as Real gate + audit log
+  participant Q as Deferral queue
+  participant X as execute (governor/harness.js)
 
   S->>C: reset() at midnight - new daily budget
   loop every 30-minute slot
+    S->>Q: work queued for this slot runs first, at full energy
+    Q->>X: execute the paused task - not re-gated
     S->>W: peer signal for this slot
-    S->>G: evaluate(task energy x peer signal)
+    S->>G: evaluate(task energy x peer signal) - once per task, on arrival
     G->>C: decide(estimate)
     G-->>S: verdict
-    S->>S: run now, run degraded, defer to cleanest slot, or drop
+    S->>X: execute(decision, task, approval?)
+    X->>Q: pause a deferrable task into its cleanest slot
+    X->>X: or run now, run reduced, or drop
     S->>W: national actual for the slot it ran in
     S->>C: commit(actual grams)
   end

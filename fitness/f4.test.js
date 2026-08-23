@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F4 — Human binding on top rungs — why it matters
 // architecturally: the whole point of escalate/block/terminate is that a
 // human stays in the loop. This proves the reference actuation harness
-// (fitness/harness.js) never runs a task for those rungs unless an approved
+// (governor/harness.js) never runs a task for those rungs unless an approved
 // HumanPort object was actually supplied — closing the loop from verdict to
 // actuation, not just to a printed decision.
 import test from "node:test";

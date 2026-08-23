@@ -10,24 +10,36 @@ stands between the reader and the code — a build step, a type system to learn,
 test framework to install, a bundler — is a cost paid by every reader and a place
 where a claim could hide.
 
-The code is small: a governor core of under 70 lines, nine property files of about
-15 lines each, and four scripts of 130 to 300 lines.
+The code is small: a governor core of 104 lines, one short property file per
+fitness function, and a handful of experiment scripts.
 
 ## Decision
 
 Write everything in plain JavaScript ES modules (`"type": "module"`), targeting
-Node 22 or newer. Use Node's built-in test runner (`node --test`) rather than an
+Node 22.9 or newer. Use Node's built-in test runner (`node --test`) rather than an
 external framework. Keep exactly one runtime dependency, and let it be the thing
-under test. Keep each file to roughly 150 lines and one purpose.
+under test. Keep each file to one purpose.
+
+On file size, state the rule as it is actually followed rather than as an
+aspiration nothing enforces:
+
+- **Roughly 150 lines is the target** for a source file. Past that, a file is usually doing two things.
+- **A file over that target needs a written reason.** The accepted exceptions today are `fitness/props.js` (every fitness property lives exactly once, and the test files and the report both call it — splitting it would duplicate the registry rather than the logic), `simulation/run.js` and `simulation/charging.js` (one experiment each, and cutting an experiment in half hides the loop a reader came to read), and `dataplane/measure.js` (one fetch-and-check pass over one document, written out straight).
+- Nothing else may cross it without being added to that list.
+
+The earlier wording said "roughly 150 lines is the ceiling" without listing the
+files that were already above it. That was a rule the repository did not keep.
 
 ## Consequences
 
 - `git clone`, `npm install`, `node whatever.js`. No build, no watch, no config.
 - The install graph is tiny, so the "one dependency" claim is checkable at a glance.
 - No static types. The code compensates with small files, explicit checks at the boundaries (`Number.isFinite`), and properties that test the real behaviour.
+- The size rule is now checkable by reading it: either a file is under the target, or it is on the list above with a reason.
 - Readers used to TypeScript get less editor help. Accepted: the audience for this repository is reading, not extending it at scale.
 
 ## Alternatives considered
 
 - **TypeScript.** Better editor support, but adds a compiler, a config, and a build output that is not the code the reader reviews.
-- **Vitest or Jest.** More features than nine property assertions need, and another dependency in a package whose dependency count is itself part of the argument.
+- **Vitest or Jest.** More features than a dozen property assertions need, and another dependency in a package whose dependency count is itself part of the argument.
+- **A hard line-count lint rule.** It would either fail on the four files above, or be configured to ignore them — which is the list above, with the reasons deleted.

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * dataplane/measure.js — Part A of E1: live measurement of the sustainability
  * data-plane gateway (https://sustainability.up.railway.app/).
@@ -33,12 +34,28 @@ const REF_DATE = new Date("2026-08-21T00:00:00Z"); // fixed reference for freshn
 const GETS_PER_DOC = 5;
 const TIMED_SUBJECTS = ["cloudflare.com", "microsoft.com", "wikimedia.org"];
 
-// The reference consumer library (sustainability-wellknown-consumer), imported from a
-// local build of the sibling RFC repository. It is deliberately NOT a dependency of
-// this package; when it is absent the run reports schema validation as unavailable
-// rather than as failed. Override with SUSTAINABILITY_CONSUMER_URL.
-const CONSUMER_URL = process.env.SUSTAINABILITY_CONSUMER_URL
-  ?? "file:///home/andrei/work/rfc-sustainability-wellknown/consumer/dist/index.js";
+// The reference consumer library (npm: sustainability-wellknown-consumer). It is
+// deliberately NOT a dependency of this package — "one dependency" is an architectural
+// claim F7 checks — so it is resolved at run time, in this order (ADR-017):
+//
+//   1. SUSTAINABILITY_CONSUMER_URL, if set (any URL a local build can be imported from)
+//   2. the bare specifier "sustainability-wellknown-consumer", if it happens to be
+//      installed:  npm i --no-save sustainability-wellknown-consumer@0.5.2
+//   3. neither  ->  schema conformance is reported as NOT MEASURED, never as 0%.
+const CONSUMER_PACKAGE = "sustainability-wellknown-consumer";
+
+/** Try the override first, then the bare specifier. Returns {consumer, source, error}. */
+async function resolveConsumer() {
+  const attempts = [];
+  const override = process.env.SUSTAINABILITY_CONSUMER_URL;
+  if (override) {
+    try { return { consumer: await import(override), source: `SUSTAINABILITY_CONSUMER_URL=${override}`, error: null }; }
+    catch (e) { attempts.push(`SUSTAINABILITY_CONSUMER_URL=${override}: ${e.message}`); }
+  }
+  try { return { consumer: await import(CONSUMER_PACKAGE), source: `bare specifier "${CONSUMER_PACKAGE}"`, error: null }; }
+  catch (e) { attempts.push(`bare specifier "${CONSUMER_PACKAGE}": ${e.message}`); }
+  return { consumer: null, source: null, error: attempts.join(" | ") };
+}
 
 const round1 = (x) => Math.round(x * 10) / 10;
 
@@ -79,18 +96,25 @@ function validate(consumer, parsed) {
   return consumer.validateDocument(parsed);
 }
 
-/** Steps 2+3: GET, save and check every document the registry lists, plus the root doc. */
+/**
+ * Steps 2+3: GET, save and check every document the registry lists, plus the root doc.
+ * Returns the per-subject rows AND the pool of UNROUNDED per-GET latencies: the overall
+ * median/p95 are computed from the raw milliseconds, so rounding happens once, at the
+ * end, rather than to every sample before it is aggregated.
+ */
 async function measureAll(index, consumer) {
   const targets = [
     { subject: "_gateway-root", url: `${GATEWAY}/.well-known/sustainability-data`, row: null },
     ...index.subjects.map((s) => ({ subject: s.domain, url: `${GATEWAY}${s.path}`, row: s })),
   ];
   const perSubject = [];
+  const latencyPool = [];
   for (const t of targets) { // sequential, by design
     const m = await measureDocument(t.subject, t.url);
     const validation = validate(consumer, m.parsed);
     const analysis = analyzeDoc(m.parsed, { refDate: REF_DATE, isRealOrg: t.row?.synthetic === false });
     if (m.lastGoodBody) writeFileSync(path.join(ROOT, `data/dataplane/docs/${t.subject}.json`), m.lastGoodBody);
+    latencyPool.push(...m.gets.map((g) => g.ms));
     perSubject.push({
       subject: t.subject, url: t.url,
       synthetic: t.row ? t.row.synthetic : null,
@@ -106,7 +130,7 @@ async function measureAll(index, consumer) {
       ...analysis,
     });
   }
-  return perSubject;
+  return { perSubject, latencyPool };
 }
 
 /** Step 4: time the reference library's discover+fetch+parse, median of 5 per subject. */
@@ -126,13 +150,15 @@ async function timeConsumer(consumer, index, error) {
 }
 
 /** Every claim in the summary is computed from the rows above, never assumed. */
-function summarize(perSubject, index, negRegister, { fetchedAt, schemaAvailable }) {
+function summarize(perSubject, latencyPool, index, negRegister, { fetchedAt, schemaAvailable }) {
   const analyzed = perSubject.filter((d) => d.analyzable);
   const realDocs = perSubject.filter((d) => d.synthetic === false);
   const allStatuses = perSubject.flatMap((d) => d.httpStatuses);
-  const latencyPool = perSubject.flatMap((d) => d.rawLatenciesMs); // every GET, not per-doc medians
   const ages = (key) => analyzed.map((d) => d[key]).filter((x) => x !== null);
-  const conformant = perSubject.filter((d) => d.schemaValid === true).length;
+  // Conformance is counted over the documents that could actually be ANALYZED: a body
+  // that never parsed is not a failed schema check, it is a document with no schema
+  // claim to make. Both counts are reported so the denominator is never in doubt.
+  const conformant = analyzed.filter((d) => d.schemaValid === true).length;
   return {
     fetchedAt,
     gateway: GATEWAY,
@@ -169,8 +195,8 @@ async function main() {
   mkdirSync(path.join(ROOT, "data/dataplane/docs"), { recursive: true });
   mkdirSync(path.join(ROOT, "results"), { recursive: true });
 
-  let consumer = null, consumerError = null;
-  try { consumer = await import(CONSUMER_URL); } catch (e) { consumerError = e.message; }
+  const { consumer, source: consumerSource, error: consumerError } = await resolveConsumer();
+  if (!consumer) console.error(`consumer library not resolved — schema conformance will be reported as NOT MEASURED (${consumerError})`);
 
   // Step 1: the subject registry.
   const fetchedAt = new Date().toISOString();
@@ -179,10 +205,10 @@ async function main() {
   writeFileSync(path.join(ROOT, "data/dataplane/index.json"),
     JSON.stringify({ fetchedAt, url: `${GATEWAY}/index.json`, status: idxRes.status, body: index }, null, 2));
 
-  const perSubject = await measureAll(index, consumer);
+  const { perSubject, latencyPool } = await measureAll(index, consumer);
   const consumerTiming = await timeConsumer(consumer, index, consumerError);
   const negRegister = index["no-machine-readable-data"] ?? { count: 0, subjects: [] }; // step 5
-  const summary = summarize(perSubject, index, negRegister, { fetchedAt, schemaAvailable: !!consumer });
+  const summary = summarize(perSubject, latencyPool, index, negRegister, { fetchedAt, schemaAvailable: !!consumer });
 
   const output = {
     provenance: {
@@ -190,8 +216,8 @@ async function main() {
       gateway: GATEWAY,
       draftSource: "draft-besleaga-sustainability-wellknown-05 (member lists identical in -06), rfc-sustainability-wellknown repository",
       schemaValidator: consumer
-        ? `sustainability-wellknown-consumer (${CONSUMER_URL}) — real JTD schema validation via ajv, not hand-rolled`
-        : "unavailable in this run — no schema-conformance claim is made",
+        ? `${CONSUMER_PACKAGE} (resolved via ${consumerSource}) — real JTD schema validation via ajv, not hand-rolled`
+        : "not resolved in this run — no schema-conformance claim is made",
       fetchedAt,
     },
     summary, perSubject, consumerTiming, negativeFindingsRegister: negRegister,

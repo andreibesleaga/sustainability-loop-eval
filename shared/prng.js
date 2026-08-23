@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * shared/prng.js — the one seeded pseudo-random number generator in this package.
  *

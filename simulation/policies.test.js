@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Unit tests for the two experiments' policy semantics.
  *
@@ -11,11 +12,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { runP0, runP1, runP2 } from "./run.js";
 import { schedule, naive, governed, nightsIn, FLEET } from "./charging.js";
-import { loadWindow, generateWorkload, WORKLOAD } from "./lib.js";
+import { loadWindow, generateWorkload, trailingMedians, WORKLOAD } from "./lib.js";
+import { createCarbonGovernor } from "../governor/carbon-governor.js";
+import { execute } from "../governor/harness.js";
 import { sum, median } from "../shared/stats.js";
 
 /** Toy window: peer signal == actual, so hand computation is unambiguous. */
-const TOY = { id: "TOY", slots: 4, actual: [100, 50, 200, 25], peerMean: [100, 50, 200, 25] };
+const TOY = {
+  id: "TOY", slots: 4, actual: [100, 50, 200, 25], peerMean: [100, 50, 200, 25],
+  slotStarts: ["2026-01-01T00:00Z", "2026-01-01T00:30Z", "2026-01-01T01:00Z", "2026-01-01T01:30Z"],
+};
 const task = (o) => ({ id: 0, arrival: 0, deferrable: false, deadline: 0, energyKWh: 1, ...o });
 
 test("P0 runs every task on arrival at that slot's actual intensity", () => {
@@ -104,4 +110,64 @@ test("E3 invariants: every vehicle charges exactly once, in full, inside its win
   assert.ok(run.totalG < base.totalG, "shifting can only reduce emissions here");
   assert.equal(run.auditValid, true);
   assert.ok(run.shiftHours.every((h) => h > 0), "a shift never moves a charge earlier than plug-in");
+});
+
+// ── The harness rule, as the simulations rely on it (ADR-006, governor/harness.js) ──
+
+test("execute() never runs a terminate task, with or without an approved approval", () => {
+  for (const approval of [undefined, { approved: false }, { approved: true, by: "someone" }, { approved: true }]) {
+    let ran = false;
+    const r = execute({ action: "terminate" }, () => { ran = true; }, approval);
+    assert.equal(ran, false, `terminate ran with approval ${JSON.stringify(approval)}`);
+    assert.equal(r.executed, false);
+    assert.equal(r.reason, "terminate is not overridable");
+  }
+});
+
+test("execute() runs allow/degrade unasked, and escalate/block only when approved", () => {
+  for (const action of ["allow", "degrade"]) {
+    assert.equal(execute({ action }, () => "done").executed, true, action);
+  }
+  for (const action of ["escalate", "block"]) {
+    assert.equal(execute({ action }, () => "done").executed, false, action);
+    assert.equal(execute({ action }, () => "done", { approved: false }).executed, false, action);
+    assert.equal(execute({ action }, () => "done", { approved: "yes" }).executed, false, `${action}: only === true counts`);
+    assert.equal(execute({ action }, () => "done", { approved: true }).executed, true, action);
+  }
+});
+
+test("commit() throws on a bad value rather than absorbing a silent zero", () => {
+  const gov = createCarbonGovernor({ budgetG: 1000 });
+  gov.commit(10);
+  for (const bad of [NaN, -1, Infinity, undefined, null, "5", {}]) {
+    assert.throws(() => gov.commit(bad), /finite, non-negative/, `commit(${String(bad)}) should throw`);
+  }
+  assert.equal(gov.spentG, 10, "a refused commit leaves the budget untouched");
+  gov.commit(0);
+  assert.equal(gov.spentG, 10, "zero is a legal commit");
+  gov.reset();
+  assert.equal(gov.spentG, 0);
+});
+
+test("P2 counts block verdicts on deferrable work separately, for the sensitivity number", async () => {
+  // ratio 100/90 = 1.11 -> block; the task is deferrable, so the outcome is a deferral.
+  const m = await runP2([task({ deferrable: true, deadline: 3 })], TOY, 90, 0.4);
+  assert.deepEqual([m.blocks, m.blocksDeferrable, m.humanDecisions, m.deferred], [1, 1, 1, 1]);
+  // Non-deferrable block: still a human decision, but not a deferral.
+  const n = await runP2([task({})], TOY, 90, 0.4);
+  assert.deepEqual([n.blocks, n.blocksDeferrable, n.humanDecisions], [1, 0, 1]);
+});
+
+test("P1t defers on a trailing median and never looks ahead", () => {
+  // Trailing window of 2 slots: at slot 2 the threshold is median(100, 50) = 75, and the
+  // peer signal there is 200, so a deferrable task arriving at slot 2 waits for slot 3.
+  const trailing = trailingMedians(TOY.peerMean, 2);
+  assert.deepEqual(trailing, [Infinity, 100, 75, 125]);
+  const m = runP1([task({ arrival: 2, deferrable: true, deadline: 3 })], TOY, (slot) => trailing[slot]);
+  assert.equal(m.totalG, 25);
+  assert.deepEqual(m.delays, [30]);
+  // At slot 0 there is no history at all, so nothing defers: the honest cold start.
+  const cold = runP1([task({ arrival: 0, deferrable: true, deadline: 3 })], TOY, (slot) => trailing[slot]);
+  assert.equal(cold.totalG, 100);
+  assert.deepEqual(cold.delays, []);
 });

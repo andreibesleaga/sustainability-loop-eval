@@ -1,40 +1,53 @@
-# ADR-006 — Escalation goes to the human port; block and terminate stop the action
+# ADR-006 — Escalation and block go to the human port; terminate is never overridable; the harness is the only actuation path
 
 - **Status:** Accepted
-- **Date:** 2026-08-22
+- **Date:** 2026-08-22 (rewritten 2026-08-23; see CHANGELOG)
 
 ## Context
 
-The point of having rungs above `degrade` is that a person is involved where the
-consequences are serious or irreversible. That only means something if the code
-path from a verdict to actually running something enforces it.
+Rungs above `degrade` mean something only if the path from a verdict to running
+something enforces them — and only if the three things a rung can mean are kept
+apart. **Stopped, refused and paused are not the same.** The first version of this
+ADR blurred them: it said "block on deferrable work simply defers, with no human
+involved". That sentence was wrong. It is replaced.
 
 ## Decision
 
-`fitness/harness.js` is the single actuation path in this package, and it is about
-twenty lines:
+`governor/harness.js` is the single actuation path. Every adapter that runs
+anything — `simulation/run.js`, `simulation/charging.js`, `demo/demo.js`,
+`demo/agent.js` — calls its `execute(decision, task, approval)`. It imports
+nothing, so no adapter can reach around it.
+
+The core rule is three lines:
 
 - `allow` and `degrade` run automatically.
-- Anything above them runs only if an approval object is present and its `approved` field is exactly `true`.
+- `escalate` and `block` run **only** with `approval.approved === true`.
+- `terminate` **never** runs: `{ executed: false, reason: "terminate is not overridable" }`.
 
-On top of that floor, the policies decide who is asked:
+What each rung then means per adapter is one table, and it lives in one place:
+[ARCHITECTURE section 8](../architecture/ARCHITECTURE.md#8-cross-cutting-concepts).
+The README states it in plain words and `demo/meaning.js` prints it. Nothing
+restates it a fourth time.
 
-- **Workload simulation (`simulation/run.js`).** `escalate` asks a human. `block` on non-deferrable work asks a human, who may authorise a degraded run; `block` on deferrable work simply defers, with no human involved. `terminate` drops the task, and no human is asked.
-- **Charging simulation (`simulation/charging.js`).** `allow`, `degrade` and `escalate` ask the owner's approval for the shift. `block` and `terminate` refuse the shift outright, with no human asked, and the vehicle charges as it otherwise would.
+Two facts from that table are load-bearing elsewhere:
 
-So `terminate` never routes to a human anywhere in this package, and `block`
-routes to one only in the workload simulation, where the alternative would be
-dropping work that has no later slot.
+- **Human decisions = every `escalate` verdict + every `block` verdict** in E2. A blocked task never proceeds on its own; a human may authorise the fallback and nothing else. Because "block on deferrable work asks a human" is a choice and not a law, the run also reports `blocksDeferrable` and `humanDecisionsIfDeferralAutomatic`.
+- **A deferred task is paused**: gated once on arrival, run later, never re-gated (ADR-016).
 
-Fitness function F4 checks the harness rule over 2,000 random decisions.
+F4 checks the harness rule; F5 asserts `executed === (autoRun || approved)` and
+that `terminate` never executed; F7 checks that every actuating adapter imports
+the harness; `simulation/policies.test.js` checks that `terminate` refuses an
+approved approval.
 
 ## Consequences
 
-- Human approval sits exactly where irreversibility begins, and the rule is a test rather than a convention.
-- The number of human decisions is a reported metric, not an afterthought — `results/simulation.md` reading 7 gives it per day, because it is a staffing cost.
-- The approvers in the simulations are simulated. Real human latency, friction and fatigue are untested. This is stated in every result file and in ARCHITECTURE.md section 11.
+- Human approval sits where irreversibility begins, as a test rather than a convention.
+- `block` and `terminate` stay different rungs. Without a human path, `block` would just be a slower `terminate`.
+- The approvers in the simulations are simulated (R6).
+- The runtime does not make these distinctions itself; the semantics are this package's (ADR-002).
 
 ## Alternatives considered
 
-- **Route `terminate` to a human too.** Makes `terminate` mean the same as `block`, which removes the top rung's meaning.
-- **Let the caller decide whether to honour a verdict.** Puts the guarantee back into every call site, which is what one gate exists to avoid.
+- **Route `terminate` to a human too.** Then it means the same as `block`.
+- **Defer blocked deferrable work automatically.** Fewer approvals, and it quietly turns the fourth rung into the second for half the workload. Reported as a sensitivity number instead.
+- **Let each call site honour the verdict.** That is the scattering one gate exists to prevent.

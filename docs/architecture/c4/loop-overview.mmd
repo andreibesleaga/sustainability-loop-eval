@@ -3,7 +3,7 @@ flowchart TD
   S["2 Sense<br/>an agent reads peers' documents<br/>and grid carbon intensity"]
   D["3 Decide<br/>the Carbon-Verdict Governor paces<br/>spend against a carbon budget"]
   G["4 Gate<br/>one gate aggregates verdicts, fails closed,<br/>and writes an audit record"]
-  H["5 Human<br/>escalate goes to a person;<br/>block and terminate stop the action"]
+  H["5 Human<br/>escalate and block go to a person;<br/>terminate stops, and nobody can lift it"]
   A["6 Act<br/>run, run smaller, wait for a cleaner slot,<br/>or do not run"]
 
   P --> S --> D --> G --> H --> A

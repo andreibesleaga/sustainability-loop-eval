@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * E2 — Carbon-Verdict Governor vs baselines, on REAL grid-carbon traces.
  *
@@ -23,20 +24,22 @@ import { writeFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { createCarbonGovernor } from "../governor/carbon-governor.js";
 import { makeGate, gated } from "../governor/gate.js";
+import { execute } from "../governor/harness.js";
 import { mean, median, p95, pearson, r, ms } from "../shared/stats.js";
-import { loadWindow, generateWorkload, WORKLOAD } from "./lib.js";
+import { loadWindow, generateWorkload, trailingMedians, WORKLOAD } from "./lib.js";
 import { renderSimulationMd } from "./report.js";
 
 const SEEDS = [101, 202, 303, 404, 505, 606, 707, 808, 909, 1010];
 const F_VALUES = [0.6, 0.7, 0.8, 0.9, 1.0];
 const SLOT_MINUTES = 30;
 const SLOTS_PER_DAY = (24 * 60) / SLOT_MINUTES; // 48
+const P1T_TRAILING_DAYS = 7;                    // P1t's causal threshold window
 
 /** Fresh tally for one run. `delays` collects per-task deferral minutes. */
 function tally(days) {
   return { totalG: 0, completed: 0, onTime: 0, dropped: 0, degraded: 0, deferred: 0,
     delays: [], escalations: 0, blocks: 0, terminations: 0, humanDecisions: 0,
-    dayG: new Array(days).fill(0) };
+    blocksDeferrable: 0, dayG: new Array(days).fill(0) };
 }
 
 /** Record one execution: emissions from the NATIONAL ACTUAL series at the run slot. */
@@ -69,18 +72,25 @@ export function runP0(tasks, W) {
 
 // ── P1: defer below-median (carbon-aware scheduling baseline) ─────────────────
 /**
- * Deferrable work that arrives while the peer signal is above the window median waits
- * for the first slot at or below it. If no such slot exists before the deadline the
- * task runs AT the deadline — which can be dirtier than running on arrival. That is
- * the honest behaviour of a threshold scheduler and is one reason P1 gains so little.
+ * Deferrable work that arrives while the peer signal is above the threshold waits for
+ * the first slot at or below it. If no such slot exists before the deadline the task
+ * runs AT the deadline — which can be dirtier than running on arrival. That is the
+ * honest behaviour of a threshold scheduler and is one reason P1 gains so little.
+ *
+ * `threshold` is either one number for the whole window (P1: the median of the whole
+ * peer series, which uses lookahead — see ADR-010) or a function of the arrival slot
+ * (P1t: a trailing median, which does not). The threshold in force at ARRIVAL is the
+ * one the task is scheduled against; that is the moment the decision is taken.
  */
 export function runP1(tasks, W, threshold) {
+  const thresholdAt = typeof threshold === "function" ? threshold : () => threshold;
   const m = tally(daysIn(W));
   for (const t of tasks) {
     let slot = t.arrival;
-    if (t.deferrable && W.peerMean[t.arrival] > threshold) {
+    const th = thresholdAt(t.arrival);
+    if (t.deferrable && W.peerMean[t.arrival] > th) {
       slot = t.deadline;
-      for (let s = t.arrival; s <= t.deadline; s++) if (W.peerMean[s] <= threshold) { slot = s; break; }
+      for (let s = t.arrival; s <= t.deadline; s++) if (W.peerMean[s] <= th) { slot = s; break; }
     }
     exec(m, W, t, slot, t.energyKWh);
   }
@@ -97,7 +107,7 @@ export function runP1(tasks, W, threshold) {
  *   degrade | escalate | block-> deferrable work moves to the cleanest slot the peer
  *                                signal predicts before its deadline; non-deferrable
  *                                work runs now at `degradedFraction` of its energy.
- *   terminate                 -> the task is dropped; nothing runs.
+ *   terminate                 -> the task is dropped; nothing runs, and nobody is asked.
  *
  * The three middle rungs choose the same physical action on purpose: what separates
  * them is who authorises it. `degrade` is automatic; `escalate` and `block` are only
@@ -105,32 +115,62 @@ export function runP1(tasks, W, threshold) {
  * human decision (so humanDecisions == escalations + blocks, by construction). The
  * simulated approver always approves — it is the workload's cost in human attention
  * that is being measured here, not the approver's judgement.
+ *
+ * Every actuation goes through governor/harness.js's execute(), including the delayed
+ * run of a deferred task: a deferred task is a PAUSED task, executing the decision it
+ * was already gated and audited for on arrival (ADR-016), not a new ungated action.
+ * `terminate` is handed a plan that throws if it is ever called — execute() refuses it
+ * outright, so the throw is an assertion that the rung is truly not overridable.
  */
 export async function runP2(tasks, W, budgetG, degradedFraction) {
   const m = tally(daysIn(W));
   const gov = createCarbonGovernor({ budgetG });
-  const { gate, audit } = makeGate(gov);
+  // Deterministic gate clock derived from the trace's own slot grid, so an audit
+  // record is stamped with the simulated time the decision was taken.
+  let clockSlot = 0;
+  const { gate, audit } = makeGate(gov, { clock: () => W.slotStarts?.[clockSlot] });
   const arrivals = Array.from({ length: W.slots }, () => []);
   for (const t of tasks) arrivals[t.arrival].push(t);
-  const queued = Array.from({ length: W.slots }, () => []); // {task, energyKWh} due to run
+  const queued = Array.from({ length: W.slots }, () => []); // paused tasks due to run
 
   for (let slot = 0; slot < W.slots; slot++) {
+    clockSlot = slot;
     if (slot % SLOTS_PER_DAY === 0) gov.reset(); // new day, new budget
-    for (const q of queued[slot]) gov.commit(exec(m, W, q.task, slot, q.energyKWh));
+    for (const q of queued[slot]) {
+      execute(q.decision, () => gov.commit(exec(m, W, q.task, slot, q.energyKWh)), q.approval);
+    }
     for (const t of arrivals[slot]) {
       const estimateG = t.energyKWh * W.peerMean[slot]; // peers' published signal
-      const { action } = await gated(gate, estimateG);
-      const now = (energyKWh) => gov.commit(exec(m, W, t, slot, energyKWh));
-      if (action === "allow") { now(t.energyKWh); continue; }
-      if (action === "terminate") { m.terminations++; m.dropped++; continue; }
+      const decision = await gated(gate, estimateG);
+      const { action } = decision;
+      // Internal invariant: gated() normalises any verdict outside the ladder to
+      // "block" (governor/gate.js), so `action` is always one of the five rungs.
       if (action === "escalate") { m.escalations++; m.humanDecisions++; }
-      else if (action === "block") { m.blocks++; m.humanDecisions++; }
-      else if (action !== "degrade") throw new Error(`unknown gate verdict: ${action}`);
-      if (!t.deferrable) { now(t.energyKWh * degradedFraction); continue; }
+      else if (action === "block") { m.blocks++; m.humanDecisions++; if (t.deferrable) m.blocksDeferrable++; }
+      if (action === "terminate") m.terminations++;
+
+      // The human port. The simulated approver always approves; `terminate` is never
+      // put to a human at all, which is why it gets no approval object.
+      const approval = action === "escalate" || action === "block"
+        ? { approved: true, by: "simulated-approver" }
+        : undefined;
+
+      const now = (energyKWh) => gov.commit(exec(m, W, t, slot, energyKWh));
       // Defer to the cleanest slot the peer signal predicts before the deadline; if
       // that is the current slot, run straight away (its queue is already past).
-      const s = cleanest(W, slot, t.deadline);
-      if (s === slot) now(t.energyKWh); else queued[s].push({ task: t, energyKWh: t.energyKWh });
+      const defer = () => {
+        const s = cleanest(W, slot, t.deadline);
+        if (s === slot) now(t.energyKWh);
+        else queued[s].push({ task: t, energyKWh: t.energyKWh, decision, approval });
+      };
+      const plan =
+        action === "allow" ? () => now(t.energyKWh)
+        : action === "terminate" ? () => { throw new Error("unreachable: terminate executed"); }
+        : t.deferrable ? defer
+        : () => now(t.energyKWh * degradedFraction);
+
+      const { executed } = execute(decision, plan, approval);
+      if (!executed) m.dropped++;
     }
   }
   // Accounting invariant: every task either completed or was dropped. Nothing vanishes.
@@ -159,6 +199,11 @@ function summarize(runs, p0Totals) {
     escalations: ms(pick((m) => m.escalations), 1),
     humanDecisions: ms(pick((m) => m.humanDecisions), 1),
     blocks: ms(pick((m) => m.blocks), 1),
+    // Sensitivity: block verdicts on DEFERRABLE work, whose physical outcome is only a
+    // deferral. If deferral of blocked work were automatic rather than approved, the
+    // human-decision count would be humanDecisionsIfDeferralAutomatic instead.
+    blocksDeferrable: ms(pick((m) => m.blocksDeferrable), 1),
+    humanDecisionsIfDeferralAutomatic: ms(pick((m) => m.humanDecisions - m.blocksDeferrable), 1),
     terminations: ms(pick((m) => m.terminations), 1),
   };
   if (runs[0].auditValid !== undefined) {
@@ -184,12 +229,19 @@ async function main() {
       meanNationalActualGPerKWh: r(mean(W.actual), 1),
     };
     const threshold = median(W.peerMean);
+    const trailing = trailingMedians(W.peerMean, (P1T_TRAILING_DAYS * 24 * 60) / SLOT_MINUTES);
     const workloads = SEEDS.map((s) => generateWorkload(s, W.slots));
     const p0 = workloads.map((tasks) => runP0(tasks, W));
     const p0Totals = p0.map((m) => m.totalG);
-    const win = { peerMedianThresholdG: r(threshold, 1), tasksPerSeed: ms(workloads.map((t) => t.length), 1), policies: {} };
+    const win = {
+      peerMedianThresholdG: r(threshold, 1),
+      p1tTrailingMedianDays: P1T_TRAILING_DAYS,
+      tasksPerSeed: ms(workloads.map((t) => t.length), 1),
+      policies: {},
+    };
     win.policies.P0 = summarize(p0, p0Totals);
     win.policies.P1 = summarize(workloads.map((t) => runP1(t, W, threshold)), p0Totals);
+    win.policies.P1t = summarize(workloads.map((t) => runP1(t, W, (slot) => trailing[slot])), p0Totals);
     for (const f of F_VALUES) {
       // Budget: f x the median of P0's own daily emissions for that seed's workload.
       const runs = [];
@@ -207,6 +259,16 @@ async function main() {
     workload: WORKLOAD,
     gate: "kaiban-distributed@2.0.0 ActionGate + hash-chained AuditLog (real code, in-process)",
     ladder: "allow < degrade < escalate < block < terminate (rungs 0.8/1.0/1.1/1.25 of daily budget committed)",
+    policies: {
+      P0: "always run: every task runs the moment it arrives",
+      P1: "threshold deferral against the median of the WHOLE peer series (uses lookahead; disclosed in ADR-010)",
+      P1t: `threshold deferral against a TRAILING ${P1T_TRAILING_DAYS}-day median of the peer signal (causal: no lookahead)`,
+      P2: "carbon-verdict governor: every task gated once on arrival by the shipped ActionGate",
+    },
+    invariants: {
+      completedOnTime: "BY CONSTRUCTION, not a finding: deadlines are clamped to the window (lib.js) and no policy ever runs a task after its deadline, so completedOnTime always equals tasksCompleted.",
+      humanDecisions: "escalations + blocks, by construction: every escalate and every block verdict is authorised by the simulated approver and counted as one human decision.",
+    },
     correlations, provenance, results,
   };
   writeFileSync(new URL("../results/simulation.json", import.meta.url), JSON.stringify(doc, null, 2) + "\n");
@@ -214,4 +276,6 @@ async function main() {
   console.log("E2 done -> results/simulation.json, results/simulation.md");
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}

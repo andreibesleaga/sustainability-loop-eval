@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * dataplane/logs.js — Part B of E1: analyse the REAL Railway HTTP access logs already
  * pulled for the sustainability-registry gateway service, and merge the counts into
@@ -9,7 +10,16 @@
  *   railway logs --http --json --since 7d -p <projectId> -s <serviceId> -e <environmentId> \
  *     > data/dataplane/railway-logs.jsonl
  * and is committed. Each line is one JSON object per HTTP request (timestamp, method,
- * path, httpStatus, totalDuration, requestId, host, clientUa, srcIp, edgeRegion, ...).
+ * path, httpStatus, totalDuration, requestId, host, clientUa, srcIpHash, edgeRegion, ...).
+ *
+ * PRIVACY (ADR-012): the committed file carries NO client IP addresses. Each `srcIp` was
+ * replaced, once, by `srcIpHash` — the first 16 hex characters of sha256(salt + ip) under
+ * a random salt that was never written down, so the mapping is irreversible and only
+ * "same client / different client" survives. Railway's `deploymentId`,
+ * `deploymentInstanceId` and `upstreamAddress` (an internal IPv6 address) were dropped
+ * for the same reason. `clientUa` is KEPT: user-agent strings are not personal data here
+ * and the crawler caveat in the write-up depends on them. This script does the same to
+ * any future capture at ingest, with a fresh per-run salt (see hashIps below).
  *
  * Retention observed at capture time: `--since 30d`/`--since 45d` and `--since 7d`
  * returned the SAME set of lines, so this is effectively all available history, not an
@@ -18,6 +28,7 @@
  * Run after measure.js (which rewrites results/dataplane.json and .md); `npm run
  * dataplane` runs both in that order. Re-running this script alone is idempotent.
  */
+import { randomBytes, createHash } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import path from "node:path";
@@ -34,16 +45,34 @@ export function subjectOf(requestPath) {
   return prefix === "" ? "_gateway-root" : prefix;
 }
 
+/**
+ * Replace any raw `srcIp` with an irreversible `srcIpHash`, using a salt generated
+ * fresh for this call and discarded with it. Entries that already carry `srcIpHash`
+ * (i.e. the committed file) pass through untouched, so re-running is idempotent and
+ * the distinct-client count is stable.
+ */
+export function hashIps(entries, salt = randomBytes(32)) {
+  return entries.map((e) => {
+    if (!("srcIp" in e)) return e;
+    const { srcIp, ...rest } = e;
+    const srcIpHash = srcIp
+      ? createHash("sha256").update(salt).update(String(srcIp)).digest("hex").slice(0, 16)
+      : srcIp;
+    return { ...rest, srcIpHash };
+  });
+}
+
 const statusBucket = (code) =>
   (code >= 200 && code < 300 ? "2xx" : code >= 400 && code < 500 ? "4xx" : code >= 500 ? "5xx" : "other");
 
 /** Pure: turn raw log lines into the reported counts. */
 export function analyzeLogLines(lines) {
-  const entries = [];
+  const raw = [];
   let parseErrors = 0;
   for (const line of lines) {
-    try { entries.push(JSON.parse(line)); } catch { parseErrors++; }
+    try { raw.push(JSON.parse(line)); } catch { parseErrors++; }
   }
+  const entries = hashIps(raw); // no raw IP survives past this line
   const times = entries.map((e) => new Date(e.timestamp).getTime()).filter((t) => !Number.isNaN(t));
   const wellKnown = entries.filter((e) => typeof e.path === "string" && e.path.includes(WELL_KNOWN_SUFFIX));
   const subjects = new Set(wellKnown.map((e) => subjectOf(e.path)));
@@ -65,13 +94,14 @@ export function analyzeLogLines(lines) {
     wellKnownRequests: wellKnown.length,
     distinctSubjectsRequested: subjects.size,
     subjectsRequestedList: [...subjects].sort(),
-    distinctClientIps: new Set(entries.map((e) => e.srcIp).filter(Boolean)).size,
+    distinctClientIps: new Set(entries.map((e) => e.srcIpHash).filter(Boolean)).size,
     distinctUserAgents: new Set(entries.map((e) => e.clientUa).filter(Boolean)).size,
     statusSplit,
     healthcheckCount: healthchecks.length,
     healthcheckShare: entries.length ? Math.round((healthchecks.length / entries.length) * 1000) / 10 : null,
     totalDurationMsMedian: durations.length ? median(durations) : null,
     topPaths: [...pathCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 15).map(([p, n]) => ({ path: p, count: n })),
+    privacy: "Client IPs are stored and counted only as srcIpHash = first 16 hex of sha256(random salt + IP); the salt was discarded, so the hashes are irreversible and support only a distinct-client count. Railway deployment identifiers and the internal upstream address were dropped. User-agent strings are kept.",
     caveat: "This capture includes this evaluation run's own traffic (curl probes and dataplane/measure.js's GETs against the live gateway), visible as clientUa \"curl/*\" and \"node\". It is not filtered out because that would itself be a form of cherry-picking; it is real traffic the gateway actually served.",
   };
 }

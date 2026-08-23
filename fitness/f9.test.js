@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F9 — Aggregation equivalence — why it matters
 // architecturally: this package's reference core (mostSevere) is only a valid
 // stand-in for reasoning about the shipped gate if it actually computes the

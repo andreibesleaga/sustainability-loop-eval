@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * dataplane/report.js — markdown rendering for the two data-plane measurements
  * (Part A: live gateway GETs, Part B: real Railway access logs).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F5 — Gate-on-path — why it matters architecturally: a
 // governance gate that some code paths can skip is decorative. For each of the
 // three operation types the gate's contract names (tool-call, outbound-message,

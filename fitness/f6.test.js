@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F6 — Audit-chain integrity — why it matters
 // architecturally: an audit trail an operator (or attacker) can silently edit
 // after the fact is not evidence. This proves verify() reports valid over a

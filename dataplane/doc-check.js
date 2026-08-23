@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * dataplane/doc-check.js — the pure part of the data-plane measurement: what a
  * sustainability document must contain, and what one actually contains.

@@ -6,7 +6,7 @@
   "slotMinutes": 30,
   "slots": 1344,
   "fetchedAt": "2026-08-22T08:06:42.696Z",
-  "provider": "UK National Grid ESO Carbon Intensity API",
+  "provider": "National Energy System Operator (NESO) Carbon Intensity API",
   "units": "gCO2e/kWh",
   "slotStarts": [
     "2026-06-29T00:00Z",

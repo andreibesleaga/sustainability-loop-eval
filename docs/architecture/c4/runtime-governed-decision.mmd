@@ -4,6 +4,7 @@ sequenceDiagram
   participant G as ActionGate (kaiban-distributed)
   participant V as Carbon validator
   participant C as Governor core
+  participant X as execute (governor/harness.js)
   participant H as Human approver
   participant L as Audit log
 
@@ -14,11 +15,19 @@ sequenceDiagram
   V-->>G: verdict
   G->>L: append hash-chained record
   G-->>A: most severe verdict wins
-  alt allow or degrade
-    A->>A: run the action, commit the grams
+  A->>X: execute(decision, task, approval?)
+  alt allow
+    X->>X: run the action, commit the grams
+  else degrade
+    X->>X: run smaller now, or pause and run later at the cleanest slot
   else escalate
-    A->>H: ask for approval
-    H-->>A: approve or refuse
-  else block or terminate
-    A->>A: do not run the action
+    X->>H: ask for approval
+    H-->>X: approve or refuse
+    X->>X: on approval, defer or run reduced
+  else block
+    X->>H: ask whether to authorise the reduced or deferred fallback
+    H-->>X: approve or refuse
+    X->>X: on approval, the fallback only - never the action as proposed
+  else terminate
+    X->>X: nothing runs, and no one is asked - not overridable
   end

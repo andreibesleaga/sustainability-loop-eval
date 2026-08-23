@@ -1,14 +1,19 @@
 %% C4 level 3 - components inside the hexagon. Flowchart form, same reason.
 flowchart TB
   CORE["<b>createCarbonGovernor</b><br/><i>governor/carbon-governor.js</i><br/>budget, pacing ratio, verdict ladder<br/>imports nothing"]
-  VAL["<b>carbonValidator</b><br/><i>signal port adapter</i><br/>turns a verdict into a gate validator"]
-  MG["<b>makeGate / gated</b><br/><i>governor/gate.js, actuation port</i><br/>wires the validator into the real gate"]
-  HAR["<b>execute</b><br/><i>fitness/harness.js, human port</i><br/>nothing above degrade runs unapproved"]
-  PROPS["<b>F1-F9 properties</b><br/><i>fitness/props.js</i><br/>one property per architectural claim"]
-  POL["<b>P0 / P1 / P2 policies</b><br/><i>simulation/run.js</i><br/>always-run, threshold deferral, governed"]
+  VAL["<b>carbonValidator</b><br/><i>signal port adapter, same file</i><br/>turns a verdict into a gate validator"]
+  MG["<b>makeGate / gated / chainAnchor</b><br/><i>governor/gate.js, actuation port</i><br/>wires the validator into the real gate;<br/>normalises a non-ladder verdict to block"]
+  HAR["<b>execute</b><br/><i>governor/harness.js, human port</i><br/>allow and degrade run; escalate and block<br/>need an approval; terminate never runs"]
+  PROPS["<b>F1-F12 properties</b><br/><i>fitness/props.js</i><br/>one property per architectural claim"]
+  IG["<b>import graph scanner</b><br/><i>fitness/import-graph.js</i><br/>the real import graph F7 checks"]
+  POL["<b>P0 / P1 / P1t / P2 policies</b><br/><i>simulation/run.js</i><br/>always-run, threshold deferral, governed"]
+  LIB["<b>traces and workload</b><br/><i>simulation/lib.js</i><br/>slot grid, cached traces, synthetic tasks"]
+  SREP["<b>readings</b><br/><i>simulation/report.js</i><br/>Markdown from JSON, recomputes nothing"]
   CHG["<b>Charging shift</b><br/><i>simulation/charging.js</i><br/>start-time shift only, never a discharge"]
   MEA["<b>measure and logs</b><br/><i>dataplane/</i><br/>live documents and real request logs"]
-  DEMO["<b>demo and agent</b><br/><i>demo/, agent/</i><br/>one real document to one verdict"]
+  DEMO["<b>demo and agent</b><br/><i>demo/demo.js, demo/agent.js</i><br/>one real document to five verdicts"]
+  PRNG["<b>seeded random</b><br/><i>shared/prng.js</i><br/>mulberry32, one generator for everything"]
+  STATS["<b>statistics</b><br/><i>shared/stats.js</i><br/>one definition of median, p95, sd"]
   GATE["<b>ActionGate + AuditLog</b><br/><i>kaiban-distributed 2.0.0, external</i>"]
 
   VAL --> CORE
@@ -16,13 +21,23 @@ flowchart TB
   MG --> GATE
   PROPS --> MG
   PROPS --> HAR
+  PROPS --> IG
+  PROPS --> PRNG
   POL --> MG
   POL --> HAR
+  POL --> LIB
   CHG --> MG
+  CHG --> HAR
+  CHG --> LIB
+  LIB --> PRNG
+  LIB --> STATS
+  SREP --> STATS
   DEMO --> MG
-  MEA -.->|documents feed the signal| DEMO
+  DEMO --> HAR
+  MEA --> STATS
+  MEA -.->|conceptual, not an import: documents<br/>feed the signal the demo reads| DEMO
 
   classDef comp fill:#85bbf0,stroke:#5d82a8,color:#000
   classDef ext fill:#999999,stroke:#6b6b6b,color:#fff
-  class CORE,VAL,MG,HAR,PROPS,POL,CHG,MEA,DEMO comp
+  class CORE,VAL,MG,HAR,PROPS,IG,POL,LIB,SREP,CHG,MEA,DEMO,PRNG,STATS comp
   class GATE ext

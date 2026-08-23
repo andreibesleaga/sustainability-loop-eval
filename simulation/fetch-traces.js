@@ -1,8 +1,10 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Fetch + cache the REAL grid-carbon traces the simulations run on.
  *
- * Source: UK National Grid ESO Carbon Intensity API (https://api.carbonintensity.org.uk),
- * free and keyless. Two 28-day windows, 30-minute slots:
+ * Source: the National Energy System Operator (NESO) Carbon Intensity API
+ * (https://api.carbonintensity.org.uk), free and keyless. NESO is the operator formerly
+ * known as National Grid ESO; the endpoint and the data are the same. Two 28-day windows, 30-minute slots:
  *   W1 winter 2026-01-05 -> 2026-02-02, W2 summer 2026-06-29 -> 2026-07-27.
  *
  * Two distinct series are cached, and they play different roles:
@@ -21,7 +23,10 @@ import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 
 const API = "https://api.carbonintensity.org.uk";
+const PROVIDER = "National Energy System Operator (NESO) Carbon Intensity API";
 const SLOT_MIN = 30;
+const TIMEOUT_MS = 20000;
+const ATTEMPTS = 3;        // one try plus two retries, then give up loudly
 const OUT_DIR = new URL("../data/simulation/", import.meta.url);
 
 /** The 3 peer systems, modelled as services located in 3 GB DNO regions. */
@@ -51,10 +56,20 @@ function chunks(from, to, days = 13) {
   return out;
 }
 
+/** One GET with a hard timeout and a small bounded retry — never an unbounded loop. */
 async function getJSON(url) {
-  const res = await fetch(url, { headers: { Accept: "application/json" } });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
-  return res.json();
+  let last;
+  for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    try {
+      const res = await fetch(url, { headers: { Accept: "application/json" }, signal: AbortSignal.timeout(TIMEOUT_MS) });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
+      return await res.json();
+    } catch (e) {
+      last = e;
+      if (attempt < ATTEMPTS) console.error(`  attempt ${attempt}/${ATTEMPTS} failed for ${url}: ${e.message} — retrying`);
+    }
+  }
+  throw new Error(`gave up after ${ATTEMPTS} attempts: ${last.message}`);
 }
 
 /** Canonical slot grid: every 30-min slot start in [from, to). */
@@ -121,7 +136,7 @@ async function main() {
     const doc = {
       window: win.id, label: win.label, from: win.from, to: win.to,
       slotMinutes: SLOT_MIN, slots: grid.length, fetchedAt,
-      provider: "UK National Grid ESO Carbon Intensity API",
+      provider: PROVIDER,
       units: "gCO2e/kWh",
       slotStarts: grid,
       national: {
@@ -139,4 +154,6 @@ async function main() {
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await main();
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}

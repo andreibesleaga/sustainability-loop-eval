@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * Unit tests for the pure helpers behind the data-plane measurement — the ones that
  * turn a fetched document or a raw log line into a reported number. No network: the
@@ -8,7 +9,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { analyzeDoc, reportingPeriodEndDate, daysBetween, MANDATORY_MEMBERS, OPTIONAL_MEMBERS, DISCLAIMER_RE } from "./doc-check.js";
-import { analyzeLogLines, subjectOf } from "./logs.js";
+import { analyzeLogLines, hashIps, subjectOf } from "./logs.js";
 import { median, p95 } from "../shared/stats.js";
 
 const REF = new Date("2026-08-21T00:00:00Z");
@@ -98,4 +99,27 @@ test("log analysis counts requests, subjects, statuses and skips unparseable lin
   assert.equal(r.topPaths[0].count, 1);
   assert.equal(subjectOf("/wikimedia.org/.well-known/sustainability-data"), "wikimedia.org");
   assert.equal(analyzeLogLines([]).totalDurationMsMedian, null);
+});
+
+test("no client IP survives ingest, and the committed capture carries none", () => {
+  // hashIps replaces srcIp with an irreversible srcIpHash, and is stable per run.
+  const salt = Buffer.from("fixed-test-salt");
+  const hashed = hashIps([{ srcIp: "1.1.1.1", path: "/x" }, { srcIp: "1.1.1.1" }, { srcIp: "2.2.2.2" }], salt);
+  assert.ok(hashed.every((e) => !("srcIp" in e)), "srcIp must not survive");
+  assert.equal(hashed[0].srcIpHash, hashed[1].srcIpHash, "the same client hashes the same way");
+  assert.notEqual(hashed[0].srcIpHash, hashed[2].srcIpHash, "different clients stay distinguishable");
+  assert.match(hashed[0].srcIpHash, /^[0-9a-f]{16}$/);
+  assert.equal(hashed[0].path, "/x", "other fields are untouched");
+  // An already-hashed entry passes through unchanged, so re-running is idempotent.
+  assert.deepEqual(hashIps([{ srcIpHash: "abc" }], salt), [{ srcIpHash: "abc" }]);
+
+  const raw = readFileSync(new URL("../data/dataplane/railway-logs.jsonl", import.meta.url), "utf8");
+  assert.equal(raw.includes('"srcIp"'), false, "the committed capture must contain no raw IP field");
+  for (const key of ["deploymentId", "deploymentInstanceId", "upstreamAddress"]) {
+    assert.equal(raw.includes(`"${key}"`), false, `${key} must not be committed`);
+  }
+  const lines = raw.split("\n").filter((l) => l.trim());
+  const r = analyzeLogLines(lines);
+  assert.equal(r.distinctClientIps, 26, "the reported distinct-client count is over hashes");
+  assert.equal(r.totalRequests, 120);
 });

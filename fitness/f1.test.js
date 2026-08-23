@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 // Fitness function F1 — Total order / most-severe-wins — why it matters
 // architecturally: the ladder (allow<degrade<escalate<block<terminate) is only
 // a meaningful safety contract if the gate ALWAYS resolves conflicting

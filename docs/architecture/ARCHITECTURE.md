@@ -28,7 +28,7 @@ with runnable code:
 
 | Question | How it is answered | Where |
 |---|---|---|
-| Does the architecture hold the properties it claims? | Nine executable checks against the shipped gate | `fitness/`, [`results/fitness.md`](../../results/fitness.md) |
+| Does the architecture hold the properties it claims? | Twelve executable checks against the shipped gate | `fitness/`, [`results/fitness.md`](../../results/fitness.md) |
 | Is the published data usable as a control signal? | Live measurement of every document on a public gateway | `dataplane/`, [`results/dataplane.md`](../../results/dataplane.md) |
 | What does the governor do on real grid conditions? | Replay on real half-hourly grid-carbon traces | `simulation/`, [`results/simulation.md`](../../results/simulation.md), [`results/charging.md`](../../results/charging.md) |
 
@@ -39,10 +39,10 @@ In priority order. When two of these pull against each other, the higher one win
 | # | Goal | What it means here |
 |---|---|---|
 | 1 | **Honesty and traceability** | Every claim points at a file. Every number is produced by a script and written to `results/`. Real, reference, and synthetic parts are labelled everywhere, including inside the result files. |
-| 2 | **Simplicity** | A reader should be able to check the core by reading it. The governor core is under 70 lines and imports nothing. No framework, no build step, no clever code. |
+| 2 | **Simplicity** | A reader should be able to check the core by reading it. The governor core is 104 lines (57 of them code) and imports nothing. No framework, no build step, no clever code. |
 | 3 | **Determinism** | Same inputs, same outputs, byte for byte. Fixed past time windows, seeded random numbers, an injected clock, cached traces. |
 | 4 | **Fail-closed safety** | A broken validator or a nonsense input resolves to `block`, never to `allow`. |
-| 5 | **Human in the loop** | Nothing above `degrade` runs without an explicit human approval reaching the point where the action would actually happen. |
+| 5 | **Human in the loop** | Nothing above `degrade` runs without an explicit human approval reaching the point where the action would actually happen — and `terminate` does not run even with one. |
 | 6 | **Portability of the core** | The governor knows nothing about HTTP, charging protocols or approval boards. Swap every adapter and the core is unchanged. |
 
 ### Who reads this
@@ -56,13 +56,13 @@ article; anyone who wants to re-run the numbers or extend the package.
 
 | Constraint | Why | Consequence |
 |---|---|---|
-| **Plain JavaScript, ES modules, Node 22 or newer** | A reader should not need a toolchain to check the code | No TypeScript, no transpiler, no bundler, no test framework beyond Node's built-in `node:test` |
+| **Plain JavaScript, ES modules, Node 22.9 or newer** | A reader should not need a toolchain to check the code | No TypeScript, no transpiler, no bundler, no test framework beyond Node's built-in `node:test`. 22.9 is the floor because the scripts use `--env-file-if-exists`. |
 | **Exactly one runtime dependency** | The one dependency is the thing under test: `kaiban-distributed@2.0.0`, which ships the real action gate and audit log | Nothing else may be added to `dependencies`. Everything else is a Node built-in. |
-| **No wall-clock reads anywhere that affects a result** | Determinism | Time windows are fixed past dates; the gate is given an injected clock; freshness in the data-plane run is measured against a fixed reference date, not "now" |
+| **No wall-clock read may affect a conclusion** | Determinism | Time windows are fixed past dates; the gate is given an injected clock; freshness in the data-plane run is measured against a fixed reference date, not "now". One documented exception: `fetchedAt` in the live data-plane run is a real wall-clock read, because it records when a live fetch happened (ADR-007). |
 | **Carbon data is CC BY 4.0** | The grid traces come from the National Energy System Operator's Carbon Intensity API | The attribution must appear in the repository and in anything derived from the data |
 | **No claim of a deployment that does not exist** | Honesty | The gateway is the author's own reference deployment. No third party publishes into it. The wording never implies otherwise. |
 | **The charging scenario may only shift start times** | The underlying demand-shaping mechanism is the subject of a patent application on which the author is a co-inventor; this work sits strictly above it | `simulation/charging.js` contains no discharge, no vehicle-to-grid, and no state-of-charge logic. Every vehicle always gets its full charge before its deadline. |
-| **Files stay small and single-purpose** | Readability | Roughly 150 lines is the working ceiling for a source file |
+| **Files stay small and single-purpose** | Readability | Roughly 150 lines is the target. Four files are above it with a written reason (`fitness/props.js`, `simulation/run.js`, `simulation/charging.js`, `dataplane/measure.js`); the list and the reasons are in ADR-001, and nothing else may cross it without joining that list. |
 
 ---
 
@@ -73,11 +73,12 @@ article; anyone who wants to re-run the numbers or extend the package.
 ### What is inside this repository
 
 - The **Carbon-Verdict Governor** reference core and the adapter that plugs it into the real gate (`governor/`).
-- Nine **architecture fitness functions** (`fitness/`).
+- Twelve **architecture fitness functions** (`fitness/`).
 - **Live measurement** of the public data plane (`dataplane/`).
 - **Trace-driven simulation**: an agentic workload and an EV-charging night (`simulation/`).
-- A one-command **demo** and a **live agent run** (`demo/`, `agent/`).
+- A one-command **demo** and an optional **live agent run** (`demo/demo.js`, `demo/agent.js`).
 - **Committed inputs and outputs** (`data/`, `results/`) so a reader can check the numbers without running anything.
+- **Shared leaf utilities** (`shared/`): the seeded generator and one definition of median, p95 and standard deviation for the whole package.
 
 ### What is outside, and how this package touches it
 
@@ -113,6 +114,10 @@ Five decisions carry the whole design.
    an approval board — is an adapter behind one of those ports. The core file
    imports nothing at all, and a fitness function checks that statically.
 
+   Three of those four ports have an adapter here. **The forecast port is
+   designed, not built**: the simulations read the peer signal straight out of
+   the cached trace, so there is no file to point at for it.
+
 2. **One gate, one total order.** Every carbon-relevant decision goes through a
    single gate that aggregates all validator opinions to the most severe verdict
    on the ladder `allow < degrade < escalate < block < terminate`. Scattered
@@ -132,7 +137,12 @@ Five decisions carry the whole design.
 5. **Everything reproducible and committed.** Inputs are cached under `data/`,
    outputs are committed under `results/`, and every script is deterministic
    except the live network measurement, whose only unstable numbers are
-   latencies.
+   latencies and the `fetchedAt` stamp.
+
+6. **One actuation path.** `governor/harness.js` is the only code in this package
+   that turns a verdict into something running. Every adapter — both simulations
+   and both demos — calls it. A fitness rule checks that each actuating adapter
+   really imports it, so the human-in-the-loop guarantee cannot be reached around.
 
 ---
 
@@ -144,13 +154,14 @@ Five decisions carry the whole design.
 
 | Folder | Responsibility |
 |---|---|
-| `governor/` | The reference core and its gate adapter. The only part that is architecture rather than evaluation. |
-| `fitness/` | Nine executable checks of architectural properties, plus the tiny actuation harness they check against. |
+| `governor/` | The reference core, its gate adapter, and the actuation harness. The only part that is architecture rather than evaluation. |
+| `fitness/` | Twelve executable checks of architectural properties, and the code that renders them into `results/fitness.md`. |
+| `shared/` | Leaf utilities used by everything: the seeded generator and one definition of median, p95 and standard deviation. Imports nothing but Node built-ins. |
 | `simulation/` | Two trace-driven experiments and their shared plumbing. |
 | `dataplane/` | Live measurement of the public gateway and analysis of its real request logs. |
-| `demo/` | A one-command walkthrough: one real document, one decision, one verdict. |
-| `agent/` | An optional live run with a real language model in front of the same gate. |
+| `demo/` | Two one-command walkthroughs: `demo.js` (one real document, one decision, five verdicts) and `agent.js` (the same with a real language model proposing and a real person on the human port). |
 | `data/` | Cached inputs: grid traces, fetched documents, raw request logs. |
+| `tools/` | `check-numbers.js`, which re-reads every hand-typed headline number in the docs against `results/`. |
 | `results/` | Committed outputs: one JSON and one short Markdown reading per experiment. |
 | `docs/` | This document, the product spec, the decision records, the fitness-function rationale, the search protocol, the artifact inventory. |
 
@@ -160,20 +171,27 @@ Five decisions carry the whole design.
 
 | Module | Responsibility | Notes |
 |---|---|---|
-| `governor/carbon-governor.js` | Holds a carbon budget in grams CO2e, tracks what has been spent, turns a *committed / budget* ratio into a verdict, and exposes the reference aggregation rule `mostSevere()` | Under 70 lines. Imports nothing. `decide()` has no side effects; `commit()` is the only thing that moves state. |
-| `governor/gate.js` | Builds the real `ActionGate` with the governor registered as a validator and a real `AuditLog` behind it; gives it a deterministic injected clock | Imports exactly two things: `kaiban-distributed` and the core |
-| `fitness/props.js` | The nine properties F1–F9, each an exported function returning `{ id, property, cases, passed, notes }` | The property logic lives here once; the test files and the report both call it |
-| `fitness/fN.test.js` | One `node:test` file per property, asserting on `passed` | Nine files, about 15 lines each |
-| `fitness/harness.js` | The human port: the only path in the package from a verdict to actually running something | About 20 lines. `allow` and `degrade` run automatically; anything higher needs an explicit approved approval object. |
-| `shared/prng.js`, `shared/stats.js` | Seeded random numbers (mulberry32) and one definition of median/p95/sd for the whole package | So property cases are reproducible and every "p95" means the same thing |
-| `fitness/report.js` | Runs the same nine properties and writes `results/fitness.json` | No duplicated logic |
+| `governor/carbon-governor.js` | Holds a carbon budget in grams CO2e, tracks what has been spent, turns a *committed / budget* ratio into a verdict, and exposes the reference aggregation rule `mostSevere()` | 104 lines. Imports nothing. `decide()` has no side effects; `commit()` is the only thing that moves state, and it throws on a non-finite or negative value rather than committing a silent zero. |
+| `governor/harness.js` | The human port, and the only path in the package from a verdict to actually running something | Imports nothing. `allow` and `degrade` run automatically; `escalate` and `block` need an approval whose `approved` field is exactly `true`; `terminate` never runs. |
+| `governor/gate.js` | Builds the real `ActionGate` with the governor registered as a validator and a real `AuditLog` behind it; gives it a deterministic injected clock. `gated()` normalises any verdict that is not on the ladder to `block`, keeping the original under `rawAction`; `chainAnchor()` and `verifyAnchored()` live here too | Imports exactly two things: `kaiban-distributed` and the core |
+| `fitness/props.js` | The twelve properties F1–F12, each an exported function returning `{ id, property, cases, passed, notes }` | The property logic lives here once; the test files and the report both call it. Above the size target on purpose — see ADR-001. |
+| `fitness/fN.test.js` | One `node:test` file per property, asserting on `passed` | Twelve files, about 15 lines each |
+| `fitness/import-graph.js` | Parses every source file's import statements into the real import graph that F7 checks | A per-statement scanner, not a regex over the whole file |
+| `fitness/report.js` | Runs the same twelve properties and writes both `results/fitness.json` and `results/fitness.md` | No duplicated logic, and no hand-written result file |
+| `shared/prng.js`, `shared/stats.js` | Seeded random numbers (mulberry32) and one definition of median/p95/sd for the whole package | So property cases are reproducible and every "p95" means the same thing. A leaf: nothing in `shared/` imports anything from the package. |
+| `tools/check-numbers.js` | Re-reads every hand-typed headline number in `README.md` and the docs and compares it with `results/*.json` | Registered as fitness function F12; part of `npm test` |
 | `simulation/fetch-traces.js` | Fetches and caches the real grid traces onto a canonical half-hourly grid | The only script in `simulation/` that touches the network |
-| `simulation/lib.js` | Seeded random numbers, statistics, trace loading, and the synthetic workload generator with all its knobs in one object | |
-| `simulation/run.js` | Experiment E2: three policies over the same task list — always-run, threshold deferral, and the governor at five budget levels | |
-| `simulation/charging.js` | Experiment E3: a fleet of EVs shifting charge start times under the gate and a human approval | Start times only, by construction |
-| `simulation/report.js` | Renders the Markdown readings. Recomputes nothing. | |
-| `dataplane/measure.js` | Fetches every document the gateway serves, five times each, and checks members, schema, disclaimers, size, latency and freshness | Live network |
-| `dataplane/logs.js` | Reads the already-pulled raw request log file and counts what it contains | Does not shell out to anything |
+| `simulation/lib.js` | Trace loading, the canonical slot grid, and the synthetic workload generator with all its knobs in one object | Draws its randomness and its statistics from `shared/`; it does not define its own |
+| `simulation/run.js` | Experiment E2: the policies over the same task list — always-run, threshold deferral (whole-window and trailing-median variants), and the governor at five budget levels | |
+| `simulation/charging.js` | Experiment E3: a fleet of EVs shifting charge start times under the gate and an owner approval | Start times only, by construction |
+| `simulation/report.js` | Renders the Markdown readings for E2 and E3. Recomputes nothing. | |
+| `simulation/lib.test.js`, `simulation/policies.test.js` | Unit tests for the trace and workload plumbing, and for the rung semantics of the two policies | Part of `npm test`; not fitness functions |
+| `dataplane/measure.js` | Fetches every document the gateway serves, five times each, and checks members, schema, disclaimers, size, latency and freshness | Live network. The only adapter allowed one external import: the optional reference consumer library (ADR-017). |
+| `dataplane/doc-check.js` | The member, disclaimer and freshness checks for one document, separated from the fetching | Pure; no network |
+| `dataplane/logs.js` | Reads the already-pulled raw request log file and counts what it contains | Does not shell out to anything. Hashes client IPs on ingest. |
+| `dataplane/report.js` | Renders `results/dataplane.md` from the JSON. Recomputes nothing. | |
+| `dataplane/measure.test.js` | Unit tests for the document checks | Part of `npm test`; not a fitness function |
+| `demo/meaning.js` | The one MEANING table both demos print, in the wording of section 8 | So the two demos cannot describe a rung differently |
 
 ---
 
@@ -190,9 +208,13 @@ has already spent, divides by the budget, and reads the ratio off the ladder. Th
 gate takes the most severe verdict any validator returned, writes a hash-chained
 audit record, and returns it. Then:
 
-- `allow` or `degrade` — the action runs (smaller, in the degrade case), and the actual grams are committed to the budget.
-- `escalate` — a human is asked. The action runs only if the human approves.
-- `block` or `terminate` — the action does not run.
+- `allow` — the action runs as proposed, and the actual grams are committed to the budget.
+- `degrade` — the action runs smaller. Work that can wait is *deferred* instead: paused now, run at full energy later, in the cleanest slot the peer signal predicts before its deadline (ADR-016).
+- `escalate` — a human is asked. On approval the action does the same physical thing as `degrade` — defer, or run reduced. Without approval nothing runs.
+- `block` — the action as proposed does not run. A human may authorise the reduced or deferred fallback, and nothing else. Without that approval nothing runs.
+- `terminate` — nothing runs, and no human is asked. It is not overridable.
+
+Section 8 gives the same five rungs as one table, per adapter.
 
 ### 6.2 One simulated day
 
@@ -212,10 +234,12 @@ verified.
 `simulation/charging.js` runs the same window as nights. Fifty vehicles plug in
 around 18:00 and must be full by 07:00. For each vehicle the agent finds the
 cleanest three-hour window the peer signal predicts, and asks the gate about
-moving the charge there. If the gate says `allow`, `degrade` or `escalate`, a
-human is asked; if the human agrees, the charge is moved. If the gate refuses, or
-the human declines, the car charges the moment it was plugged in — it charges
-either way. What is withheld is the improvement, never the electricity.
+moving the charge there. If the gate says `allow`, `degrade` or `escalate`, the
+owner is asked; if the owner agrees, the charge is moved. Asking the owner even on
+`allow` is a *product* rule, not a gate rule: it is somebody's car. If the gate
+says `block` or `terminate`, the shift is refused outright with no fallback and no
+one asked, and the car charges the moment it was plugged in. It charges either
+way. What is withheld is the improvement, never the electricity.
 
 ### 6.4 One data-plane measurement
 
@@ -232,10 +256,13 @@ file that was pulled separately and summarises the real traffic the gateway serv
 `npm run demo` fetches one real document from the public gateway, turns its
 carbon-intensity figure into an estimate for one action, sends that action through
 the real gate, and prints the verdicts. If the network is unavailable it falls
-back to a committed fixture and says so. `npm run agent` does the same with a real
-language model proposing the action; when the verdict is `escalate` it asks *you*,
-at the terminal, to approve. It needs an API key; without one it explains that and
-exits.
+back to a committed fixture and says so. It prints one action per rung, so all
+five verdicts and their meanings appear in one screen. `npm run agent` does the
+same with a real language model proposing the action; when the verdict is
+`escalate` it asks *you*, at the terminal, to approve, and when the verdict is
+`block` it asks whether you authorise the reduced fallback instead. On `terminate`
+it asks nothing. It needs an API key; without one it explains that and exits.
+Neither command produces a number that appears anywhere in `results/`.
 
 ---
 
@@ -255,12 +282,14 @@ There is one deployment: a developer's machine.
 | Command | Network | Notes |
 |---|---|---|
 | `npm run fitness` / `npm test` | none | Pure in-process |
+| `npm run check:docs` | none | Re-reads the docs against `results/` |
 | `npm run simulate`, `npm run charging` | none | Read the cached traces |
 | `npm run fetch-traces` | NESO Carbon Intensity API | Run once; keyless |
 | `npm run dataplane` | the public gateway | Live; latency numbers will differ per run |
 | `npm run demo` | one document from the gateway | Falls back to a committed fixture offline |
 | `npm run agent` | the gateway and the OpenRouter API | Needs `OPENROUTER_API_KEY` (in `.env`, gitignored) |
-| `npm run arch` | none | Draws the import graph with `madge` |
+| `npm run arch` | none | Checks for circular imports with `madge` |
+| `npm run arch:graph` | none | Draws the whole import graph with `madge` — this is what produced `results/madge.txt` |
 
 No server is deployed by this package. No broker, no database, no container. The
 gate's semantics do not depend on any of that — it is in-process code — which is
@@ -277,6 +306,48 @@ set of validator opinions has exactly one most severe member, so concurrent
 policies always aggregate to a single answer. Fitness functions F1 and F9 check
 that the shipped gate really computes that maximum and that the package's
 reference rule computes the same thing.
+
+### Stopped, refused and paused are three different things
+
+`terminate` is **stopped**: it does not happen and nobody can make it happen.
+`block` is **refused**: what was proposed does not happen, but a person may
+authorise a smaller or later version. A deferred task is **paused**: authorised,
+not refused, not stopped, just waiting for a cleaner slot.
+
+This is the canonical table. ADR-006, `PRODUCT.md` UC-4, `demo/meaning.js` and the
+README's plain-words version all point at it rather than restating it.
+
+| Rung | Who authorises | Core rule (`governor/harness.js`) | E2 workload simulation (`simulation/run.js`) | E3 charging simulation (`simulation/charging.js`) | `demo/agent.js` |
+|---|---|---|---|---|---|
+| `allow` | automatic | runs | runs now, at full energy | shift proposed; the owner's consent is still required (a product rule, not a gate rule) | "would run" |
+| `degrade` | automatic | runs in reduced form | **non-deferrable:** runs now at `degradedFraction`. **deferrable:** deferred — paused, and later run at full energy in the cleanest slot the peer signal predicts before its deadline | shift proposed; owner consent | "would run, reduced" |
+| `escalate` | a human decides | runs only with `approval.approved === true` | a human is asked; on approval the task does the same physical thing as `degrade` (defer, or run reduced). Counted as **1 human decision** | shift proposed; owner consent | prompts y/n; runs as proposed on y |
+| `block` | withheld; a human **may** authorise a reduced or deferred fallback | runs only with `approval.approved === true`, and then only the fallback | a human is asked whether to authorise the fallback; on approval the task does the same physical thing as `degrade`. Counted as **1 human decision** | refused outright, no fallback — the car charges exactly as it would have without the agent | prompts: authorise a REDUCED run (`degradedFraction`) y/n; nothing else is offered |
+| `terminate` | nobody — not overridable | never runs; no human is asked | task dropped | refused | "stopped — nothing runs" |
+
+Three things follow:
+
+- **Human decisions = every `escalate` verdict + every `block` verdict** in E2 — what `humanDecisions` counts, and what the article's "19 and 30 escalate-or-block cases per day" means. `blocksDeferrable` and `humanDecisionsIfDeferralAutomatic` report the sensitivity: 442.9 (winter) and 637 (summer) over 28 days — about 16 and 23 a day — against 545.7 and 853 when every block is approved; the difference is the 102.8 and 216 block verdicts on deferrable work.
+- **A deferred task is gated exactly once**, on arrival. One task, one verdict, one audit record (ADR-016).
+- **`block` in E3 has no fallback.** A car is not a task you can run at 40%; the refusal falls back to charging naively.
+
+### What is upstream's and what is this package's
+
+`kaiban-distributed@2.0.0` ships the aggregation rule (most-severe-wins), the
+fail-closed behaviour on a validator error, the hash-chained audit log, and the
+registry kill-switch. It does **not** ship the meaning of the rungs: its default
+actor path treats `allow` and `degrade` as "proceed" and sends `escalate`, `block`
+and `terminate` alike to a dead letter, with no human-approval port. The semantics
+above are this package's.
+
+So F1, F2, F5, F6, F8 and F9 test shipped code; F3 and F4 test this package's
+semantics; F7, F10, F11 and F12 test this repository's structure and honesty. A
+green table is not a claim that the runtime guarantees the human-in-the-loop part.
+
+Upstream's `WorkflowOrchestrator` / `CheckpointStore` (Redis) do
+checkpoint-and-resume for crash recovery — the natural home for a production
+"pause and rehydrate" of a deferred task, but unrelated to governance and not used
+here.
 
 ### The ladder is driven by a pacing ratio
 
@@ -301,6 +372,13 @@ recomputes the chain; changing one field of one record makes `verify()` fail and
 name the index where it broke. F6 checks both. Every simulation arm verifies its
 chain at the end and records the result.
 
+What that does and does not buy, because "tamper-proof" would be too strong:
+
+- **Edits are detected** by `verify()`, which names the index (F6, F10).
+- **Truncation is not**, by `verify()` alone — a shortened chain is still consistent. F10 asserts that honestly.
+- **Truncation is detected with an anchor**: `chainAnchor(records)` returns `{ length, tipHash }`, and `verifyAnchored(audit, anchor)` compares against one taken earlier (F10).
+- **The log is tamper-*evident*, not tamper-*resistant*.** `records()` returns live objects, so code in the process can mutate them; `verify()` will notice, but nothing prevents it. Not persisted, not signed (section 11).
+
 ### Determinism
 
 Nothing that affects a result reads the wall clock, calls the network at run time,
@@ -312,11 +390,20 @@ byte-identical decisions *and* byte-identical audit records.
 
 ### The human port
 
-`fitness/harness.js` is the only path in this package from a verdict to running
-something. `allow` and `degrade` run on their own. Anything above them runs only
+`governor/harness.js` is the only path in this package from a verdict to running
+something. `allow` and `degrade` run on their own. `escalate` and `block` run only
 if an approval object is present and its `approved` field is exactly `true`.
-F4 checks this over random decisions. The simulations use simulated approvers,
-which is a real limitation and is named as such in section 11.
+`terminate` never runs, approval or not.
+
+The harness imports nothing, so no adapter can reach around it by importing
+something cleverer. F7 additionally requires that every adapter which actuates —
+`simulation/run.js`, `simulation/charging.js`, `demo/demo.js`, `demo/agent.js` —
+really imports it. F4 checks the rule over random decisions, F5 asserts
+`executed === (autoRun || approved)` per case, and `simulation/policies.test.js`
+asserts that `terminate` does not run even when handed an approved approval.
+
+The simulations use simulated approvers, which is a real limitation and is named
+as such in section 11.
 
 ### Provenance labels
 
@@ -334,7 +421,7 @@ real data used as a stand-in, not real peer publications.
 
 ## 9. Architecture decisions
 
-Fifteen decisions are recorded in [`docs/adr/`](../adr/). Each one is short:
+Eighteen decisions are recorded in [`docs/adr/`](../adr/). Each one is short:
 context, decision, consequences, alternatives considered.
 
 | ADR | Decision |
@@ -344,7 +431,7 @@ context, decision, consequences, alternatives considered.
 | [ADR-003](../adr/ADR-003-core-imports-nothing.md) | The governor core imports nothing |
 | [ADR-004](../adr/ADR-004-five-rung-ladder-and-rungs.md) | A five-rung ladder driven by a pacing ratio, rungs 0.8 / 1.0 / 1.1 / 1.25 |
 | [ADR-005](../adr/ADR-005-fail-closed.md) | Fail closed on bad input and on validator errors |
-| [ADR-006](../adr/ADR-006-human-port-and-stop-rungs.md) | Escalation goes to the human port; block and terminate stop the action |
+| [ADR-006](../adr/ADR-006-human-port-and-stop-rungs.md) | Escalation and block go to the human port; terminate is never overridable; the harness is the only actuation path |
 | [ADR-007](../adr/ADR-007-determinism.md) | Determinism by construction |
 | [ADR-008](../adr/ADR-008-real-grid-traces.md) | Real NESO traces: national actual for emissions, regional forecasts as peer stand-ins |
 | [ADR-009](../adr/ADR-009-synthetic-workload-parameters.md) | Synthetic workload parameters live at the top of their file |
@@ -354,6 +441,9 @@ context, decision, consequences, alternatives considered.
 | [ADR-013](../adr/ADR-013-fitness-functions-as-test-layer.md) | Fitness functions are the architecture test layer |
 | [ADR-014](../adr/ADR-014-demo-live-document-with-fixture-fallback.md) | The demo reads one live document, with a fixture fallback |
 | [ADR-015](../adr/ADR-015-cc-by-attribution.md) | CC BY 4.0 attribution for the grid data |
+| [ADR-016](../adr/ADR-016-gate-once-on-arrival-execute-later.md) | Gate once on arrival, execute later: the deferral queue |
+| [ADR-017](../adr/ADR-017-consumer-library-optional.md) | The reference consumer library is resolved at run time; its absence is reported as "not measured" |
+| [ADR-018](../adr/ADR-018-openrouter-for-the-agent-demo.md) | The optional agent demo calls OpenRouter over plain HTTPS, defaulting to `anthropic/claude-sonnet-5` |
 
 ---
 
@@ -363,26 +453,33 @@ Each quality goal from section 1, as a scenario that a script can settle.
 
 | # | Goal | Scenario | Settled by | Status |
 |---|---|---|---|---|
-| Q1 | Fail-closed safety | A validator throws, or the carbon estimate is `NaN`, negative, missing, or a string | F2, 75 cases | Green — [`results/fitness.md`](../../results/fitness.md) |
+| Q1 | Fail-closed safety | A validator throws, the carbon estimate is `NaN`, negative, missing or a string, or a validator returns a verdict that is not on the ladder | F2, 100 cases | Green — [`results/fitness.md`](../../results/fitness.md) |
 | Q2 | Fail-closed safety | Two validators disagree; one wants `allow`, one wants `terminate` | F1 and F9, 4,000 cases | Green |
 | Q3 | Predictability | Budget pressure rises step by step; severity must never fall | F3, plus the four default rung boundaries pinned exactly | Green |
-| Q4 | Human in the loop | A verdict of `escalate`, `block` or `terminate` arrives with no approval, or with a refusal | F4, 2,000 cases | Green |
+| Q4 | Human in the loop | A verdict of `escalate`, `block` or `terminate` arrives with no approval, or with a refusal; and `terminate` arrives *with* an approval | F4 and F5, 4,100 cases, plus `simulation/policies.test.js` | **Green (the harness is the actuation path used by every adapter as of v1.1.0)** — before v1.1.0 the harness was the tested path but not provably the only one, because nothing checked that the adapters went through it |
 | Q5 | Nothing runs unaudited | Actions of every operation type the gate defines are evaluated; the audit length must equal executed plus refused | F5, 2,100 cases | Green |
-| Q6 | Evidence integrity | One field of one audit record is changed after the fact | F6, 500 decisions; `verify()` must fail at that index | Green |
-| Q7 | Portability of the core | Static check of the import graph: the core imports nothing, the gate adapter imports only the runtime and the core, adapters do not import each other | F7, 15 checks | Green |
+| Q6 | Evidence integrity | One field of one audit record is changed after the fact; and the tail of the chain is truncated | F6 plus F10, 800 cases. `verify()` must fail at the edited index; truncation is caught by `verifyAnchored()` and, honestly recorded, **not** by `verify()` alone | Green |
+| Q7 | Portability of the core | Static check of the import graph: `governor/carbon-governor.js` and `governor/harness.js` import nothing, the gate adapter imports only the runtime and the core, adapters do not import each other, every actuating adapter imports the harness, and the one external-library exception is named | F7, 24 checks | Green |
 | Q8 | Determinism | The same estimate sequence through two fresh gates | F8, 300 steps; decisions and audit records must be byte-identical | Green |
-| Q9 | Traceability | Every number in the article can be pointed at a file in `results/` | By construction; the inventory in [`docs/ARTIFACT-INVENTORY.md`](../ARTIFACT-INVENTORY.md) covers the artifacts the scripts do not measure | Maintained by hand |
-| Q10 | Simplicity | The governor core stays readable in one sitting | Under 70 lines, zero imports; F7 keeps it that way | Green |
+| Q9 | Traceability | Every number in the article can be pointed at a file in `results/`, and every hand-typed number in the docs still matches it | F12 (`tools/check-numbers.js`), plus the inventory in [`docs/ARTIFACT-INVENTORY.md`](../ARTIFACT-INVENTORY.md) for artifacts the scripts do not measure | Green for the numbers a script produces; the inventory is still maintained by hand |
+| Q10 | Simplicity | The governor core stays readable in one sitting | 104 lines, of which 57 are code and the rest are comments and blanks; zero imports; F7 keeps it that way and F12 keeps this row honest | Green |
 
-All nine fitness functions pass, over 10,994 cases in total. The same gate and
-audit code carries its own upstream suite of 71 tests, which also passes
-(`results/kaiban-upstream-tests.json`, commit `17ad362`).
+All twelve fitness functions pass, over 13,366 cases in total. Version 1.0.0
+— the snapshot the article cites — had nine, over 10,994 cases; the difference is
+properties added, not properties fixed. The same gate and audit code carries its
+own upstream governance suite (4 files, 71 tests), which also passes
+(`results/kaiban-upstream-tests.json`, commit `17ad362`), and an upstream
+end-to-end suite of 69 tests against a real Redis broker
+(`results/kaiban-upstream-e2e.json`, same commit).
 
 ---
 
 ## 11. Risks and technical debt
 
 Written plainly, because these are the things that would change the conclusions.
+R1 to R10 below are the canonical list; [`docs/LIMITATIONS.md`](../LIMITATIONS.md)
+indexes every other place in the repository where a limitation is stated, so a
+reader can check that they all say the same thing.
 
 | # | Risk | What it means | What would fix it |
 |---|---|---|---|
@@ -394,14 +491,25 @@ Written plainly, because these are the things that would change the conclusions.
 | R6 | **The approvers are simulated** | In the workload simulation the approver always agrees; in the charging simulation it is a seeded coin at 100% and 80%. Real human friction, latency and fatigue are untested. | A study with real approvers |
 | R7 | **The MCP servers are not evaluated** | The charging scenario runs through the governor and the gate, not over a live charging protocol. The tool servers exist as separate prototypes and are inventoried, not measured. | A gated end-to-end run against a real protocol endpoint |
 | R8 | **Ten seeds, two windows** | Ten seeds per configuration and two 28-day windows (one winter, one summer) in one country. The spread between seeds is reported, but this is not a wide sample. | More seeds, more windows, more regions, more countries |
-| R9 | **The gate is one runtime** | The properties are checked against one implementation of the ladder, in one process. | A second independent implementation to check against |
+| R9 | **The gate is one runtime** | The properties are checked against one implementation of the ladder, in one process. And the ladder's *meaning* — the human port, `block` as a refusal with a fallback, `terminate` as unoverridable — is this package's, not the runtime's; the runtime treats the top three rungs alike. | A second independent implementation to check against, and the semantics merged upstream |
 | R10 | **The absence claims are search results** | The novelty claims rest on a documented adversarial search on a stated date. Absence of evidence in those sources, nothing more. | Documented in [`docs/SEARCH-PROTOCOL.md`](../SEARCH-PROTOCOL.md); readers are asked to open an issue if they find a prior composition |
 
 ### Technical debt
 
-- `dataplane/measure.js` imports the reference consumer library by an absolute path on the author's machine. On any other machine that import fails, so `npm run dataplane` is not portable as written. The committed results and the saved documents are unaffected.
-- The result files are regenerated by hand, in a fixed order. There is no single script that rebuilds everything and checks the Markdown against the JSON.
-- `data/dataplane/` holds a snapshot from one run. Re-running the measurement overwrites it.
+Fixed in v1.1.0, recorded because the v1.0.0 archive still has them: the
+data-plane run's absolute-path import of the consumer library (ADR-017); no single
+command that rebuilt everything (`npm run all`, plus F12); a hand-written
+`results/fitness.md`; client IP addresses in the raw request log, now stored only
+as a salted hash whose salt is discarded.
+
+Still open:
+
+- **The shipped gate passes a non-ladder action through verbatim** instead of failing closed on it. `gated()` normalises it to `block` and keeps the original under `rawAction`, so nothing downstream sees it — but the gap is upstream's, and is to be reported there.
+- **The audit log is tamper-evident, not tamper-resistant**, in memory, not persisted and not signed. `verify()` catches an edit and `verifyAnchored()` catches a truncation; nothing prevents either.
+- **`fetchedAt` is a real wall-clock read** — the honest exception to determinism (ADR-007), which is why `results/dataplane.json` never diffs clean.
+- **The forecast port is designed, not built**, and so is the wiring from the human port to a real approval board.
+- **`data/dataplane/` is a snapshot** that re-running overwrites.
+- **The deferral queue is in memory** for one simulated arm; nothing is persisted (ADR-016).
 
 ---
 
@@ -410,22 +518,33 @@ Written plainly, because these are the things that would change the conclusions.
 | Term | Plain meaning |
 |---|---|
 | **Adapter** | A piece of code that plugs a concrete outside system into a port. Swap the adapter, the core is unchanged. |
+| **`allow`** | Lowest rung. Runs as proposed, automatically. |
+| **Arm** | One run of one policy, at one setting, with one seed, over one window. A result row is the mean of ten arms. |
 | **Action gate** | The single place every consequential action must pass through. It collects validator opinions, picks the most severe, records the decision, and returns it. |
-| **Audit chain** | An append-only log where each record's hash covers the previous record's hash. Editing an old record breaks the chain visibly. |
+| **Audit chain** | An append-only log where each record's hash covers the previous one. An edit breaks it visibly; a truncation does not, without an anchor. |
+| **`block`** | Fourth rung. Refused: a human may authorise the reduced or deferred fallback and nothing else. |
+| **Budget factor (f)** | The daily budget as a multiple of the median uncontrolled day: `f = 1.0` is the loosest setting evaluated, `f = 0.6` the tightest. |
 | **Carbon budget** | An allowance of grams of CO2-equivalent for a period, here a day or a night. |
 | **Carbon intensity** | How dirty the electricity is right now, in grams of CO2-equivalent per kilowatt-hour. |
 | **Carbon-Verdict Governor** | The reference core in `governor/`: it maps carbon-budget state onto the verdict ladder. |
+| **Chain anchor** | `{ length, tipHash }` taken from a chain at a moment in time. Catches truncation, which `verify()` alone cannot. |
 | **Cybernetic Sustainability Loop** | The whole composition: publish, sense, decide, gate, act, publish again. |
 | **Deferrable task** | Work that may run later, up to a deadline. Half the simulated workload is deferrable within six hours. |
+| **Deferral queue** | Where a paused task waits. Gated once on arrival, run later at full energy in the chosen slot, never re-gated (ADR-016). |
+| **`degrade`** | Second rung, automatic. Runs smaller, or is paused to a cleaner slot if it can wait. |
+| **`escalate`** | Third rung. A human decides; on approval the action does what `degrade` would have done. |
+| **Forecast port** | Where load and generation forecasts would reach the core. **Designed, not built.** |
 | **Fitness function** | An automated, repeatable test of an *architectural* property, not of a feature. The term is from Ford, Parsons and Kua. |
 | **Gated Grid Actuation** | The pattern of exposing physical operations to agents only as typed tools behind the same gate and the same human approval. Prototyped elsewhere; simulated here. |
 | **Hexagonal architecture** | Ports and adapters, in Cockburn's sense: the domain logic in the middle, everything external plugged in at the edges. |
 | **kaiban-distributed** | The open-source distributed agent runtime whose shipped action gate and audit log this package imports and tests against. |
 | **National actual** | The measured grid carbon intensity for Great Britain. Ground truth for every gram reported here. |
 | **Pacing ratio** | Spent plus this action's estimate, divided by the budget. The number the ladder reads. |
+| **Pacing versus capping** | Pacing spreads spending (the `degrade` rung fires at 80% of the budget); capping would stop dead at 100%. This governor paces, so days still end over budget (R3). |
 | **Peer signal** | What another system publishes about its own carbon intensity. Here, stood in for by regional forecasts. |
-| **Port** | An interface the core owns: signal, forecast, human, actuation. |
+| **Port** | An interface the core owns: signal, forecast, human, actuation. Three have adapters here; the forecast port does not. |
 | **Regional forecast** | The grid API's per-region prediction. There is no regional *actual* to check it against. |
 | **Sustainability Signal Plane** | The publish-and-consume layer: every participating system is both a reporter and a sensor. |
+| **`terminate`** | Top rung. Nothing runs, nobody is asked, and an approval does not lift it. |
 | **Verdict ladder** | `allow < degrade < escalate < block < terminate`, in that order, always. |
 | **Well-known URI** | A standard web address every site can serve, like `robots.txt`. Here: `/.well-known/sustainability-data`. |

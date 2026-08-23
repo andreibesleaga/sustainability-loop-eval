@@ -8,11 +8,11 @@ authors:
     given-names: Andrei N.
     orcid: "https://orcid.org/0009-0001-3464-5283"
 year: 2026
-license: MIT
+license: GPL-3.0-only
 repository-code: "https://github.com/andreibesleaga/sustainability-loop-eval"
-doi: 10.5281/zenodo.22056634
-version: "1.0.0"
-date-released: "2026-08-22"
+doi: 10.5281/zenodo.22056633
+version: "1.1.0"
+date-released: "2026-08-23"
 keywords:
   - sustainability
   - carbon-aware computing

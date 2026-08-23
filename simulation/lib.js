@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
  * simulation/lib.js — trace loading and the synthetic workload generator.
  *
@@ -90,4 +91,26 @@ export function generateWorkload(seed, slots, w = WORKLOAD, slotMinutes = 30) {
     }
   }
   return tasks;
+}
+
+// ── Trailing threshold (P1t) ──────────────────────────────────────────────────
+/**
+ * For each slot, the median of the `windowSlots` slots STRICTLY BEFORE it.
+ *
+ * The P1 baseline uses the median of the whole window, which a scheduler running in
+ * real time could not know (ADR-010 discloses that lookahead). This is the causal
+ * version: at slot i only slots [i-windowSlots, i) are visible. Before any history
+ * exists the threshold is +Infinity, i.e. "no reason to defer yet" — the honest
+ * behaviour of a scheduler that has not seen a day of signal.
+ */
+export function trailingMedians(series, windowSlots) {
+  const out = new Array(series.length);
+  for (let i = 0; i < series.length; i++) {
+    const from = Math.max(0, i - windowSlots);
+    if (i === from) { out[i] = Infinity; continue; }
+    const w = series.slice(from, i).sort((a, b) => a - b);
+    const mid = (w.length - 1) / 2;
+    out[i] = w.length % 2 ? w[mid] : (w[Math.floor(mid)] + w[Math.ceil(mid)]) / 2;
+  }
+  return out;
 }

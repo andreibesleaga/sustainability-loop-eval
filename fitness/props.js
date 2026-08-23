@@ -1,17 +1,24 @@
+// SPDX-License-Identifier: GPL-3.0-only
 /**
- * The nine fitness-function properties (F1–F9), each as one exported function
+ * The twelve fitness-function properties (F1–F12), each as one exported function
  * returning a summary { id, property, cases, passed, notes }. Called from both
  * the node:test files (fitness/fN.test.js, which assert on `passed`) and from
- * report.js (which just collects the summaries) so the property logic lives
- * in exactly one place.
+ * report.js (which collects the summaries and renders results/fitness.md) so the
+ * property logic lives in exactly one place.
+ *
+ * F1/F2/F5/F6/F8/F9 test properties of the SHIPPED gate (kaiban-distributed@2.0.0).
+ * F3/F4/F10/F11 test this package's own contribution: the Carbon-Verdict Governor
+ * core, the actuation harness and the audit anchor. F7/F12 are static checks of the
+ * repository itself (import graph; documentation against results/).
  */
 import path from "node:path";
 import { GATE_ACTION_SEVERITY } from "kaiban-distributed";
-import { createCarbonGovernor, mostSevere, LADDER } from "../governor/carbon-governor.js";
-import { makeGate, gated } from "../governor/gate.js";
-import { execute } from "./harness.js";
+import { createCarbonGovernor, mostSevere, severityOf, LADDER, DEFAULT_RUNGS } from "../governor/carbon-governor.js";
+import { makeGate, gated, chainAnchor, verifyAnchored } from "../governor/gate.js";
+import { execute } from "../governor/harness.js";
 import { mulberry32, pick, randInt, randFloat } from "../shared/prng.js";
-import { ROOT, CORE, ADAPTERS, importsOf, jsFilesIn, targetOf } from "./import-graph.js";
+import { ROOT, CORE, SHARED, ADAPTERS, importsOf, jsFilesIn, targetOf, importsModule } from "./import-graph.js";
+import { checkNumbers } from "../tools/check-numbers.js";
 
 
 // ── F1 — Total order / most-severe-wins ─────────────────────────────────────
@@ -24,7 +31,13 @@ export async function f1TotalOrder(cases = 2000) {
   let passed = 0;
   const failures = [];
   for (let i = 0; i < cases; i++) {
-    const governor = createCarbonGovernor({ budgetG: 1000 });
+    const budgetG = randFloat(rng, 10, 5000);
+    const governor = createCarbonGovernor({ budgetG });
+    // Vary the CARBON estimate too, so the deciding verdict is not always the same
+    // rung: the aggregation has to be right for every combination, not just for
+    // "allow plus extras".
+    const estimateG = randFloat(rng, 0, budgetG * 1.6);
+    const carbonAction = governor.decide(estimateG).action; // decide() does not commit
     const n = randInt(rng, 0, 5);
     const extraActions = Array.from({ length: n }, () => pick(rng, LADDER));
     const extraValidators = extraActions.map((action, idx) => ({
@@ -32,8 +45,8 @@ export async function f1TotalOrder(cases = 2000) {
       check: () => ({ action, reason: "fixed", validator: `extra-${idx}` }),
     }));
     const { gate } = makeGate(governor, { extraValidators });
-    const decision = await gated(gate, 0); // estimate 0 -> carbon verdict is "allow"
-    const expected = mostSevere(["allow", ...extraActions]);
+    const decision = await gated(gate, estimateG);
+    const expected = mostSevere([carbonAction, ...extraActions]);
     const maxSeverity = Math.max(...decision.verdicts.map((v) => GATE_ACTION_SEVERITY[v.action]));
     const ok =
       decision.action === expected &&
@@ -49,7 +62,7 @@ export async function f1TotalOrder(cases = 2000) {
     passed: passed === cases,
     notes:
       passed === cases
-        ? `all ${cases} random verdict multisets resolved to the reference mostSevere() with it listed first`
+        ? `all ${cases} random verdict multisets (carbon rung varied across the whole ladder) resolved to the reference mostSevere() with it listed first`
         : `${cases - passed}/${cases} mismatches, e.g. ${JSON.stringify(failures[0])}`,
   };
 }
@@ -60,11 +73,20 @@ export async function f1TotalOrder(cases = 2000) {
 // a malformed carbon estimate can never leak through as anything but block.
 // (c) documents the one intentional bypass: enabled:false is a deployment-time
 // opt-out, not a per-request one — enforcement is all-or-nothing per deployment.
-export async function f2FailClosed({ throwCases = 25, invalidCases = 25, disabledCases = 25 } = {}) {
+// (d) is the ROGUE-VALIDATOR case, and it is the one that found a real upstream gap:
+// the shipped gate ranks verdicts with GATE_ACTION_SEVERITY, which is `undefined` for
+// an action that is not on the ladder, so its sort comparator returns NaN and the
+// ordering collapses to insertion order. Measured on kaiban-distributed@2.0.0, the
+// shipped gate answers **allow** for the verdict set [allow, "not-a-rung", terminate].
+// governor/gate.js's gated() re-aggregates fail-closed when any verdict is off the
+// ladder, which is what this sub-case checks; the raw shipped answer is kept as
+// `rawAction` so the gap stays visible rather than being papered over.
+export async function f2FailClosed({ throwCases = 25, invalidCases = 25, disabledCases = 25, rogueCases = 25 } = {}) {
   const rng = mulberry32(2);
   let passed = 0;
   const failures = [];
-  const cases = throwCases + invalidCases + disabledCases;
+  const cases = throwCases + invalidCases + disabledCases + rogueCases;
+  let rogueMaskedByShippedGate = 0;
 
   for (let i = 0; i < throwCases; i++) {
     const governor = createCarbonGovernor({ budgetG: 1000 });
@@ -95,14 +117,40 @@ export async function f2FailClosed({ throwCases = 25, invalidCases = 25, disable
     if (ok) passed++; else failures.push({ case: "disabled", estimate, decision });
   }
 
+  const ROGUE = "not-a-rung";
+  for (let i = 0; i < rogueCases; i++) {
+    const governor = createCarbonGovernor({ budgetG: 1000 });
+    const others = Array.from({ length: randInt(rng, 0, 3) }, () => pick(rng, LADDER));
+    const actions = [ROGUE, ...others];
+    // Shuffle so the rogue verdict sometimes sits first and sometimes last: the
+    // shipped gate's answer depends on that position, the normalised one must not.
+    for (let k = actions.length - 1; k > 0; k--) {
+      const j = randInt(rng, 0, k);
+      [actions[k], actions[j]] = [actions[j], actions[k]];
+    }
+    const extraValidators = actions.map((action, idx) => ({
+      name: `v-${idx}`, check: () => ({ action, reason: "fixed", validator: `v-${idx}` }),
+    }));
+    const { gate } = makeGate(governor, { extraValidators });
+    const decision = await gated(gate, 0); // carbon verdict is "allow" at estimate 0
+    const expected = mostSevere(["allow", ...actions]); // ROGUE ranks as block severity
+    const ok = decision.action === expected
+      && LADDER.includes(decision.action)
+      && severityOf(decision.action) >= severityOf("block")
+      && decision.rawAction !== undefined
+      && decision.normalisedReason === `non-ladder verdict '${ROGUE}' treated as block (fail closed)`;
+    if (severityOf(decision.rawAction) < severityOf(expected)) rogueMaskedByShippedGate++;
+    if (ok) passed++; else failures.push({ case: "rogue", actions, expected, got: decision.action, raw: decision.rawAction });
+  }
+
   return {
     id: "F2",
-    property: "Fail-closed: throwing validator / invalid estimate -> block; disabled -> documented all-or-nothing passthrough",
+    property: "Fail-closed: throwing validator / invalid estimate / off-ladder verdict -> block or worse; disabled -> documented all-or-nothing passthrough",
     cases,
     passed: passed === cases,
     notes:
       passed === cases
-        ? `all ${cases} cases fail-closed correctly (${throwCases} throw, ${invalidCases} invalid-estimate, ${disabledCases} disabled-passthrough)`
+        ? `all ${cases} cases fail-closed correctly (${throwCases} throw, ${invalidCases} invalid-estimate, ${disabledCases} disabled-passthrough, ${rogueCases} rogue off-ladder verdict). Upstream gap recorded honestly: in ${rogueMaskedByShippedGate}/${rogueCases} rogue cases the SHIPPED gate's own answer was less severe than the correct one (rawAction), because GATE_ACTION_SEVERITY has no entry for an off-ladder action; governor/gate.js re-aggregates fail-closed`
         : `${cases - passed}/${cases} failed, e.g. ${JSON.stringify(failures[0])}`,
   };
 }
@@ -155,35 +203,44 @@ export function f3Monotonicity(cases = 2000) {
 
 // ── F4 — Human binding on top rungs ─────────────────────────────────────────
 // Why it matters: the whole point of escalate/block/terminate is that a human
-// stays in the loop. This proves the reference harness (fitness/harness.js)
-// never runs a task for those rungs unless an approved HumanPort object was
-// actually supplied — the property that closes the loop from verdict to actuation.
+// stays in the loop — and the point of terminate is that even a human cannot
+// wave it through. This proves the reference harness (governor/harness.js) never
+// runs a task for escalate/block unless an approved HumanPort object was actually
+// supplied, and never runs one for terminate under ANY approval: the property that
+// closes the loop from verdict to actuation.
 export function f4HumanBinding(cases = 2000) {
   const rng = mulberry32(4);
   let passed = 0;
+  let terminateCases = 0, terminateRefused = 0, terminateApproved = 0;
   const failures = [];
   for (let i = 0; i < cases; i++) {
     const action = pick(rng, LADDER);
     const hasApproval = rng() < 0.5;
     const approved = hasApproval ? rng() < 0.5 : false;
     const approval = hasApproval ? { approved } : undefined;
+    if (action === "terminate" && approved) terminateApproved++;
     let ran = false;
     const result = execute({ action }, () => { ran = true; return "done"; }, approval);
     const autoRun = action === "allow" || action === "degrade";
-    const shouldRun = autoRun || approved;
+    const shouldRun = autoRun || (approved && action !== "terminate");
     const ok = ran === shouldRun && result.executed === shouldRun;
+    if (action === "terminate") {
+      terminateCases++;
+      if (!ran && result.reason === "terminate is not overridable") terminateRefused++;
+    }
     if (ok) passed++;
-    else failures.push({ i, action, hasApproval, approved, ran, executed: result.executed });
+    else failures.push({ i, action, hasApproval, approved, ran, executed: result.executed, shouldRun });
   }
+  const terminateOk = terminateCases > 0 && terminateRefused === terminateCases;
   return {
     id: "F4",
-    property: "Human binding: escalate/block/terminate never execute without an explicit approved HumanPort approval",
+    property: "Human binding: escalate/block never execute without an explicit approved HumanPort approval, and terminate never executes at all",
     cases,
-    passed: passed === cases,
+    passed: passed === cases && terminateOk,
     notes:
-      passed === cases
-        ? `all ${cases} random decisions obeyed the human-binding rule in fitness/harness.js`
-        : `${cases - passed}/${cases} violated the rule, e.g. ${JSON.stringify(failures[0])}`,
+      passed === cases && terminateOk
+        ? `all ${cases} random decisions obeyed the human-binding rule in governor/harness.js, including ${terminateCases} terminate cases (${terminateApproved} of them carrying an approved approval object) that were refused as not overridable`
+        : `${cases - passed}/${cases} violated the rule, e.g. ${JSON.stringify(failures[0])}; terminate refused ${terminateRefused}/${terminateCases}`,
   };
 }
 
@@ -202,6 +259,8 @@ export async function f5GateOnPath(casesPerOperation = 700) {
   const attempted = [];
   let executedCount = 0;
   let refusedCount = 0;
+  let harnessViolations = 0;
+  let terminateExecuted = 0;
   const cases = casesPerOperation * operations.length;
   for (const operation of operations) {
     for (let i = 0; i < casesPerOperation; i++) {
@@ -210,6 +269,13 @@ export async function f5GateOnPath(casesPerOperation = 700) {
       const decision = await gated(gate, estimate, { operation });
       attempted.push({ operation, action: decision.action });
       const { executed } = execute(decision, () => true, approval);
+      // The harness rule, asserted here rather than assumed: what actually ran is
+      // exactly what allow/degrade or an approved non-terminate rung permitted.
+      const autoRun = decision.action === "allow" || decision.action === "degrade";
+      const approved = approval?.approved === true;
+      const shouldRun = autoRun || (approved && decision.action !== "terminate");
+      if (executed !== shouldRun) harnessViolations++;
+      if (decision.action === "terminate" && executed) terminateExecuted++;
       if (executed) executedCount++; else refusedCount++;
     }
   }
@@ -219,15 +285,16 @@ export async function f5GateOnPath(casesPerOperation = 700) {
     && records.every((r, i) => r.decision.context.operation === attempted[i].operation
       && r.decision.action === attempted[i].action
       && LADDER.includes(r.decision.action));
-  const ok = aligned && executedCount + refusedCount === cases && opsSeen.size === operations.length;
+  const ok = aligned && executedCount + refusedCount === cases && opsSeen.size === operations.length
+    && harnessViolations === 0 && terminateExecuted === 0;
   return {
     id: "F5",
-    property: "Gate-on-path: every attempted operation produces exactly one audit record, in order, with its own operation type; nothing runs unaudited",
+    property: "Gate-on-path: every attempted operation produces exactly one audit record, in order, with its own operation type; nothing runs unaudited, and what ran is exactly what the harness rule permits",
     cases,
     passed: ok,
     notes: ok
-      ? `${records.length} audit records match the ${attempted.length} attempts one-for-one (operation + verdict); executed ${executedCount}, refused ${refusedCount}; all ${operations.length} operation types routed`
-      : `records=${records.length}, attempts=${attempted.length}, aligned=${aligned}, executed=${executedCount}, refused=${refusedCount}, ops=${[...opsSeen]}`,
+      ? `${records.length} audit records match the ${attempted.length} attempts one-for-one (operation + verdict); executed ${executedCount}, refused ${refusedCount}, every one of them exactly as the harness rule predicts; no terminate ever executed; all ${operations.length} operation types routed`
+      : `records=${records.length}, attempts=${attempted.length}, aligned=${aligned}, executed=${executedCount}, refused=${refusedCount}, harnessViolations=${harnessViolations}, terminateExecuted=${terminateExecuted}, ops=${[...opsSeen]}`,
   };
 }
 
@@ -268,10 +335,27 @@ export async function f6AuditChainIntegrity(n = 500) {
 // claim against the ACTUAL import graph of the repository as it stands, not an
 // assertion in prose:
 //   governor/carbon-governor.js  imports nothing at all
-//   governor/gate.js             imports only kaiban-distributed + the core
+//   governor/harness.js          imports nothing at all
+//   governor/gate.js             imports only kaiban-distributed + the core (+ node:*)
 //   shared/*.js                  are leaves (import nothing)
-//   simulation/, dataplane/, demo/  may import governor/ and shared/ (and node:*),
-//                                never each other and never the test suite
+//   simulation/, dataplane/, demo/  may import governor/, shared/, node:* and their own
+//                                folder, never each other and never the test suite
+//   the ONE permitted external library in an adapter is the optional consumer library
+//   in dataplane/measure.js, named here so a second one cannot slip in unnoticed —
+//   together with the one dynamic import whose specifier is an environment variable
+//   (SUSTAINABILITY_CONSUMER_URL), which is the documented override for the same
+//   library and is allowed in that file and nowhere else
+//   every adapter that ACTUATES must import governor/harness.js, so no adapter can
+//   invent its own path from a verdict to running something
+
+/** The optional reference consumer library — the single named external-library exception. */
+export const CONSUMER_PACKAGE = "sustainability-wellknown-consumer";
+
+/** Adapter files that actuate, and therefore must go through the harness. */
+export const ACTUATING_ADAPTERS = [
+  "simulation/run.js", "simulation/charging.js", "demo/demo.js", "demo/agent.js",
+];
+
 export function f7PortIsolation() {
   const notes = [];
   const violations = [];
@@ -279,38 +363,81 @@ export function f7PortIsolation() {
 
   const check = (file, allowed, label) => {
     checks++;
-    const bad = importsOf(file).filter((s) => {
-      const t = targetOf(file, s);
+    const bad = importsOf(file).filter((spec) => {
+      const t = targetOf(file, spec);
       return !(t.startsWith("node:") || allowed.includes(t));
     });
     if (bad.length) violations.push({ file: path.relative(ROOT, file), imports: bad, rule: label });
   };
 
-  const corePath = path.join(ROOT, CORE, "carbon-governor.js");
-  checks++;
-  const coreImports = importsOf(corePath);
-  if (coreImports.length) violations.push({ file: `${CORE}/carbon-governor.js`, imports: coreImports, rule: "core imports nothing" });
-  else notes.push("core (carbon-governor.js) imports nothing");
+  // 1. The core hexagon: every file in governor/ is enumerated, so adding one to that
+  //    folder cannot escape the rule by not being listed here.
+  const coreFiles = jsFilesIn(CORE);
+  const mustImportNothing = new Set(["carbon-governor.js", "harness.js"]);
+  const seenPure = [];
+  for (const f of coreFiles) {
+    const base = path.basename(f);
+    checks++;
+    if (mustImportNothing.has(base)) {
+      const imports = importsOf(f);
+      if (imports.length) violations.push({ file: `${CORE}/${base}`, imports, rule: `${base} imports nothing` });
+      else seenPure.push(base);
+    } else if (base === "gate.js") {
+      check(f, ["kaiban-distributed", CORE], "gate.js: kaiban-distributed + core only");
+      checks--; // check() already counted this one
+    } else {
+      violations.push({ file: `${CORE}/${base}`, imports: [], rule: `unexpected file in ${CORE}/: extend F7 before adding one` });
+    }
+  }
+  for (const base of mustImportNothing) {
+    if (!coreFiles.some((f) => path.basename(f) === base)) {
+      violations.push({ file: `${CORE}/${base}`, imports: [], rule: "expected core file is missing" });
+    }
+  }
+  notes.push(`${coreFiles.length} governor/ file(s) checked: ${[...seenPure].sort().join(" + ")} import nothing at all; gate.js imports only kaiban-distributed + the core`);
 
-  check(path.join(ROOT, CORE, "gate.js"), ["kaiban-distributed", CORE], "gate.js: kaiban-distributed + core only");
-  notes.push("gate.js imports only kaiban-distributed + the core");
-
-  const sharedFiles = jsFilesIn("shared");
+  // 2. shared/ modules are leaves.
+  const sharedFiles = jsFilesIn(SHARED);
   for (const f of sharedFiles) check(f, [], "shared/ modules are leaves");
   notes.push(`${sharedFiles.length} shared/ module(s) import nothing`);
 
-  let adapterFiles = 0;
+  // 3. Adapter source files, and 4. their test files under a relaxed rule.
+  let adapterFiles = 0, adapterTests = 0;
   for (const dir of ADAPTERS) {
-    const files = jsFilesIn(dir);
-    adapterFiles += files.length;
-    for (const f of files) check(f, [dir, CORE, "shared", "kaiban-distributed"], `${dir}/ imports only itself, governor, shared`);
+    for (const f of jsFilesIn(dir)) {
+      adapterFiles++;
+      const allowed = [dir, CORE, SHARED, "kaiban-distributed"];
+      // The one named external-library exception, and only in the file that needs it.
+      // "<dynamic>" is the SUSTAINABILITY_CONSUMER_URL override — a specifier that is an
+      // environment variable and so cannot be resolved statically. It is allowed here
+      // and nowhere else, precisely because a dynamic import is the one thing this
+      // scanner cannot see through.
+      if (path.relative(ROOT, f) === path.join("dataplane", "measure.js")) allowed.push(CONSUMER_PACKAGE, "<dynamic>");
+      check(f, allowed, `${dir}/ imports only itself, governor, shared`);
+    }
+    for (const f of jsFilesIn(dir, { tests: true })) {
+      adapterTests++;
+      check(f, [dir, CORE, SHARED, "kaiban-distributed"], `${dir}/ tests import only their own folder, governor, shared`);
+    }
   }
-  notes.push(`${adapterFiles} adapter file(s) in ${ADAPTERS.join("/")} import only governor/, shared/ and their own folder`);
+  notes.push(`${adapterFiles} adapter file(s) + ${adapterTests} adapter test file(s) in ${ADAPTERS.join("/")} import only governor/, shared/, node:* and their own folder`);
+  notes.push(`the only external library allowed in an adapter is the optional "${CONSUMER_PACKAGE}" in dataplane/measure.js, alongside its one SUSTAINABILITY_CONSUMER_URL dynamic import; every other import in every adapter resolves statically`);
+
+  // 5. Every actuating adapter goes through the harness — there is no second path
+  //    from a verdict to running something.
+  for (const rel of ACTUATING_ADAPTERS) {
+    checks++;
+    const abs = path.join(ROOT, rel);
+    if (!importsModule(abs, `${CORE}/harness.js`)) {
+      violations.push({ file: rel, imports: [], rule: `actuating adapters must import ${CORE}/harness.js` });
+    }
+  }
+  notes.push(`${ACTUATING_ADAPTERS.length} actuating adapter(s) (${ACTUATING_ADAPTERS.join(", ")}) import ${CORE}/harness.js`);
 
   const ok = violations.length === 0;
   return {
     id: "F7",
-    property: "Port isolation (hexagonal): core imports nothing, gate.js imports only kaiban-distributed+core, shared/ is a leaf, adapters never import each other",
+    property: "Port isolation (hexagonal): core and harness import nothing, gate.js imports only kaiban-distributed+core, shared/ is a leaf, adapters never import each other, and every actuating adapter goes through the harness",
     cases: checks,
     passed: ok,
     notes: ok ? notes.join("; ") : `violations: ${JSON.stringify(violations)}`,
@@ -386,5 +513,176 @@ export async function f9AggregationEquivalence(cases = 2000) {
       passed === cases
         ? `all ${cases} random verdict sets (varying carbon action + extras) agreed with mostSevere()`
         : `${cases - passed}/${cases} mismatches, e.g. ${JSON.stringify(failures[0])}`,
+  };
+}
+
+// ── F10 — Audit anchoring ────────────────────────────────────────────────────
+// Why it matters: F6 shows the chain is tamper-EVIDENT for edits. It is not the
+// same as tamper-RESISTANT, and the difference matters to anyone who would rely on
+// the log as evidence. `AuditLog.records()` hands out the live record objects, so a
+// process holding the log can edit them (F6 detects that) — but it can also DROP the
+// tail, and a shorter chain re-hashes perfectly: verify() alone says "valid". What
+// catches that is an external ANCHOR — {length, tipHash} written down somewhere the
+// log's holder cannot rewrite. This function proves both halves honestly: the edit
+// case is detected by verify(); the truncation case is NOT, and only verifyAnchored()
+// sees it.
+export async function f10AuditAnchoring({ editCases = 150, truncateCases = 150, chainLength = 40 } = {}) {
+  const rng = mulberry32(10);
+  const cases = editCases + truncateCases;
+  let passed = 0;
+  let truncationMissedByVerify = 0;
+  const failures = [];
+
+  const freshChain = async (n) => {
+    const governor = createCarbonGovernor({ budgetG: 1000 });
+    const { gate, audit } = makeGate(governor);
+    for (let i = 0; i < n; i++) await gated(gate, randFloat(rng, 0, 1400));
+    return audit;
+  };
+
+  // (a) random edits: verify() must catch every one, and so must verifyAnchored().
+  for (let i = 0; i < editCases; i++) {
+    const audit = await freshChain(chainLength);
+    const anchor = chainAnchor(audit.records());
+    const records = audit.records();
+    const idx = randInt(rng, 0, records.length - 1);
+    const field = pick(rng, ["action", "timestamp"]);
+    if (field === "action") {
+      records[idx].decision.action = records[idx].decision.action === "allow" ? "terminate" : "allow";
+    } else {
+      records[idx].timestamp = "1999-01-01T00:00:00.000Z";
+    }
+    const v = audit.verify();
+    const va = verifyAnchored(audit, anchor);
+    const ok = v.valid === false && v.brokenAt === idx && va.valid === false;
+    if (ok) passed++; else failures.push({ case: "edit", i, idx, field, verify: v, anchored: va });
+  }
+
+  // (b) tail truncation: verify() says the shorter chain is fine (assert that, rather
+  //     than pretend otherwise); only the anchor catches it.
+  for (let i = 0; i < truncateCases; i++) {
+    const audit = await freshChain(chainLength);
+    const anchor = chainAnchor(audit.records());
+    const drop = randInt(rng, 1, chainLength - 1);
+    audit.records().length = chainLength - drop; // truncate the live array in place
+    const v = audit.verify();
+    if (v.valid === true) truncationMissedByVerify++;
+    const va = verifyAnchored(audit, anchor);
+    const ok = v.valid === true && va.valid === false && va.reason === "chain shorter than anchor (truncation or deletion)";
+    if (ok) passed++; else failures.push({ case: "truncate", i, drop, verify: v, anchored: va });
+  }
+
+  return {
+    id: "F10",
+    property: "Audit anchoring: edits are caught by verify() alone; truncation/deletion is NOT, and is caught only against an external {length, tipHash} anchor",
+    cases,
+    passed: passed === cases,
+    notes:
+      passed === cases
+        ? `${editCases} random single-field edits all broke verify() at exactly the edited index; ${truncateCases} random tail truncations were reported VALID by verify() in ${truncationMissedByVerify}/${truncateCases} cases (tamper-evident, not tamper-resistant) and were caught by verifyAnchored() in all ${truncateCases}`
+        : `${cases - passed}/${cases} failed, e.g. ${JSON.stringify(failures[0])}`,
+  };
+}
+
+// ── F11 — Governor core invariants ───────────────────────────────────────────
+// Why it matters: everything above rests on the core behaving like a small, boring,
+// predictable function. These are the properties a reader would otherwise have to
+// take on trust from reading it: decide() is monotone in the estimate and has no
+// side effects, commit() is additive and reset() clears, the shipped severity table
+// agrees with the ladder's own order, and rung boundaries are inclusive from below.
+export function f11CoreInvariants({ monotoneCases = 500, idempotenceCases = 500, commitCases = 500, boundaryCases = 500 } = {}) {
+  const rng = mulberry32(11);
+  const cases = monotoneCases + idempotenceCases + commitCases + boundaryCases + LADDER.length;
+  let passed = 0;
+  const failures = [];
+
+  // (a) decide() is monotone in estimateG: more grams never yields a lighter rung.
+  for (let i = 0; i < monotoneCases; i++) {
+    const gov = createCarbonGovernor({ budgetG: randFloat(rng, 10, 100000) });
+    gov.commit(randFloat(rng, 0, 5000));
+    const a = randFloat(rng, 0, 20000);
+    const b = a + randFloat(rng, 0, 20000);
+    const ok = severityOf(gov.decide(b).action) >= severityOf(gov.decide(a).action);
+    if (ok) passed++; else failures.push({ case: "monotone", i, a, b });
+  }
+
+  // (b) decide() is idempotent and side-effect free: it must not move spentG.
+  for (let i = 0; i < idempotenceCases; i++) {
+    const gov = createCarbonGovernor({ budgetG: randFloat(rng, 10, 100000) });
+    const spent = randFloat(rng, 0, 5000);
+    gov.commit(spent);
+    const estimate = randFloat(rng, 0, 20000);
+    const first = gov.decide(estimate);
+    const second = gov.decide(estimate);
+    const ok = JSON.stringify(first) === JSON.stringify(second) && gov.spentG === spent;
+    if (ok) passed++; else failures.push({ case: "idempotent", i, first, second, spentG: gov.spentG, spent });
+  }
+
+  // (c) commit() is additive, reset() clears, and a bad value throws rather than
+  //     being absorbed as a silent zero.
+  for (let i = 0; i < commitCases; i++) {
+    const gov = createCarbonGovernor({ budgetG: 1000 });
+    const parts = Array.from({ length: randInt(rng, 1, 5) }, () => randFloat(rng, 0, 500));
+    for (const g of parts) gov.commit(g);
+    const total = parts.reduce((a, b) => a + b, 0);
+    const additive = Math.abs(gov.spentG - total) < 1e-9;
+    let threw = false;
+    try { gov.commit(pick(rng, [NaN, -1, undefined, "1", Infinity])); } catch { threw = true; }
+    const unchangedAfterThrow = Math.abs(gov.spentG - total) < 1e-9;
+    gov.reset();
+    const ok = additive && threw && unchangedAfterThrow && gov.spentG === 0;
+    if (ok) passed++; else failures.push({ case: "commit", i, additive, threw, cleared: gov.spentG });
+  }
+
+  // (d) rung boundaries are inclusive from below: exactly AT a rung is that rung, and
+  //     one ulp below it is the rung beneath.
+  const rungNames = ["degrade", "escalate", "block", "terminate"];
+  for (let i = 0; i < boundaryCases; i++) {
+    const gov = createCarbonGovernor({ budgetG: 1000 });
+    const name = pick(rng, rungNames);
+    const at = DEFAULT_RUNGS[name];
+    const below = LADDER[LADDER.indexOf(name) - 1];
+    const ok = gov.verdictFor(at) === name && gov.verdictFor(at - 1e-9) === below;
+    if (ok) passed++; else failures.push({ case: "boundary", name, at, got: gov.verdictFor(at) });
+  }
+
+  // (e) the SHIPPED severity table agrees with this package's ladder order, rung for
+  //     rung. If upstream ever reordered it, every property above would silently mean
+  //     something different.
+  let tableOk = true;
+  for (let i = 0; i < LADDER.length; i++) {
+    if (GATE_ACTION_SEVERITY[LADDER[i]] === i) passed++;
+    else { tableOk = false; failures.push({ case: "severity-table", rung: LADDER[i], expected: i, got: GATE_ACTION_SEVERITY[LADDER[i]] }); }
+  }
+
+  return {
+    id: "F11",
+    property: "Governor core invariants: decide() monotone + side-effect free, commit() additive and loud on bad input, reset() clears, rung boundaries inclusive from below, shipped GATE_ACTION_SEVERITY order == LADDER order",
+    cases,
+    passed: passed === cases,
+    notes:
+      passed === cases
+        ? `${monotoneCases} monotone, ${idempotenceCases} idempotence/no-side-effect, ${commitCases} commit/reset (each also proving commit() throws rather than absorbing a bad value) and ${boundaryCases} rung-boundary cases held; GATE_ACTION_SEVERITY matches LADDER for all ${LADDER.length} rungs (${tableOk})`
+        : `${cases - passed}/${cases} failed, e.g. ${JSON.stringify(failures[0])}`,
+  };
+}
+
+// ── F12 — Documentation agrees with results/ ─────────────────────────────────
+// Why it matters: every headline number in the README and the docs is hand-typed,
+// and results/ is regenerated by scripts. Prose and evidence drift apart silently —
+// that is how a paper ends up citing a number nothing produces any more. This is a
+// static check, like F7: each registered claim is re-read from the document and
+// compared against the value in results/*.json that it is supposed to come from.
+export function f12DocsAgreeWithResults() {
+  const { checks, mismatches } = checkNumbers();
+  const ok = mismatches.length === 0;
+  return {
+    id: "F12",
+    property: "Documentation agrees with results/: every registered headline number in README.md and docs/ matches the value in results/*.json it is drawn from",
+    cases: checks.length,
+    passed: ok,
+    notes: ok
+      ? `all ${checks.length} registered claims across ${new Set(checks.map((c) => c.docFile)).size} documents match results/`
+      : `${mismatches.length}/${checks.length} mismatch: ${mismatches.map((m) => `${m.docFile}:${m.line} ${m.label} doc=${m.found} results=${m.expected}`).join(" | ")}`,
   };
 }

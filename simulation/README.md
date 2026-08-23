@@ -31,8 +31,9 @@ produces **byte-identical** JSON: no wall clock, no live network, no unseeded ra
 
 **Real** — the carbon data, and the enforcement code:
 
-* 30-minute carbon-intensity series from the UK National Grid ESO
-  [Carbon Intensity API](https://api.carbonintensity.org.uk) (free, keyless), two 28-day
+* 30-minute carbon-intensity series from the National Energy System Operator (NESO)
+  [Carbon Intensity API](https://api.carbonintensity.org.uk) (free, keyless; NESO is the
+  operator formerly known as National Grid ESO — same endpoint, same data), two 28-day
   windows: **W1** 2026-01-05 → 2026-02-02 (winter) and **W2** 2026-06-29 → 2026-07-27
   (summer). 1344 slots each; **0 gaps** had to be carried forward in either window.
 * **National ACTUAL** intensity is the ground truth. Every gram reported anywhere in this
@@ -52,7 +53,9 @@ produces **byte-identical** JSON: no wall clock, no live network, no unseeded ra
 
 * E2 workload: Poisson(λ=6) task arrivals per 30-min slot, 0.05 kWh per task
   (LLM-inference-style job), 50% deferrable by up to 6 h, degraded mode = 40% of energy.
-* E3 fleet: 50 EVs, 20 kWh delivered evenly over 3 h, plug-in 18:00 ± 1 h, deadline 07:00.
+* E3 fleet: 50 EVs, 20 kWh delivered evenly over 3 h — an implied 6.67 kW for the whole
+  session; there is no separate charger rating in the model — plug-in 18:00 ± 1 h,
+  deadline 07:00.
   Each night's sessions are decided in plug-in order, so the nightly budget is paced in
   chronological order rather than in vehicle-index order.
 * The human approver. In E2 it always approves (deterministic). In E3 approval is a seeded
@@ -68,6 +71,9 @@ Every knob lives at the top of its file and is echoed verbatim into the results 
 * Verdict ladder rungs (from `governor/carbon-governor.js`): `degrade` 0.8, `escalate` 1.0,
   `block` 1.1, `terminate` 1.25 of the period budget committed.
 * E2 daily budget `B = f × median(P0's own daily emissions)`, `f ∈ {0.6, 0.7, 0.8, 0.9, 1.0}`.
+* P1's threshold is the median of the peer signal over the *whole* window, which a live
+  scheduler could not know (disclosed in ADR-010). **P1t** is the causal variant: the
+  same policy against a trailing 7-day median. Both rows are reported.
 * E3 nightly budget `B = 0.8 × median(naive nightly fleet emissions)`.
 
 ## Safety constraint in E3 (non-negotiable)
@@ -83,7 +89,7 @@ declined approval withholds the *optimisation*, never the charge.
 |---|---|
 | `fetch-traces.js` | fetch + cache the real traces, aligned onto a canonical slot grid |
 | `lib.js` | trace loading (with validation) and the workload generator |
-| `run.js` | E2 — policies P0 / P1 / P2 and the metric aggregation |
+| `run.js` | E2 — policies P0 / P1 / P1t / P2 and the metric aggregation |
 | `charging.js` | E3 — fleet, proposal, gate, approver |
 | `report.js` | markdown rendering only; recomputes nothing |
 | `lib.test.js` | unit tests for the PRNG, Poisson draws, statistics, traces, workload |
@@ -106,12 +112,23 @@ against the national actual series. Then:
   three rungs pick the same physical action on purpose: what differs is **who authorises
   it**. `degrade` is automatic; `escalate` and `block` happen only because the simulated
   human approves, and each is counted as one human decision — so
-  `humanDecisions == escalations + blocks` by construction.
-* `terminate` — the task is dropped. This is the only rung that removes work.
+  `humanDecisions == escalations + blocks` by construction. Because "a block on
+  deferrable work asks a human" is a design choice rather than a law, the run also
+  reports `blocksDeferrable` and `humanDecisionsIfDeferralAutomatic`, so the choice can
+  be priced.
+* `terminate` — the task is dropped, and nobody is asked. This is the only rung that
+  removes work, and the only one no approval can override.
+
+Every actuation in both experiments goes through `execute()` in `governor/harness.js` —
+including the delayed run of a deferred task, which executes the decision it was already
+gated and audited for on arrival. Fitness function F7 checks statically that `run.js`,
+`charging.js` and both demos import it, so there is no second path from a verdict to
+running something.
 
 ## Reading the E2 tables honestly
 
 P2 emits less partly because it *does less work*. Total gCO2e must be read next to
-`completed`, `degraded`, `dropped` and `humanDecisions` — those columns are the price. P0
-and P1 complete 100% of tasks; P2 does not. The per-experiment markdown ends with an
+`completed`, `degraded`, `dropped` and `humanDecisions` — those columns are the price. P0,
+P1 and P1t complete 100% of tasks; P2 does not. `completedOnTime` is an *invariant*, not
+a finding: deadlines are clamped to the window, so it always equals `completed`. The per-experiment markdown ends with an
 explicit caveats section.

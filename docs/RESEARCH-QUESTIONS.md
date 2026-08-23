@@ -22,11 +22,22 @@ deterministically. Do those properties actually hold in the code that ships?
 Carbon-Verdict Governor plugged in as a validator — not merely in a description
 of it, and not merely in a reimplementation written for this package.
 
-**What the package measures.** Nine architecture fitness functions
+**What the package measures.** Twelve architecture fitness functions
 (`fitness/props.js`), each testing one clause of the claim against the real
-`ActionGate` and the real `AuditLog` imported from npm. Property-style cases use a
-seeded generator so they are reproducible. Separately, the runtime's own
-governance test suite is re-run inside a checkout of that runtime and recorded.
+`ActionGate` and the real `AuditLog` imported from npm. Every property except the
+two static ones (F7, F12) draws its cases from a seeded generator, so they are
+reproducible. Separately, the runtime's own governance test suite is re-run
+inside a checkout of that runtime and recorded.
+
+**Whose property is whose.** F1, F2, F5, F6, F8 and F9 test *shipped upstream*
+behaviour: aggregation, fail-closed on a validator error, the audit chain,
+determinism. F3 and F4 test *this package's* rung semantics, because the runtime
+ships the vocabulary `allow < degrade < escalate < block < terminate` but not its
+meaning — its own default actor path treats the top three rungs identically and
+has no human-approval port. F7, F10, F11 and F12 test this repository's structure,
+invariants and documentation. A green table is not a claim that the runtime
+guarantees the human-in-the-loop semantics; it guarantees the aggregation and the
+record, and this package guarantees the rest.
 
 **What would falsify it.** Any one of these:
 
@@ -36,22 +47,32 @@ governance test suite is re-run inside a checkout of that runtime and recorded.
 - Anything above `degrade` executes without an approved approval (F4).
 - The audit length does not equal executed plus refused, so something ran unaudited (F5).
 - `verify()` passes over a tampered chain, or fails to name where it broke (F6).
-- The core imports anything, or the adapters import each other (F7).
+- The core imports anything, the adapters import each other, or an adapter that actuates does not go through `governor/harness.js` (F7).
 - Two fresh gates given the same sequence disagree in decisions or in audit records (F8).
+- An edit to the audit chain goes undetected by `verify()`, or a truncation goes undetected by `verifyAnchored()` against a prior anchor (F10).
+- `decide()` is non-monotone in the estimate, or has a side effect, or a rung boundary is off by one (F11).
+- A headline number typed into a document no longer matches the file it points at (F12).
 
-**Current answer.** All nine pass, over **10,994** cases in total — of which F7's 15 are static import checks rather than generated cases. Upstream, the same gate
-and audit code passes its own **71** unit tests at commit `17ad362`. Source:
-[`results/fitness.md`](../results/fitness.md), `results/fitness.json`,
-`results/kaiban-upstream-tests.json`.
+**Current answer.** All twelve pass, over **13,366** cases in total — of
+which F7's 24 and F12's are static checks rather than generated cases. At
+v1.0.0, the snapshot the article cites, it was nine functions over **10,994**
+cases; the difference is properties added, not properties fixed. Upstream, the
+same gate and audit code passes its own governance suite (4 files, **71** tests)
+at commit `17ad362`, and an end-to-end suite of 69 tests against a real Redis
+broker. Source: [`results/fitness.md`](../results/fitness.md),
+`results/fitness.json`, `results/kaiban-upstream-tests.json`,
+`results/kaiban-upstream-e2e.json`.
 
 **Limitations.**
 
 - One implementation of the ladder, in one process. A second independent implementation would be a stronger check.
-- F4 checks the reference actuation harness in this package, about twenty lines. Wiring the gate directly to a real approval board is designed, not built.
-- The audit chain is in memory and verifiable. It is not persisted or signed.
+- F4 checks the reference actuation harness in this package, `governor/harness.js`. As of v1.1.0 F7 also checks that every adapter which actuates imports it, so it is the *only* actuation path and not merely *an* actuation path. What is on the other end of the human port is still a simulated approver or a terminal prompt: **wiring the gate to a real approval board is designed, not built.**
+- **The forecast port is designed, not built.** The simulations read the peer signal straight from the cached trace rather than through a forecast adapter.
+- The audit chain is in memory and verifiable. It is not persisted or signed. It is tamper-*evident* — `records()` returns the live objects, so code in the process can mutate them and `verify()` will notice, but nothing prevents the mutation. Truncation is invisible to `verify()` alone and needs an external anchor (F10).
+- The shipped gate itself passes a verdict that is not on the ladder through verbatim rather than failing closed on it. This package normalises that to `block`; the upstream gap is real and is recorded (ADR-002, ARCHITECTURE section 11).
 - A property can only test something you can state precisely. Properties nobody thought to state are not covered by a green table.
 
-**How to extend.** Add F10 and beyond (the recipe is in
+**How to extend.** Add F13 and beyond (the recipe is in
 [`DEVELOPMENT.md`](DEVELOPMENT.md)); check the same properties against a second
 runtime; run the gate under concurrency; persist and sign the chain and test the
 verification path across a restart.
@@ -86,15 +107,30 @@ reports; or a log window showing no real traffic at all.
 
 **Current answer.** **12** documents measured — 9 mapped from real organizations,
 2 deliberately synthetic, plus the gateway's own — all returning HTTP 200 on every
-one of 5 sequential GETs. Schema conformance **12/12**. Mandatory-member coverage
+one of 5 sequential GETs. Those twelve are the gateway's **subject registry**; the
+gateway also serves a further 22 adapter and wire-format demonstration documents
+which E1 does not measure and which no number here includes. Schema conformance
+**12/12**, counted over the documents actually analysed, and reported as
+"not measured" rather than as a rate if the reference consumer library is absent
+(ADR-017). Mandatory-member coverage
 **100%**: all 8 members on every document. Median latency **44.6 ms**, median body
 **1296.5 bytes**. The in-band disclaimer is present on **9/9** real-organization
 documents. Median `updated` age **23 days** against the fixed reference date. The
 negative-findings register names **2** organizations honestly reported as
 publishing no machine-readable data. The log capture covers
 2026-08-15 to 2026-08-22 with **120** requests, **58** of them to well-known
-paths, from **26** distinct client IPs. Source:
+paths, from **26** distinct clients. Source:
 [`results/dataplane.md`](../results/dataplane.md), `results/dataplane.json`.
+
+**What that log window is and is not evidence of.** It is evidence that the
+gateway is reachable and is being crawled. It is not evidence of demand, and it
+should not be read as any:
+
+- 41 of the 120 requests were 4xx. The top paths are `/robots.txt` (23), `/` (16) and `/favicon.ico` (7) — crawler behaviour, not consumption.
+- 35 distinct subjects were requested against 11 subjects actually served, so most subject requests were for documents that do not exist.
+- The user agents are predominantly crawlers, and the capture **includes this evaluation's own probes** (`curl/*` and `node`), left in rather than filtered because filtering real server traffic is its own kind of cherry-picking.
+- **No independent consumer was observed.** Discoverable is not the same as consumed, and nothing in this window shows the latter.
+- Client addresses are stored only as a salted hash whose salt is discarded, so "26 distinct clients" is a count over hashes.
 
 **Limitations.**
 
@@ -124,8 +160,13 @@ that drives it is good enough to decide *when* to run.
 **What the package measures.** `simulation/run.js` replays a synthetic agentic
 workload over two 28-day windows of real Great Britain half-hourly carbon
 intensity, under three policies on the identical task list per seed: always-run
-(P0), threshold deferral (P1), and the governor at five budget levels (P2, budget
-factor 0.6 to 1.0), with every governor decision passing through the real gate.
+(P0), threshold deferral (P1), threshold deferral on a trailing 7-day median with
+no lookahead (P1t), and the governor at five budget levels (P2, budget factor 0.6
+to 1.0), with every governor decision passing through the real gate and every
+action through `governor/harness.js`. P1's threshold is the median of the peer
+signal over the *whole* window, which is a small piece of lookahead in the
+baseline's favour; P1t exists so a reader can see what the baseline does with
+information it could actually have had. Its result: −0.92% (winter) and −2.26% (summer) against always-run, with 100% of tasks completed — below P1's −1.54% and −2.97%, which had the full-window median.
 Ten seeds; mean and standard deviation reported. `simulation/charging.js` runs the
 gated charging shift on the same traces. Emissions always come from the national
 *actual* series; the peer signal is the mean of three regional *forecast* series
@@ -146,7 +187,8 @@ where nothing is dropped; or the deferred work missing its deadlines.
 | Tasks completed (of about 8,075) | 7996.6 | 7698.8 |
 | Tasks dropped | 78.5 | 376.3 |
 | Tasks degraded | 1238.2 | 1220.9 |
-| Human decisions over 28 days | 545.7 | 853 |
+| Human decisions over 28 days (every `escalate` + every `block`) | 545.7 | 853 |
+| Of those, `block` verdicts on deferrable work | 102.8 | 216 |
 | Days over budget (of 28) | 14 | 14.4 |
 | Peer signal versus national actual, Pearson r | 0.96 | 0.986 |
 | Audit chain valid, all 10 seeds | yes | yes |
@@ -156,11 +198,12 @@ shift avoids **32.51% ± 0.13** of session emissions in winter and
 **16.04% ± 0.04** in summer at full approval; at 80% approval those become
 **25.93% ± 0.34** and **12.77% ± 0.16**.
 
-Three things in that table matter as much as the headline:
+Four things in that table matter as much as the headline:
 
 1. **The governor paces a budget; it does not cap it.** Half the days still end over budget, because deferred work commits into the next day and non-deferrable work is throttled rather than stopped short of the top rung.
-2. **The saving is not like-for-like.** P0 and P1 complete every task; P2 does not. Total grams must be read next to completed, degraded and dropped.
+2. **The saving is not like-for-like.** P0, P1 and P1t complete every task; P2 does not. Total grams must be read next to completed, degraded and dropped.
 3. **The peer signal is biased low in level even though it is excellent in shape.** Mean peer signal 83.7 against a national actual of 124.2 gCO2e/kWh in summer, because one of the three modelled peers sits in near-zero-carbon North Scotland. Good enough to choose *when* to run; not good enough to set an absolute budget without calibration.
+4. **"Human decisions" means every `escalate` verdict and every `block` verdict.** A blocked task never proceeds on its own; a human may authorise the reduced or deferred fallback, and nothing else. Because "block on deferrable work asks a human" is a design choice rather than a law, the run also reports what the count would be if deferring blocked work needed no approval: 442.9 (winter) and 637 (summer) over 28 days — about 16 and 23 a day — against 545.7 and 853 when every block is approved; the difference is the 102.8 and 216 block verdicts on deferrable work.
 
 **Limitations.**
 
@@ -170,7 +213,8 @@ Three things in that table matter as much as the headline:
 - The regional series is forecast-only, so the peer signal cannot be checked against a regional actual.
 - Ten seeds, two windows, one country.
 - Emissions are attributional: energy times grid intensity at run time. No embodied carbon, no power-usage-effectiveness, no hardware accounting.
-- The charging scenario shifts start times only. No discharge, no state-of-charge logic, and no live charging-protocol call — it runs through the governor and the gate, not over a real protocol wire.
+- The charging scenario shifts start times only. No discharge, no state-of-charge logic, and no live charging-protocol call — it runs through the governor and the gate, not over a real protocol wire. In it, `block` and `terminate` refuse the shift outright with no fallback and nobody asked; the car charges as it would have anyway.
+- A deferred task is gated once, on arrival, and executed later without re-evaluation (ADR-016). If grid conditions change between the decision and the slot, nothing re-checks.
 
 **How to extend.** Replay a real agentic workload instead of a Poisson one; add
 regions, countries and seasons; run a study with real approvers and measure their
@@ -188,6 +232,9 @@ located precedent. That claim rests on a documented adversarial search, on a
 stated date, in stated sources — see [`SEARCH-PROTOCOL.md`](SEARCH-PROTOCOL.md).
 It establishes absence of evidence in those sources on that date, and nothing
 more. A reader who finds a prior composition is asked to open an issue.
+
+Every limitation named above is indexed, with its canonical wording, in
+[`LIMITATIONS.md`](LIMITATIONS.md).
 
 Loop closure itself — actions changing consumption, changing the next published
 document — is shown here by construction and by simulation. It is not yet shown by
