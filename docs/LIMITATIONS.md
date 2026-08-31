@@ -45,7 +45,7 @@ Every location below is expected to agree with the two lists above.
 |---|---|
 | [`architecture/ARCHITECTURE.md`](architecture/ARCHITECTURE.md) §11 | R1–R10 in full, plus the technical-debt list |
 | [`RESEARCH-QUESTIONS.md`](RESEARCH-QUESTIONS.md) | A "Limitations" block per research question, and "What none of these questions establish" |
-| [`../README.md`](../README.md) | "What we found" (the honest version), "The limits, once more", "What is real and what is simulated", and "Corrections relative to the submitted article (v1.0.0)" |
+| [`../RESEARCH.md`](../RESEARCH.md) | "What we found" (the honest version), "The limits, once more", "What is real and what is simulated", and "Corrections relative to the submitted article (v1.0.0)" — the [`README`](../README.md) carries the short "honest catches" summary |
 | [`architecture/PRODUCT.md`](architecture/PRODUCT.md) | Non-goals, "Out of scope", and the closing paragraph of §7 |
 | [`SEARCH-PROTOCOL.md`](SEARCH-PROTOCOL.md) | "What the protocol does NOT establish" — this is R10 |
 | [`ARTIFACT-INVENTORY.md`](ARTIFACT-INVENTORY.md) | What was *not* run (the full Docker stack), and the prototype status of the MCP servers — this is R7 |

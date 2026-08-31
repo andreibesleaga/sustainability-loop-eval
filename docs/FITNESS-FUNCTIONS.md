@@ -129,7 +129,7 @@ literal. It does not span statements and it tolerates trailing comments.
 ```
 npm run fitness          # node --test over fitness/*.test.js
 npm run fitness:report   # re-runs the same property functions, writes results/fitness.{json,md}
-npm test                 # the adapter unit tests, then check:docs, then npm run fitness
+npm test                 # the adapter unit tests, then npm run fitness, then check:docs
 npm run check:docs       # F12 on its own
 npm run arch             # madge: no circular dependencies (part of the same claim F7 makes)
 npm run arch:graph       # madge: the full import graph — this is what produced results/madge.txt
@@ -139,7 +139,7 @@ npm run arch:graph       # madge: the full import graph — this is what produce
 unit tests. The `node:test` files elsewhere (`simulation/lib.test.js`,
 `simulation/policies.test.js`, `dataplane/measure.test.js`) cover the adapters'
 own arithmetic instead — statistics, trace loading, policy semantics, document
-checking. There are **26** of those, and `npm test` runs them first.
+checking. There are **32** of those, and `npm test` runs them first.
 
 Each property lives once, in `fitness/props.js`, as an exported function
 returning `{ id, property, cases, passed, notes }`; the `fitness/fN.test.js`
