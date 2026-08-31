@@ -21,6 +21,8 @@ you can check them or re-run them yourself.
 - One **gate** applies the ladder to every action, records the decision, and never fails open.
 - Doing the work changes how much energy the system used — which changes what it publishes next. That is the loop.
 
+![Context](docs/architecture/c4/c4-context.png)
+
 ### The five verdicts
 
 | Rung | Who decides | What happens |
@@ -100,12 +102,14 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 | [Development guide](docs/DEVELOPMENT.md) | Run, extend, regenerate, cite |
 | [Changelog](CHANGELOG.md) | What changed between v1.0.0 (the article's snapshot) and now |
 
+
+![The loop](docs/architecture/c4/loop-overview.png)
+
 ## Versions and corrections
 
 The article cites **v1.0.0** (Zenodo
 [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634)); this
-branch is **v1.1.0**, a hardening pass — no headline number changed. Where
-checking the package against the frozen article found something imprecise, the
+branch is **v1.1.0**, a hardening pass — no headline number changed. The
 correction is stated openly in
 [RESEARCH.md → Corrections](RESEARCH.md#corrections-relative-to-the-submitted-article-v100).
 
