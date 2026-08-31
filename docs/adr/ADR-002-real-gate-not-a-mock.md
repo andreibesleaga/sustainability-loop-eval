@@ -51,7 +51,7 @@ and `governor/harness.js`. F3 and F4 test those.
 
 Two more upstream facts, recorded so nobody has to go looking:
 
-- The shipped gate passes an action string that is not on the ladder through verbatim rather than failing closed on it. This package normalises such a verdict to `block` in `gated()` (ADR-005, D3) and keeps the original under `rawAction`. The gap is upstream's to fix and is to be reported there.
+- The shipped gate passes an action string that is not on the ladder through verbatim rather than failing closed on it. This package normalises such a verdict to `block` in `gated()` (ADR-005) and keeps the original under `rawAction`. The gap is upstream's to fix and is to be reported there.
 - Upstream also ships `WorkflowOrchestrator` and `CheckpointStore` (Redis) for checkpoint-and-resume of workflow steps after a crash. That is crash recovery, not governance — but it is the natural place a production "pause and rehydrate" of a deferred task would live (ADR-016). Not used here.
 
 ## Alternatives considered

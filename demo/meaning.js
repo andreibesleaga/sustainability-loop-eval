@@ -26,5 +26,16 @@ export const DEMO_ACTION = {
   terminate: "stopped — nothing runs, and nobody is asked",
 };
 
-/** Rungs a human is asked about at all. `terminate` is deliberately absent. */
-export const PROMPTS_HUMAN = new Set(["escalate", "block"]);
+const ANSI_RE = /\u001b\[[0-9;?]*[ -\/]*[@-~]/g;
+const CONTROL_RE = /[\u0000-\u001f\u007f-\u009f]/g;
+
+/**
+ * Untrusted text in, safe-to-print text out — shared by both demos so neither can
+ * print a fetched document's members raw: drop ANSI escape sequences and control
+ * characters (so nothing can move the cursor, clear the screen, or fake a prompt),
+ * collapse whitespace, and clamp the length.
+ */
+export function clean(value, max = 300) {
+  const s = String(value ?? "").replace(ANSI_RE, "").replace(CONTROL_RE, " ").replace(/\s+/g, " ").trim();
+  return s.length > max ? `${s.slice(0, max)}...` : s;
+}

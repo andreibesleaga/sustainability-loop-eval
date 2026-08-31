@@ -56,7 +56,10 @@ repository's own structure, invariants and documentation.
   decisions, so runs are replayable and reviewable.
 - **F9** aggregation equivalence — the article's reference model of the gate
   (`mostSevere()`) must actually compute what the shipped gate computes, so
-  reasoning about one is reasoning about the other.
+  reasoning about one is reasoning about the other. Its assertion is a subset of
+  F1's, on a different sample (other seeds, a wider estimate range); it is kept as
+  the named equivalence obligation ADR-002 promises, not as extra discriminating
+  power — read the two together.
 - **F10** audit anchoring — what the chain does and does not catch, asserted
   rather than assumed. See below.
 - **F11** governor core invariants — the properties the core must have for any
@@ -73,7 +76,7 @@ truncations of the tail.
 
 - A random **edit** makes `audit.verify()` fail, and it names the index.
 - A random **truncation** is **not** detected by `verify()` alone — a shortened chain is still consistent. F10 asserts that rather than claiming otherwise.
-- The same truncation **is** detected by `verifyAnchored(audit, anchor)`, where `anchor` is a `chainAnchor(records)` — `{ length, tipHash }` — taken earlier and kept outside the log.
+- The same truncation **is** detected by `verifyAnchored(audit, anchor)`, where `anchor` is a `chainAnchor(records)` — `{ length, tipHash, anchorHash }`, the third a digest of the first two — taken earlier and kept outside the log. What no anchor catches: a record appended *after* the anchor that is later rewritten and re-hashed. Anchor after every batch that matters.
 
 The point: a hash chain gives tamper evidence for *modification*. Catching
 deletion needs one bit of state the attacker does not control. And because
@@ -112,7 +115,7 @@ The rules, because "the adapters do not import each other" is not precise enough
 to be a test:
 
 1. `governor/carbon-governor.js` and `governor/harness.js` have **zero** import statements. Both are core.
-2. `governor/gate.js` imports exactly two specifiers: `kaiban-distributed` and the core.
+2. `governor/gate.js` imports exactly two specifiers besides Node built-ins: `kaiban-distributed` and the core (it also imports `node:crypto`, for the anchor digest; `node:*` is allowed everywhere).
 3. `shared/*.js` is a leaf: nothing but Node built-ins.
 4. Adapter files (`simulation/`, `dataplane/`, `demo/`) import only: their own folder, `governor/`, `shared/`, `node:*` built-ins, and `kaiban-distributed`. Never another adapter folder.
 5. `*.test.js` files inside adapter folders are **included**, under the same rule. A test that reaches across folders is still an import that reaches across folders.
@@ -139,7 +142,7 @@ npm run arch:graph       # madge: the full import graph — this is what produce
 unit tests. The `node:test` files elsewhere (`simulation/lib.test.js`,
 `simulation/policies.test.js`, `dataplane/measure.test.js`) cover the adapters'
 own arithmetic instead — statistics, trace loading, policy semantics, document
-checking. There are **32** of those, and `npm test` runs them first.
+checking. There are **33** of those, and `npm test` runs them first.
 
 Each property lives once, in `fitness/props.js`, as an exported function
 returning `{ id, property, cases, passed, notes }`; the `fitness/fN.test.js`
@@ -159,7 +162,7 @@ of the tests rather than of the architecture.
 ## Current results
 
 `results/fitness.md` is rendered from the run, so it is the authority. As of
-v1.1.0: **12/12 green over 13,366 cases.** Version 1.0.0 — the snapshot the
+v1.1.0: **12/12 green over 13,392 cases.** Version 1.0.0 — the snapshot the
 article cites — was 9/9 over 10,994 cases. The difference is properties added,
 not properties fixed.
 

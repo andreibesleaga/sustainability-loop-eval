@@ -4,6 +4,96 @@ All notable changes to this evaluation package. Dates are ISO. The one thing thi
 exists to make unambiguous is **which numbers changed and which did not** — see the
 section of that name under each release.
 
+## [Unreleased] — 2026-08-31 — audit pass
+
+A multi-lens audit of v1.1.0 (code correctness, documentation consistency, systems
+theory and cybernetics, external references checked live, planetary-design and
+engineering practice), with every finding disputed by an independent defence and
+prosecution before anything was changed. No experiment was re-run against new data.
+
+### Which numbers changed and which did not
+
+- **No headline result changed.** `results/simulation.*`, `results/charging.*` and
+  `results/dataplane.*` are byte-identical to v1.1.0 (re-verified by re-running the
+  seeded experiments). Every number the article prints still reproduces.
+- **Fitness totals: 12/12 over 13,366 → 12/12 over 13,392.** F12 grew from 33 to 59
+  registered claims because more hand-typed numbers were bound to `results/` (see below).
+  Nothing failed; the registry got larger.
+- **Adapter unit tests: 32 → 33** (one structural test added; the "26" the docs said was
+  already stale at v1.1.0 — the actual count then was 32).
+
+### Added
+
+- **Limitations R11–R17** in `docs/LIMITATIONS.md` and ARCHITECTURE §11, each with a
+  number measured on the committed traces where one could be: synchronised shifting onto
+  one slot (R11); the two experiments are joined by assumption — no measured run consumes
+  the gateway's documents as its signal (R12); in E3 the gate can only reduce the saving,
+  the ungated argmin arm avoids 32.85% / 16.53% against the governed 32.51% / 16.04%
+  (R13); rebound unmodelled and budgets relative (R14); self-declared estimates and no
+  metering port (R15); arrival hour decides the verdict (R16); average not marginal
+  intensity, and the traces are CO2-only labelled gCO2e (R17).
+- **ARCHITECTURE §8 "A control-theoretic reading"**: what kind of controller the governor
+  is (integral pacing on own spend, quantised output, feedforward on the grid, daily
+  reset), Ashby's requisite variety, the Conant–Ashby good-regulator theorem, and a
+  Viable System Model mapping.
+- **Perfect-signal test** (`simulation/policies.test.js`): with peer == actual, the
+  governor never exceeds always-run and shifting never exceeds naive, by construction.
+  The two existing real-trace assertions are now worded as what they are — empirical on
+  the committed traces (4.44% / 2.34% of E3 sessions land in a window that is dirtier on
+  the actual series; the aggregate still held on every seed).
+- **`.github/workflows/ci.yml`**: `npm ci`, `npm test`, then the determinism proof
+  (simulate, charging, `fitness:report` twice, `git diff --exit-code results/`) on Node
+  22 and 24. Offline only — nothing live runs in CI.
+- **`.env.example`**; `madge` pinned to 8.0.0 in `npm run arch` / `arch:graph`.
+- **F12 registry**: the "12/12 green" numerator (from F1–F11's pass flags, never from
+  F12's own), the "100% valid" half of the data-plane sentence, the 80%-approval
+  charging figures, the unit-test count (counted from the test files), the quality-
+  scenario case sums (Q2, Q4, Q6, Q10), the human-decisions sensitivity numbers, the "22
+  demonstration documents" (from the committed registry snapshot), and the totals now
+  repeated in `RESEARCH.md` and `docs/FITNESS-FUNCTIONS.md`.
+- `chainAnchor()`'s `anchorHash` is now checked by `verifyAnchored()` (a corrupted anchor
+  object is reported); the post-anchor-edit limit of any anchor is documented.
+
+### Changed — safety and correctness
+
+- **`dataplane/measure.js` treats the gateway as a trust boundary**: subject names from
+  the registry are validated (lower-case host-name shape, ≤253 chars) before use in a
+  file name; the fetch URL is built from the validated name and the registry's `path`
+  member is no longer spliced in (a path such as `@evil.example/x` would have re-pointed
+  every request at another host); every fetch has a 15 s timeout and a 1 MiB streamed
+  body cap; the registry fetch checks its HTTP status.
+- **`gated()`** now includes the decision's own action in the fail-closed re-aggregation.
+  Unreachable through the shipped gate (its action is always one of its verdicts), it
+  closes a corner where a foreign gate object with an off-ladder action and no verdicts
+  would have resolved to `allow`.
+- **Both demos sanitise every printed document member** through one shared `clean()` in
+  `demo/meaning.js` (previously `demo.js` printed five members raw and `agent.js` printed
+  a non-numeric `carbon-intensity` raw). `PROMPTS_HUMAN`, exported and unused, is gone.
+- **`results/fitness.md`** now reads the upstream rows (71/71, 69/69, per-file counts,
+  commit and date) from the committed capture JSONs instead of template literals; the
+  v1.0.0 totals are the one labelled constant.
+
+### Documentation corrections (stale since v1.1.0 unless noted)
+
+- ADR-015 and DEVELOPMENT still said the code is MIT → status notes; the v1.0.0 Zenodo
+  record's licence is described as Zenodo actually records it (`gpl-3.0-or-later`; the
+  code here is GPL-3.0-*only*) in DEVELOPMENT, RESEARCH.md and LICENSE.
+- "26 unit tests" → 32, then 33; `npm test` step order (fitness runs before `check:docs`).
+- "gate.js imports exactly two specifiers" omitted `node:crypto` (five places + F7's note).
+- "Three policies" (four, with P1t); "Five decisions" (six); ADR-005's F2 at 75 cases
+  (100, four shapes); ADR-012's debt (closed in v1.1.0); `DEMO_SUBJECT` default
+  (`cloudflare.com`); the ADR index's dangling CHANGELOG reference; "the one dotted
+  arrow" (two); the anchor shape (three fields); "Node.js 22" (22.9); a dangling "D3".
+- RESEARCH-QUESTIONS: loop closure is "shown by simulation" only for the sense → decide →
+  gate → act half; the publish-back edge is never exercised (R12).
+- ADR-006 / ADR-011 status notes: in E3 the vehicle owner's consent answers a
+  budget-pressure `escalate`; the E3 saving is the scheduler's (R13).
+- Units: NESO publishes gCO2/kWh (CO2 from generation only); the `gCO2e/kWh` label is
+  kept for the draft's member naming and the discrepancy is recorded (ADR-008, ADR-015,
+  `simulation/README.md`).
+- README restructured into a short front page; the full write-up moved verbatim to
+  `RESEARCH.md`.
+
 ## [1.1.0] — 2026-08-23 — hardening pass
 
 A review pass over v1.0.0. No experiment was re-run against new data; the grid traces, the

@@ -7,6 +7,7 @@ node_modules/
 # via a local .env loaded by `npm run agent`. Never commit one.
 .env
 .env.*
+!.env.example
 
 # NOTE: results/ and data/ are COMMITTED ON PURPOSE. They are the evidence the
 # article's numbers come from (cached carbon traces, saved gateway documents, raw

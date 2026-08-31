@@ -394,7 +394,7 @@ export function f7PortIsolation() {
       violations.push({ file: `${CORE}/${base}`, imports: [], rule: "expected core file is missing" });
     }
   }
-  notes.push(`${coreFiles.length} governor/ file(s) checked: ${[...seenPure].sort().join(" + ")} import nothing at all; gate.js imports only kaiban-distributed + the core`);
+  notes.push(`${coreFiles.length} governor/ file(s) checked: ${[...seenPure].sort().join(" + ")} import nothing at all; gate.js imports only kaiban-distributed + the core (+ node:* built-ins)`);
 
   // 2. shared/ modules are leaves.
   const sharedFiles = jsFilesIn(SHARED);
@@ -437,7 +437,7 @@ export function f7PortIsolation() {
   const ok = violations.length === 0;
   return {
     id: "F7",
-    property: "Port isolation (hexagonal): core and harness import nothing, gate.js imports only kaiban-distributed+core, shared/ is a leaf, adapters never import each other, and every actuating adapter goes through the harness",
+    property: "Port isolation (hexagonal): core and harness import nothing, gate.js imports only kaiban-distributed+core (+ node:* built-ins), shared/ is a leaf, adapters never import each other, and every actuating adapter goes through the harness",
     cases: checks,
     passed: ok,
     notes: ok ? notes.join("; ") : `violations: ${JSON.stringify(violations)}`,

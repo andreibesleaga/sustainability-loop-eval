@@ -59,10 +59,40 @@ async function resolveConsumer() {
 
 const round1 = (x) => Math.round(x * 10) / 10;
 
+// Trust boundary: everything the gateway returns — the registry and every document —
+// is third-party-shaped JSON and is treated as untrusted (as demo/agent.js already
+// does for what it prints). A subject name must look like a host name before it is
+// used in a file name; the fetch URL is built from that validated name and never from
+// a path string the registry supplies; every fetch has a timeout and a body cap.
+const SUBJECT_RE = /^[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?$/; // lower-case host-name shape, ≤253 chars
+const FETCH_TIMEOUT_MS = 15_000;
+const MAX_BODY_BYTES = 1_048_576; // 1 MiB — the largest document measured is 1.7 kB
+
+/** A subject from the registry, validated or refused loudly. */
+function subjectFrom(entry) {
+  const domain = String(entry?.domain ?? "").toLowerCase();
+  if (!SUBJECT_RE.test(domain) || domain.includes("..")) {
+    throw new Error(`registry entry has an unusable domain ${JSON.stringify(entry?.domain)} — refusing to use it in a URL or a file name`);
+  }
+  return domain;
+}
+
+/** Read a response body with a hard byte cap, streaming, so a huge reply cannot land on disk. */
+async function readCapped(res, cap = MAX_BODY_BYTES) {
+  const chunks = [];
+  let total = 0;
+  for await (const chunk of res.body ?? []) {
+    total += chunk.byteLength;
+    if (total > cap) throw new Error(`response body exceeded ${cap} bytes`);
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks).toString("utf8");
+}
+
 async function timedGet(url) {
   const t0 = performance.now();
-  const res = await fetch(url);
-  const body = await res.text();
+  const res = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+  const body = await readCapped(res);
   return {
     status: res.status, ms: performance.now() - t0, bytes: Buffer.byteLength(body),
     contentType: res.headers.get("content-type") || null, body,
@@ -103,9 +133,16 @@ function validate(consumer, parsed) {
  * end, rather than to every sample before it is aggregated.
  */
 async function measureAll(index, consumer) {
+  // "_gateway-root" is this script's own label, not a registry value. Every other
+  // subject is validated, and its URL is derived from the validated name — the
+  // registry's `path` member is deliberately not spliced into the URL, because a
+  // path such as "@evil.example/x" would re-point the request at another host.
   const targets = [
     { subject: "_gateway-root", url: `${GATEWAY}/.well-known/sustainability-data`, row: null },
-    ...index.subjects.map((s) => ({ subject: s.domain, url: `${GATEWAY}${s.path}`, row: s })),
+    ...(index.subjects ?? []).map((s) => {
+      const subject = subjectFrom(s);
+      return { subject, url: `${GATEWAY}/${subject}/.well-known/sustainability-data`, row: s };
+    }),
   ];
   const perSubject = [];
   const latencyPool = [];
@@ -200,8 +237,9 @@ async function main() {
 
   // Step 1: the subject registry.
   const fetchedAt = new Date().toISOString();
-  const idxRes = await fetch(`${GATEWAY}/index.json`);
-  const index = JSON.parse(await idxRes.text());
+  const idxRes = await fetch(`${GATEWAY}/index.json`, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+  if (!idxRes.ok) throw new Error(`GET ${GATEWAY}/index.json returned HTTP ${idxRes.status} — nothing measured`);
+  const index = JSON.parse(await readCapped(idxRes));
   writeFileSync(path.join(ROOT, "data/dataplane/index.json"),
     JSON.stringify({ fetchedAt, url: `${GATEWAY}/index.json`, status: idxRes.status, body: index }, null, 2));
 

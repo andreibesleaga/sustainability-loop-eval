@@ -13,8 +13,9 @@
  *              reduced/deferred fallback the caller passes as `task`
  *   terminate  NEVER runs — not with an approval, not with any approval
  *
- * Like the core, this file imports nothing: the rule cannot be smuggled past by
- * swapping a dependency, and F7 checks that statically.
+ * Precondition: `decision` comes from gated(), so `action` is on the ladder. An action
+ * that is not is treated exactly like `block` (it runs only with an approval), which
+ * matches how the core ranks an unknown verdict. Imports nothing; F7 checks that.
  */
 
 /** @typedef {{approved: boolean, by?: string}} HumanApproval */

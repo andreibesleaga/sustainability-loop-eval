@@ -51,3 +51,14 @@ approved approval.
 - **Route `terminate` to a human too.** Then it means the same as `block`.
 - **Defer blocked deferrable work automatically.** Fewer approvals, and it quietly turns the fourth rung into the second for half the workload. Reported as a sensitivity number instead.
 - **Let each call site honour the verdict.** That is the scattering one gate exists to prevent.
+
+## Status note (2026-08-31, audit)
+
+In E3 (`simulation/charging.js`) the *vehicle owner's* consent is the approval that
+authorises an `escalate` verdict — a budget-pressure verdict whose natural authority
+is the budget's operator. The two questions ("may the fleet exceed its pacing?" and
+"may my car be shifted?") are answered by one coin. `block` and `terminate` are never
+owner-approved there (they fall back to naive charging). This is a disclosed
+simplification, kept because changing it would move the charging numbers the article
+prints; the human port names no roles, and a role model (who may approve what, with
+what latency) is designed, not built.

@@ -22,13 +22,13 @@ import of a JSON client, and the core is no longer portable.
 returns verdicts out. Everything else is an adapter:
 
 - `carbonValidator()` — the signal port, in the same file, turning a decision into the shape the gate wants.
-- `governor/gate.js` — the actuation port. It imports exactly two things: `kaiban-distributed` and the core.
+- `governor/gate.js` — the actuation port. It imports exactly two things besides a Node built-in: `kaiban-distributed` and the core (plus `node:crypto`, for the audit-anchor digest).
 - `governor/harness.js` — the human port, and the only path in the package from a verdict to running something. It also imports nothing. It lives next to the core, in `governor/`, because it is part of the architecture rather than part of the test layer; it used to sit in `fitness/`, which read as though the guarantee were a property of the tests.
 - The **forecast port** has no adapter. It is part of the design and is named as designed-not-built in `ARCHITECTURE.md` sections 4 and 11 and in the glossary.
 
 Fitness function F7 checks this statically against the real import graph: both
 files in `governor/` other than the gate adapter import nothing at all, the gate
-adapter imports only those two specifiers, and the `simulation/`, `dataplane/` and
+adapter imports only those two specifiers and Node built-ins, and the `simulation/`, `dataplane/` and
 `demo/` adapters do not import each other.
 
 ## Consequences

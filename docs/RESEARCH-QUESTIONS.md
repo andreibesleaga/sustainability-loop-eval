@@ -53,7 +53,7 @@ record, and this package guarantees the rest.
 - `decide()` is non-monotone in the estimate, or has a side effect, or a rung boundary is off by one (F11).
 - A headline number typed into a document no longer matches the file it points at (F12).
 
-**Current answer.** All twelve pass, over **13,366** cases in total — of
+**Current answer.** All twelve pass, over **13,392** cases in total — of
 which F7's 24 and F12's are static checks rather than generated cases. At
 v1.0.0, the snapshot the article cites, it was nine functions over **10,994**
 cases; the difference is properties added, not properties fixed. Upstream, the
@@ -159,7 +159,7 @@ that drives it is good enough to decide *when* to run.
 
 **What the package measures.** `simulation/run.js` replays a synthetic agentic
 workload over two 28-day windows of real Great Britain half-hourly carbon
-intensity, under three policies on the identical task list per seed: always-run
+intensity, under four policies on the identical task list per seed: always-run
 (P0), threshold deferral (P1), threshold deferral on a trailing 7-day median with
 no lookahead (P1t), and the governor at five budget levels (P2, budget factor 0.6
 to 1.0), with every governor decision passing through the real gate and every
@@ -237,6 +237,9 @@ Every limitation named above is indexed, with its canonical wording, in
 [`LIMITATIONS.md`](LIMITATIONS.md).
 
 Loop closure itself — actions changing consumption, changing the next published
-document — is shown here by construction and by simulation. It is not yet shown by
-a live deployment with independent parties on both ends. That is the open problem,
-and it is why the convention is published rather than kept.
+document — is shown here by construction, and its sense → decide → gate → act half by
+simulation. The publish-back half is *not* exercised by any experiment: the signal the
+simulations read is an exogenous cached trace, so nothing the governor does can change
+what it senses next (limitation R12). It is not yet shown by a live deployment with
+independent parties on both ends. That is the open problem, and it is why the
+convention is published rather than kept.

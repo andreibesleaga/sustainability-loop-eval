@@ -11,7 +11,7 @@ carbon-aware thing that existing tools already do.
 
 ## Decision
 
-Three policies replay the identical task list per seed, so any difference between
+Four policies (three, plus the P1t variant added in v1.1.0) replay the identical task list per seed, so any difference between
 them is a policy difference and not sampling noise:
 
 - **P0, always run.** Every task runs the moment it arrives. The zero line.

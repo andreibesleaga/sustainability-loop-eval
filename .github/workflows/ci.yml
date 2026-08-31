@@ -1,0 +1,33 @@
+# Offline, deterministic checks only. Nothing here touches the network after `npm ci`:
+# the live data-plane measurement (npm run dataplane), the trace fetch (npm run
+# fetch-traces) and both demos are deliberately NOT run — they are live, keyed, or both.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [22, 24] # engines: >=22.9 (--env-file-if-exists); 20 lacks it
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      # Unit tests → the twelve architecture fitness functions through the real gate →
+      # F12 / check:docs (every registered number in the docs still matches results/).
+      - run: npm test
+      # Determinism: the seeded, offline experiments must reproduce the committed
+      # results byte for byte. fitness:report runs twice because F12 reads the
+      # fitness.json that the first run rewrites (documented in tools/check-numbers.js).
+      - run: npm run simulate
+      - run: npm run charging
+      - run: npm run fitness:report && npm run fitness:report
+      - run: git diff --exit-code -- results/simulation.json results/simulation.md results/charging.json results/charging.md results/fitness.json results/fitness.md
+      - run: npm run arch

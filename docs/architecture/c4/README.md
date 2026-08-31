@@ -14,9 +14,11 @@ same thing the words say; if they ever disagree, the code wins.
 | [`loop-overview.mmd`](loop-overview.mmd) · [`.png`](loop-overview.png) | Concept | The Cybernetic Sustainability Loop: publish, sense, decide, gate, human, act, publish again |
 
 **Solid and dotted edges.** A solid arrow is an import or a call that exists in
-this repository. The one dotted arrow, in the component diagram, is labelled as
-conceptual: the measured documents feed the *signal* the demo reads, but
-`dataplane/` and `demo/` do not import each other, and F7 would fail if they did.
+this repository. There are two dotted arrows. In the component diagram, one is
+labelled as conceptual: the measured documents feed the *signal* the demo reads, but
+`dataplane/` and `demo/` do not import each other, and F7 would fail if they did. In
+the context diagram, the peers' "read its document in turn" edge is dotted because it
+is the loop-closing edge nothing in this package exercises (limitation R12).
 
 ## How the images were made
 

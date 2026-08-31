@@ -105,7 +105,7 @@ careful about that line, and section 11 lists what it means for the results.
 
 ## 4. Solution strategy
 
-Five decisions carry the whole design.
+Six decisions carry the whole design.
 
 1. **A hexagonal core with adapters at the edges.** The governor owns four ports:
    a *signal port* (peer and grid readings come in), a *forecast port* (load and
@@ -173,7 +173,7 @@ Five decisions carry the whole design.
 |---|---|---|
 | `governor/carbon-governor.js` | Holds a carbon budget in grams CO2e, tracks what has been spent, turns a *committed / budget* ratio into a verdict, and exposes the reference aggregation rule `mostSevere()` | 104 lines. Imports nothing. `decide()` has no side effects; `commit()` is the only thing that moves state, and it throws on a non-finite or negative value rather than committing a silent zero. |
 | `governor/harness.js` | The human port, and the only path in the package from a verdict to actually running something | Imports nothing. `allow` and `degrade` run automatically; `escalate` and `block` need an approval whose `approved` field is exactly `true`; `terminate` never runs. |
-| `governor/gate.js` | Builds the real `ActionGate` with the governor registered as a validator and a real `AuditLog` behind it; gives it a deterministic injected clock. `gated()` normalises any verdict that is not on the ladder to `block`, keeping the original under `rawAction`; `chainAnchor()` and `verifyAnchored()` live here too | Imports exactly two things: `kaiban-distributed` and the core |
+| `governor/gate.js` | Builds the real `ActionGate` with the governor registered as a validator and a real `AuditLog` behind it; gives it a deterministic injected clock. `gated()` normalises any verdict that is not on the ladder to `block`, keeping the original under `rawAction`; `chainAnchor()` and `verifyAnchored()` live here too | Imports two things plus one Node built-in: `kaiban-distributed`, the core, and `node:crypto` (for the anchor digest) |
 | `fitness/props.js` | The twelve properties F1–F12, each an exported function returning `{ id, property, cases, passed, notes }` | The property logic lives here once; the test files and the report both call it. Above the size target on purpose — see ADR-001. |
 | `fitness/fN.test.js` | One `node:test` file per property, asserting on `passed` | Twelve files, about 15 lines each |
 | `fitness/import-graph.js` | Parses every source file's import statements into the real import graph that F7 checks | A per-statement scanner, not a regex over the whole file |
@@ -272,7 +272,7 @@ There is one deployment: a developer's machine.
 
 | Thing | Requirement |
 |---|---|
-| Runtime | Node.js 22 or newer |
+| Runtime | Node.js 22.9 or newer (`--env-file-if-exists`, used by `npm run agent`, arrived in 22.9) |
 | Install | `npm install` — one runtime dependency |
 | Disk | The cached traces and documents are already committed; nothing large is downloaded |
 | Operating system | Anything Node runs on |
@@ -376,7 +376,7 @@ What that does and does not buy, because "tamper-proof" would be too strong:
 
 - **Edits are detected** by `verify()`, which names the index (F6, F10).
 - **Truncation is not**, by `verify()` alone — a shortened chain is still consistent. F10 asserts that honestly.
-- **Truncation is detected with an anchor**: `chainAnchor(records)` returns `{ length, tipHash }`, and `verifyAnchored(audit, anchor)` compares against one taken earlier (F10).
+- **Truncation is detected with an anchor**: `chainAnchor(records)` returns `{ length, tipHash, anchorHash }` (the third is a digest of the first two, so a corrupted anchor object is itself noticed), and `verifyAnchored(audit, anchor)` compares against one taken earlier (F10). An anchor protects only the records up to its position; a tail rewritten after it passes both checks.
 - **The log is tamper-*evident*, not tamper-*resistant*.** `records()` returns live objects, so code in the process can mutate them; `verify()` will notice, but nothing prevents it. Not persisted, not signed (section 11).
 
 ### Determinism
@@ -418,6 +418,43 @@ API's *regional forecasts* standing in for peers' published documents. They are
 real data used as a stand-in, not real peer publications.
 
 ---
+
+### A control-theoretic reading
+
+The article's title says *cybernetic*; this is what kind of controller the package
+actually contains, in control-theory terms, so a reader with that background does not
+have to reverse-engineer it.
+
+- **Two loops, one closed.** The inner budget loop is a genuine negative-feedback
+  regulator: `commit()` feeds back the *measured* grams (the national actual), not the
+  estimate the decision was made on, so the estimate/actual gap is inside the loop and
+  the integrator corrects it. The outer loop — act → publish → peers sense → act — is
+  open in every experiment: the signal is an exogenous cached trace (R12).
+- **What the governor is.** Integral control on its own cumulative spend (the pacing
+  ratio), a quantised five-level output (the ladder), a hard reset every period, and
+  pure feedforward with respect to the grid — it reads a forecast and never senses the
+  grid's response to its own actions. "Paces, does not cap" (R3) and the midnight
+  sawtooth (R16) are the signatures of the reset-plus-carry-over coupling. It is closer
+  to a token-bucket pacer than to Watt's proportional governor the name evokes.
+- **Requisite variety (Ashby).** A five-state controller regulates disturbances of far
+  higher variety. ADR-004's choice of a ladder over a continuous throttle is a deliberate
+  variety *attenuation*: regulation resolution is traded for a total order, which is
+  what lets concurrent opinions aggregate and the gate fail closed.
+- **The good-regulator theorem (Conant and Ashby).** Every good regulator of a system
+  must be a model of that system. The governor contains no model of workload or grid;
+  the forecast port, where that model would live, is designed and not built. It is
+  therefore not an optional adapter but the precondition for the governor being a
+  *good* regulator rather than a reflexive one.
+- **Beer's Viable System Model.** System 1 = the actuating adapters; System 2 = the
+  gate's total-order aggregation (anti-oscillation between S1 units, Beer's S2 role);
+  System 3 = the budget bargain, with the hash-chained audit log as the S3\* audit
+  channel; System 4 = the forecast port — the outside-and-future function, missing, which
+  VSM predicts as the failure mode of a merely reactive organisation; System 5 = the
+  normative layer, correctly outside this package. `escalate`/`block` through the human
+  port are the algedonic channel; `terminate` is the algedonic stop.
+- **Where the dynamics are not analysed.** Stability, delay and synchronisation of many
+  controllers on one shared signal (R11), and the strategic dynamics of a self-declared
+  control input (R15).
 
 ## 9. Architecture decisions
 
@@ -464,7 +501,7 @@ Each quality goal from section 1, as a scenario that a script can settle.
 | Q9 | Traceability | Every number in the article can be pointed at a file in `results/`, and every hand-typed number in the docs still matches it | F12 (`tools/check-numbers.js`), plus the inventory in [`docs/ARTIFACT-INVENTORY.md`](../ARTIFACT-INVENTORY.md) for artifacts the scripts do not measure | Green for the numbers a script produces; the inventory is still maintained by hand |
 | Q10 | Simplicity | The governor core stays readable in one sitting | 104 lines, of which 57 are code and the rest are comments and blanks; zero imports; F7 keeps it that way and F12 keeps this row honest | Green |
 
-All twelve fitness functions pass, over 13,366 cases in total. Version 1.0.0
+All twelve fitness functions pass, over 13,392 cases in total. Version 1.0.0
 — the snapshot the article cites — had nine, over 10,994 cases; the difference is
 properties added, not properties fixed. The same gate and audit code carries its
 own upstream governance suite (4 files, 71 tests), which also passes
@@ -477,7 +514,7 @@ end-to-end suite of 69 tests against a real Redis broker
 ## 11. Risks and technical debt
 
 Written plainly, because these are the things that would change the conclusions.
-R1 to R10 below are the canonical list; [`docs/LIMITATIONS.md`](../LIMITATIONS.md)
+R1 to R17 below are the canonical list (R11–R17 from the 2026-08-31 audit); [`docs/LIMITATIONS.md`](../LIMITATIONS.md)
 indexes every other place in the repository where a limitation is stated, so a
 reader can check that they all say the same thing.
 
@@ -493,6 +530,13 @@ reader can check that they all say the same thing.
 | R8 | **Ten seeds, two windows** | Ten seeds per configuration and two 28-day windows (one winter, one summer) in one country. The spread between seeds is reported, but this is not a wide sample. | More seeds, more windows, more regions, more countries |
 | R9 | **The gate is one runtime** | The properties are checked against one implementation of the ladder, in one process. And the ladder's *meaning* — the human port, `block` as a refusal with a fallback, `terminate` as unoverridable — is this package's, not the runtime's; the runtime treats the top three rungs alike. | A second independent implementation to check against, and the semantics merged upstream |
 | R10 | **The absence claims are search results** | The novelty claims rest on a documented adversarial search on a stated date. Absence of evidence in those sources, nothing more. | Documented in [`docs/SEARCH-PROTOCOL.md`](../SEARCH-PROTOCOL.md); readers are asked to open an issue if they find a prior composition |
+| R11 | **Shifted load piles onto one slot** | Every deferrable task and every vehicle picks the cleanest slot of the *same* shared signal, so shifted work synchronises. Measured at f = 0.8: 75.3% (winter) and 92.9% (summer) of deferred executions land in the busiest 5% of half-hours, up to ~43 queued tasks in one slot against an arrival mean of 6; in E3 all 50 cars start in the same slot on most nights and one summer slot takes 54.8% of all sessions. The signal is exogenous here, so the pile-up cannot feed back; at adoption scale it would. Not modelled. | An endogenous-signal sensitivity arm, dispersion inside the clean window, a capacity term in the governor |
+| R12 | **The two halves are joined by assumption** | No measured experiment consumes the gateway's documents as its control signal: E1 measures annual disclosures (median `updated` age 23 days, reporting-period age 233 days, 3 of 12 with a `carbon-intensity` member) while E2/E3 consume a half-hourly stand-in. The publish-back edge of the loop is never exercised. | Peers publishing at grid cadence; an E2 arm fed from real gateway documents |
+| R13 | **In E3 the gate can only reduce the saving** | `allow`/`degrade`/`escalate` all yield the same shift and `block`/`terminate` fall back to naive charging, so the saving is the scheduler's. Measured: an ungated argmin-only arm avoids 32.85% / 16.53% against the governed 32.51% / 16.04%. The gate adds audit, pacing and the human port there, not grams. | Report the ungated arm; give `degrade` a distinct physical meaning in E3 |
+| R14 | **Rebound unmodelled; budgets relative** | No induced demand (Jevons); every budget is f × the median of the same workload's own uncontrolled day — an oracle — not an absolute allocation. | Elastic demand in the workload model; a normative layer setting absolute budgets |
+| R15 | **Self-declared estimates, no metering port** | The validator reads the agent's own `estimatedGramsCO2e`; under-declaring is allowed. No port supplies the trusted actual grams `commit()` needs (the traces do, here). Publishing a control input is strategic (Goodhart). | A metering port; attestation on published documents |
+| R16 | **Arrival hour decides the verdict** | Daily reset + growing pacing ratio: 00:00–06:00 arrivals 100% allowed, 23:00 arrivals dropped 11.4% (winter) / 23.8% (summer) at f = 0.8; 35.7% / 51.2% of deferred work crosses midnight, 4.4% / 6.4% of grams are yesterday's. No fairness cut reported. | A rolling budget window; a fairness column |
+| R17 | **Average intensity, not marginal** | Attributional accounting (energy × slot average); shifted load is often served by the marginal plant, so real abatement can be smaller. Traces are CO2-only, labelled gCO2e (ADR-015). | Re-score with a marginal series; state both |
 
 ### Technical debt
 
@@ -527,7 +571,7 @@ Still open:
 | **Carbon budget** | An allowance of grams of CO2-equivalent for a period, here a day or a night. |
 | **Carbon intensity** | How dirty the electricity is right now, in grams of CO2-equivalent per kilowatt-hour. |
 | **Carbon-Verdict Governor** | The reference core in `governor/`: it maps carbon-budget state onto the verdict ladder. |
-| **Chain anchor** | `{ length, tipHash }` taken from a chain at a moment in time. Catches truncation, which `verify()` alone cannot. |
+| **Chain anchor** | `{ length, tipHash, anchorHash }` taken from a chain at a moment in time. Catches truncation, which `verify()` alone cannot; protects only the anchored prefix. |
 | **Cybernetic Sustainability Loop** | The whole composition: publish, sense, decide, gate, act, publish again. |
 | **Deferrable task** | Work that may run later, up to a deadline. Half the simulated workload is deferrable within six hours. |
 | **Deferral queue** | Where a paused task waits. Gated once on arrival, run later at full energy in the chosen slot, never re-gated (ADR-016). |

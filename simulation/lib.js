@@ -99,9 +99,9 @@ export function generateWorkload(seed, slots, w = WORKLOAD, slotMinutes = 30) {
  *
  * The P1 baseline uses the median of the whole window, which a scheduler running in
  * real time could not know (ADR-010 discloses that lookahead). This is the causal
- * version: at slot i only slots [i-windowSlots, i) are visible. Before any history
- * exists the threshold is +Infinity, i.e. "no reason to defer yet" — the honest
- * behaviour of a scheduler that has not seen a day of signal.
+ * version: at slot i only slots [i-windowSlots, i) are visible. At slot 0, with no
+ * history at all, the threshold is +Infinity, i.e. "no reason to defer yet"; from
+ * slot 1 on it is the median of whatever has been seen so far, however little.
  */
 export function trailingMedians(series, windowSlots) {
   const out = new Array(series.length);

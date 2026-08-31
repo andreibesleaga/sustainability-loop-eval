@@ -40,5 +40,4 @@ One exception was made in v1.1.0: ADR-006 was **rewritten in place** rather than
 superseded, because its old text contained a sentence that was simply wrong about
 what the code did ("block on deferrable work simply defers, with no human
 involved"). Superseding it would have left the wrong sentence in the repository as
-though it had once been true. The rewrite is noted in the file and in
-`CHANGELOG.md`.
+though it had once been true. The rewrite is noted in the file's own header.

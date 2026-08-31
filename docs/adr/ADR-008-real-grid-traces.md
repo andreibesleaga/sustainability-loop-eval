@@ -34,3 +34,12 @@ actual, and **regional** series that are forecast-only.
 - **Use the national forecast as the peer signal.** Simpler, but it would model peers as reading the same central feed the architecture is trying to replace.
 - **Use the national actual for both.** Would make the agent clairvoyant and every result optimistic.
 - **Synthesise peer documents.** Loses the only real thing about the peer signal.
+
+## Status note (2026-08-31, audit)
+
+NESO's series is **gCO2/kWh, CO2 from generation only**; the traces label it
+`gCO2e/kWh` to match the draft's member name. The mismatch is a label, not a number,
+and is recorded in ADR-015 and `simulation/README.md` rather than fixed in the data.
+Also recorded: the regional "peer" series is the *same provider's* forecast, so the
+peer signal shares the national signal's errors — the cadence and provenance gap
+between this stand-in and real published documents is limitation R12.

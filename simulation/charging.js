@@ -39,7 +39,7 @@ export const FLEET = {
   // The charge rate is not a free parameter: it is energy / duration. There is no
   // separate nameplate charger rating in this model, and nothing reads one.
   impliedRateKW: Math.round((20 / (6 * SLOT_HOURS)) * 100) / 100, // 6.67 kW
-  plugInSlotRange: [34, 38],            // 17:00–19:00 UTC, i.e. 18:00 ± 1 h
+  plugInSlotRange: [34, 38],            // 17:00–19:00 UTC: 18:00 ± 1 h local in W1 (GMT), 19:00 ± 1 h local in W2 (BST); both arms share the schedule, so the comparison is unaffected
   deadlineSlotOffset: 62,               // 07:00 next morning, measured from midnight
   budgetFactor: 0.8,                    // daily budget = 0.8 x median naive daily fleet emissions
   approvalRates: [1.0, 0.8],

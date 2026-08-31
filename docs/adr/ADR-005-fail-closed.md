@@ -22,7 +22,10 @@ There is exactly one legitimate bypass: a gate constructed with
 is a deployment-time, all-or-nothing switch, not a per-request escape hatch.
 
 Fitness function F2 checks all three: 25 throwing-validator cases, 25 invalid
-estimates, 25 disabled-gate cases.
+estimates, 25 disabled-gate cases. *(Status 2026-08-31: since v1.1.0 F2 has a fourth
+shape — 25 off-ladder-verdict cases, the sub-case that found the upstream severity gap
+described in ADR-002 — for 100 cases in all; `results/fitness.json` is the count of
+record.)*
 
 ## Consequences
 

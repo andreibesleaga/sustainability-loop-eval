@@ -37,8 +37,8 @@
     "charging": "node simulation/charging.js",
     "demo": "node demo/demo.js",
     "agent": "node --env-file-if-exists=.env demo/agent.js",
-    "arch": "npx --yes madge --circular --extensions js governor fitness simulation dataplane demo shared",
-    "arch:graph": "npx --yes madge --extensions js governor fitness simulation dataplane demo shared",
+    "arch": "npx --yes madge@8.0.0 --circular --extensions js governor fitness simulation dataplane demo shared",
+    "arch:graph": "npx --yes madge@8.0.0 --extensions js governor fitness simulation dataplane demo shared",
     "all": "npm run fitness:report && npm run simulate && npm run charging && npm run dataplane"
   },
   "dependencies": {

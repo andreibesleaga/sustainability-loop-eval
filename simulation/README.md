@@ -132,3 +132,10 @@ P2 emits less partly because it *does less work*. Total gCO2e must be read next 
 P1 and P1t complete 100% of tasks; P2 does not. `completedOnTime` is an *invariant*, not
 a finding: deadlines are clamped to the window, so it always equals `completed`. The per-experiment markdown ends with an
 explicit caveats section.
+
+**Units (audit note, 2026-08-31).** NESO publishes the intensity as gCO2/kWh — CO2
+from electricity generation only, not a full CO2-equivalent. The traces and every
+result file label the series `gCO2e/kWh`, the unit name the well-known-URI draft uses
+for its `carbon-intensity-gCO2e-per-kWh` member, so a peer document and a trace read
+alike. Read every gram here as CO2 from generation; the label was left unchanged
+because changing it would rewrite the committed traces and results (ADR-015).

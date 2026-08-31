@@ -704,5 +704,6 @@ Note on the data files, which are not covered by the GNU GPL above:
 Note on earlier releases:
 
 * The v1.0.0 archive (Zenodo 10.5281/zenodo.22056634) contains an MIT licence
-  file; its Zenodo record was later set to GPL-3.0-only by the author. The code
-  is GPL-3.0-only from v1.1.0 onward.
+  file; its Zenodo record's licence metadata was later set by the author to
+  GPL-3.0 (Zenodo lists it as gpl-3.0-or-later). The code in this repository is
+  GPL-3.0-only from v1.1.0 onward.

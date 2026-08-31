@@ -33,3 +33,18 @@ Anything derived from these results carries the attribution forward.
 
 - **One licence line for the whole repository.** Shorter, and wrong: the code licence does not cover the data.
 - **Attribution in the README only.** Correct in letter, and easy to lose the moment a results file is copied elsewhere.
+
+## Status note (2026-08-31, audit)
+
+- The two sentences above that say the code is **MIT** describe v1.0.0. From v1.1.0 the
+  code is **GPL-3.0-only** (`package.json`, `LICENSE`, `CITATION.cff`, `CHANGELOG.md`);
+  the data remain CC BY 4.0 and the split this ADR insists on is unchanged. Left in place
+  rather than rewritten, so the record shows what was decided when.
+- **Units.** NESO publishes the intensity as **gCO2/kWh — CO2 from electricity generation
+  only**, not a full CO2-equivalent. The cached traces and every result file label the
+  series `gCO2e/kWh`, the unit name the well-known-URI draft uses for its
+  `carbon-intensity-gCO2e-per-kWh` member, so that a peer document and a trace read
+  alike. Read every gram in this package as CO2 from generation; the "e" slightly
+  overstates the gas coverage. The label was left as is because changing it would
+  rewrite the committed traces and results; the correction lives here, in
+  `simulation/README.md` and in ADR-008.

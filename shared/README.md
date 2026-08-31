@@ -10,5 +10,5 @@ that a given number means one thing across the whole package:
 
 They are deliberately *not* part of the governance hexagon: `governor/carbon-governor.js`
 and `governor/harness.js` import nothing at all, and `governor/gate.js` imports only
-`kaiban-distributed` and the core. The adapters (`simulation/`, `dataplane/`, `demo/`) and the fitness suite may import
+`kaiban-distributed`, the core and one Node built-in (`node:crypto`). The adapters (`simulation/`, `dataplane/`, `demo/`) and the fitness suite may import
 `shared/`, never each other — checked by fitness function F7.

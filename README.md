@@ -49,12 +49,12 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 Demonstration only — no number in `results/` comes from the demos.
 `npm install` prints advisories from the one dependency's own tree; they are
 explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
-everything: 32 unit tests, the twelve architecture checks through the real
+everything: 33 unit tests, the twelve architecture checks through the real
 gate, and a check that every number in these pages still matches `results/`.
 
 ## Headline results
 
-- **The safety properties hold in shipped code.** 12/12 green over 13,366 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
+- **The safety properties hold in shipped code.** 12/12 green over 13,392 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
 - **The data plane is real and cheap to read.** 12 documents, 100% valid, median 44.6 ms and about 1.3 kB per fetch; 120 requests from 26 clients in the log window — reachability shown, adoption not yet.
 - **The governor cuts emissions — by also doing less work.** At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against −1.54% and −2.97% for plain threshold deferral. About 15% of tasks run reduced and a few are dropped; read the emissions next to the completed counts, never alone.
 - **Charging:** 32.51% of session emissions avoided in winter and 16.04% in summer at full approval (25.93% and 12.77% at 80% approval) — cars only shift *when* they charge, never how much, and every car still charges fully.
@@ -64,7 +64,10 @@ The honest catches — the governor paces a budget rather than capping it,
 humans are the bottleneck (~19–30 approvals/day simulated), the workload is
 synthetic, the gateway is the author's own — are spelled out with every number
 in [RESEARCH.md](RESEARCH.md#what-we-found) and
-[docs/LIMITATIONS.md](docs/LIMITATIONS.md).
+[docs/LIMITATIONS.md](docs/LIMITATIONS.md), which also carries seven further
+limitations measured in a 2026-08-31 audit (R11–R17): shifted load synchronises
+onto one slot, no experiment consumes the gateway's own documents as its signal,
+and in the charging run the saving is the scheduler's, not the gate's.
 
 **Real:** the gate, the audit log, the gateway documents, the grid traces.
 **Synthetic:** the workload, the EV fleet, the approver.

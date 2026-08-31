@@ -25,7 +25,7 @@ import { createInterface } from "node:readline/promises";
 import { createCarbonGovernor } from "../governor/carbon-governor.js";
 import { makeGate, gated } from "../governor/gate.js";
 import { execute } from "../governor/harness.js";
-import { MEANING, DEMO_ACTION } from "./meaning.js";
+import { MEANING, DEMO_ACTION, clean } from "./meaning.js";
 
 const SUBJECT = "cloudflare.com";
 const URL_LIVE = `https://sustainability.up.railway.app/${SUBJECT}/.well-known/sustainability-data`;
@@ -36,19 +36,8 @@ const BUDGET_G = 900, SPENT_G = 300; // ILLUSTRATIVE daily budget, and grams alr
 const DEGRADED_FRACTION = 0.4;  // what a "reduced run" costs, as a fraction of the proposal
 const HTTP_TIMEOUT_MS = 60000;  // a model call must not hang this script forever
 
-// ANSI escape sequences, and every C0/C1 control character.
-const ANSI_RE = /\u001b\[[0-9;?]*[ -\/]*[@-~]/g;
-const CONTROL_RE = /[\u0000-\u001f\u007f-\u009f]/g;
-
-/**
- * Untrusted text in, safe-to-print text out: drop ANSI escape sequences and control
- * characters (so nothing can move the cursor, clear the screen, or fake a prompt),
- * collapse whitespace, and clamp the length.
- */
-function clean(value, max = 300) {
-  const s = String(value ?? "").replace(ANSI_RE, "").replace(CONTROL_RE, " ").replace(/\s+/g, " ").trim();
-  return s.length > max ? `${s.slice(0, max)}...` : s;
-}
+// clean() — the ANSI/control-character stripper for untrusted text — is shared with
+// demo.js via ./meaning.js, so the two demos sanitise identically.
 
 /** A number from untrusted JSON, or null. Never NaN, never negative, never absurd. */
 function cleanNumber(value, max = 1e6) {
@@ -107,7 +96,7 @@ async function main() {
   const remainingG = BUDGET_G - SPENT_G;
 
   console.log(`Document: ${source}`);
-  console.log(`Peer    : ${target} — reporting period ${period}, carbon-intensity ${published ?? `(none published; using illustrative ${FALLBACK_INTENSITY})`} gCO2e/kWh`);
+  console.log(`Peer    : ${target} — reporting period ${period}, carbon-intensity ${Number.isFinite(published) ? published : `(${published == null ? "none published" : `unusable value ${clean(published, 40)}`}; using illustrative ${FALLBACK_INTENSITY})`} gCO2e/kWh`);
   console.log(`Model   : ${MODEL} via OpenRouter — one real call`);
   console.log(`Budget  : ILLUSTRATIVE ${remainingG} gCO2e left of ${BUDGET_G} today\n`);
 

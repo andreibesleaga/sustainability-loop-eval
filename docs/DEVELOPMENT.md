@@ -30,7 +30,7 @@ never as 0%.
 
 | Command | What it does | Network |
 |---|---|---|
-| `npm test` | The 32 adapter unit tests, then the twelve architecture fitness functions through the real gate, then `check:docs` | none |
+| `npm test` | The 33 adapter unit tests, then the twelve architecture fitness functions through the real gate, then `check:docs` | none |
 | `npm run fitness` | The twelve fitness functions on their own | none |
 | `npm run fitness:report` | Re-runs the same twelve properties and writes `results/fitness.json` **and** `results/fitness.md` | none |
 | `npm run check:docs` | F12: compares every hand-typed headline number in the docs against `results/` | none |
@@ -53,7 +53,7 @@ needs any of them.
 |---|---|---|---|
 | `OPENROUTER_API_KEY` | `demo/agent.js` | none | The key for the optional live agent run. Without it the script explains that and exits. Put it in a gitignored `.env` at the repository root, or export it in your shell. Never commit it. |
 | `OPENROUTER_MODEL` | `demo/agent.js` | `anthropic/claude-sonnet-5` | Which model proposes the action (ADR-018). |
-| `DEMO_SUBJECT` | `demo/demo.js` | the gateway's own document | Which subject's document the demo reads. Must match `/^[a-z0-9.-]+$/i`; if no fixture exists for it, the script says which ones do. |
+| `DEMO_SUBJECT` | `demo/demo.js` | `cloudflare.com` | Which subject's document the demo reads. Must match `/^[a-z0-9.-]+$/i`; if no fixture exists for it, the script says which ones do. |
 | `SUSTAINABILITY_CONSUMER_URL` | `dataplane/measure.js` | none | Points at a local build of the reference consumer library. If unset, the bare specifier `sustainability-wellknown-consumer` is tried; if that is not installed either, schema conformance is reported as "not measured" (ADR-017). |
 
 `npm run agent` is the only command that spends money. It is never part of
@@ -181,8 +181,8 @@ result file. If a number needs to change, change what produced it.
 
 | Version | What it is |
 |---|---|
-| **v1.0.0** — Zenodo [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634) | The snapshot the article cites. Nine fitness functions, 9/9 green over 10,994 cases; every number the article prints comes from this tag. Licensed MIT. |
-| **v1.1.0** — `main` | A hardening pass: the rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10, F11, F12), a portable data-plane run, client IPs hashed, and a documentation pass. Code licensed GPL-3.0-only from this version. |
+| **v1.0.0** — Zenodo [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634) | The snapshot the article cites. Nine fitness functions, 9/9 green over 10,994 cases; every number the article prints comes from this tag. The archive's files carry an MIT licence file; the Zenodo record's licence metadata was later set by the author to GPL-3.0 (Zenodo lists it as `gpl-3.0-or-later`). |
+| **v1.1.0** — `main`, Zenodo [10.5281/zenodo.22068404](https://doi.org/10.5281/zenodo.22068404) (the concept DOI 10.5281/zenodo.22056633 resolves here) | A hardening pass: the rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10, F11, F12), a portable data-plane run, client IPs hashed, and a documentation pass. Code licensed GPL-3.0-only from this version. |
 
 `CHANGELOG.md` lists every change and says explicitly which numbers moved. The
 short answer: none of the headline simulation, charging or data-plane numbers
@@ -203,7 +203,7 @@ doi:10.5281/zenodo.22056634 (concept DOI 10.5281/zenodo.22056633 for all version
 
 Three licences apply and they are not the same:
 
-- **Code** — GNU GPL v3.0 only, from v1.1.0 onward. See `LICENSE`. The v1.0.0 release archived on Zenodo (10.5281/zenodo.22056634) was published under MIT and remains MIT as released.
+- **Code** — GNU GPL v3.0 only, from v1.1.0 onward. See `LICENSE`. The v1.0.0 archive on Zenodo (10.5281/zenodo.22056634) contains an MIT licence file as released; the record's licence metadata was later set by the author to GPL-3.0 (Zenodo lists it as `gpl-3.0-or-later`; the code in this repository is GPL-3.0-*only*).
 - **Documentation, text, diagrams, figures and result write-ups** — © Andrei N. Besleaga, all rights reserved. Not covered by the GPL. Cite the article and the Zenodo DOI when using them.
 - **Carbon-intensity data** — © National Energy System Operator, CC BY 4.0. The attribution travels with the data: it is in the cached trace files and copied into every simulation results JSON. Carry it forward in anything derived from these results.
 

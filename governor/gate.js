@@ -50,9 +50,13 @@ export async function gated(gate, estimateG, { agentId = "agent-1", operation = 
   const decisionOffLadder = !LADDER.includes(decision.action);
   if (!offLadder.length && !decisionOffLadder) return decision;
   const bad = decisionOffLadder ? decision.action : offLadder[0];
+  // The decision's own action joins the re-aggregation: with the shipped gate it is
+  // always one of the verdict actions (or "allow"), so this changes nothing there; for
+  // any other gate object an off-ladder decision then ranks as block instead of being
+  // dropped from the set (which, with no verdicts, would have resolved to "allow").
   return {
     ...decision,
-    action: mostSevere(actions),
+    action: mostSevere([...actions, decision.action]),
     rawAction: decision.action,
     normalisedReason: `non-ladder verdict '${bad}' treated as block (fail closed)`,
   };
@@ -62,19 +66,32 @@ export async function gated(gate, estimateG, { agentId = "agent-1", operation = 
  * An external anchor over an audit chain: how long it was and what its tip hash was.
  * Written down somewhere the log's own holder cannot rewrite (a receipt, another
  * service, a signed line in a build log), this is what makes truncation detectable.
+ *
+ * `length` + `tipHash` are the anchor: on a valid hash chain they commit the whole
+ * anchored prefix. `anchorHash` is a digest OF the anchor object itself, so a copy of
+ * the anchor that was itself altered or corrupted can be noticed; it adds nothing to
+ * what the chain proves. What no anchor can do is protect records appended AFTER it:
+ * a holder who rewrites and re-hashes the tail past the anchored position passes both
+ * `verify()` and `verifyAnchored()`. Re-anchor after every batch you care about.
  */
+const anchorDigest = (length, tipHash) => createHash("sha256").update(`${length}:${tipHash}`).digest("hex");
+
 export function chainAnchor(records) {
   const length = records.length;
   const tipHash = length ? records[length - 1].hash : "";
-  return { length, tipHash, anchorHash: createHash("sha256").update(`${length}:${tipHash}`).digest("hex") };
+  return { length, tipHash, anchorHash: anchorDigest(length, tipHash) };
 }
 
 /**
- * Verify an audit log against an anchor taken earlier: the chain must still verify,
- * must not have shrunk below the anchored length, and the record at the anchored
- * position must still carry the anchored tip hash.
+ * Verify an audit log against an anchor taken earlier: the anchor object must be
+ * self-consistent (if it carries its digest), the chain must still verify, must not
+ * have shrunk below the anchored length, and the record at the anchored position
+ * must still carry the anchored tip hash.
  */
 export function verifyAnchored(audit, anchor) {
+  if (anchor.anchorHash !== undefined && anchor.anchorHash !== anchorDigest(anchor.length, anchor.tipHash)) {
+    return { valid: false, reason: "anchor object does not match its own digest (corrupted or altered anchor)" };
+  }
   const chain = audit.verify();
   const records = audit.records();
   if (!chain.valid) return { valid: false, reason: "chain broken", brokenAt: chain.brokenAt };

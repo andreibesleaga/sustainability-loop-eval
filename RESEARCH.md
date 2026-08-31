@@ -53,7 +53,7 @@ verdict plus every block verdict*.
 
 The honest version, with the numbers and the catches together.
 
-- **The safety properties hold in shipped code.** Twelve executable checks against the real gate, all green over 13,366 cases. The gate always picks the worst verdict, refuses on bad input instead of allowing, never runs anything above "degrade" without a human, never runs "terminate" at all, and its audit log catches tampering. (Nine of the twelve, over 10,994 cases, are what the article cites; three were added afterwards. See **Versions** below.)
+- **The safety properties hold in shipped code.** Twelve executable checks against the real gate, all green over 13,392 cases. The gate always picks the worst verdict, refuses on bad input instead of allowing, never runs anything above "degrade" without a human, never runs "terminate" at all, and its audit log catches tampering. (Nine of the twelve, over 10,994 cases, are what the article cites; three were added afterwards. See **Versions** below.)
 - **The data plane is real and cheap to read.** Twelve live documents, all valid, median 44.6 ms and about 1.3 kB per fetch.
 - **The governor cuts emissions.** About 16% less carbon in winter and 20% less in summer than just running everything, against 1.5% and 3.0% for ordinary carbon-aware scheduling.
 - **But it does less work to get there.** Around 15% of tasks run in a reduced mode and some are dropped. Read the emissions column next to the completed and dropped columns, never alone.
@@ -94,7 +94,7 @@ them is upstream's job.
 |---|---|---|
 | `npm run demo` | Reads one real document from the public gateway, turns its carbon figure into estimates for five actions, sends them through the real gate, prints all five verdicts and what each one means. Falls back to a saved copy offline, and says so. | A real verdict in seconds |
 | `npm run agent` | A real language model (`anthropic/claude-sonnet-5` via OpenRouter, plain HTTPS, no SDK) reads a real peer document and proposes a task. The proposal goes through the same real gate. If the verdict is `escalate`, **you** approve or refuse at the terminal; if it is `block`, you are asked whether to authorise a reduced run instead; if it is `terminate`, you are not asked at all. Needs `OPENROUTER_API_KEY` (put it in a gitignored `.env`); without one it explains and exits. | You are the human in the loop |
-| `npm test` | 32 unit tests for the adapters' own arithmetic, then the twelve architecture checks through the real `kaiban-distributed` gate, then `check:docs`. | 12/12 green over 13,366 cases; the runtime's own governance suite (4 files, 71 tests) passes at commit `17ad362` |
+| `npm test` | 33 unit tests for the adapters' own arithmetic, then the twelve architecture checks through the real `kaiban-distributed` gate, then `check:docs`. | 12/12 green over 13,392 cases; the runtime's own governance suite (4 files, 71 tests) passes at commit `17ad362` |
 | `npm run fitness` | The twelve architecture checks on their own. | as above |
 | `npm run dataplane` | Fetches and checks every document in the gateway's subject registry, five times each, then summarises the gateway's real request logs. | 12 documents, 100% valid, all 8 mandatory fields on each, median 44.6 ms and 1296.5 bytes, not-endorsed notice on 9/9 real-organization documents, 2 organizations honestly recorded as publishing nothing, 120 requests from 26 clients over the roughly one-week log window |
 | `npm run simulate` | Replays a made-up agent workload over real Great Britain grid data, January and July 2026, under the policies and ten random seeds. | At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against **−1.54%** and **−2.97%** for plain threshold deferral. 7996.6 and 7698.8 of about 8075 tasks completed; 1238.2 and 1220.9 run reduced; 545.7 and 853 human decisions over 28 days (about 19 and 30 a day); 14 and 14.4 of 28 days over budget. Peer signal matches the real grid at r = 0.96 and 0.986. |
@@ -294,7 +294,7 @@ criteria themselves are designed, not built.
 ## Versions
 
 - **v1.0.0** — Zenodo [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634). The snapshot the article cites: nine fitness functions, 9/9 green over 10,994 cases. Every number the article prints comes from this tag.
-- **`main` / v1.1.0** — a hardening pass. The rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10 audit anchoring, F11 core invariants, F12 documentation-agrees-with-results), a portable data-plane run, client IP addresses hashed, and a documentation pass.
+- **`main` / v1.1.0** — Zenodo [10.5281/zenodo.22068404](https://doi.org/10.5281/zenodo.22068404) (where the concept DOI now resolves). A hardening pass. The rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10 audit anchoring, F11 core invariants, F12 documentation-agrees-with-results), a portable data-plane run, client IP addresses hashed, and a documentation pass.
 
 None of the headline simulation, charging or data-plane numbers changed. The
 fitness totals changed because properties were added, not because anything
@@ -371,7 +371,7 @@ metadata is in `CITATION.cff`.
 Copyright © 2026 Andrei N. Besleaga. Three licences apply and they are not the
 same thing:
 
-- **Source code** (all `*.js` files, `package.json`, `tools/`) — **GNU GPL v3.0 only**. See [`LICENSE`](LICENSE) for the full text. The v1.0.0 release archived on Zenodo (10.5281/zenodo.22056634) contains an MIT licence file; its Zenodo record was later set to GPL-3.0-only by the author; from v1.1.0 the code is GPL-3.0-only.
+- **Source code** (all `*.js` files, `package.json`, `tools/`) — **GNU GPL v3.0 only**. See [`LICENSE`](LICENSE) for the full text. The v1.0.0 release archived on Zenodo (10.5281/zenodo.22056634) contains an MIT licence file; its Zenodo record's licence metadata was later set by the author to GPL-3.0 (Zenodo lists it as `gpl-3.0-or-later`); from v1.1.0 the code in this repository is GPL-3.0-only.
 - **Documentation, text, diagrams, figures and result write-ups** (`README.md`, `CHANGELOG.md`, `docs/**`, `results/*.md`, `*.mmd`, `*.png`) — © Andrei N. Besleaga, **all rights reserved**. Not covered by the GPL. Please cite the article and the Zenodo DOI when using them.
 - **Carbon-intensity data** — © National Energy System Operator, **CC BY 4.0**. The attribution travels with the data and must be carried forward in anything derived from these results.
 

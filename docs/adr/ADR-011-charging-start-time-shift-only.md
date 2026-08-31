@@ -39,3 +39,15 @@ to charging less, later than the deadline, or not at all.
 
 - **Model bidirectional charging.** Larger savings on paper, and outside the line this work draws around the patented mechanism.
 - **Model partial charging.** Would let the simulation "save" carbon by delivering less energy, which is not a saving.
+
+## Status note (2026-08-31, audit)
+
+Measured on the committed traces: an *ungated* argmin-only shift avoids 32.85%
+(winter) and 16.53% (summer) against the governed 32.51% and 16.04% — in this
+scenario the gate can only reduce the saving, because `block`/`terminate` fall back
+to naive charging and the other rungs all yield the same shift (limitation R13). The
+saving is the scheduler's; what the gate adds here is the audit trail, the budget
+pacing and the human port. Also: 4.44% (winter) and 2.34% (summer) of sessions end up
+in a window that is dirtier on the national actual than charging at plug-in, because
+the window is chosen on the peer forecast — the aggregate saving still held on every
+seed.

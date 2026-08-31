@@ -87,7 +87,33 @@ test("E2 conservation invariants hold on the real trace at every budget factor",
     assert.equal(m.terminations, m.dropped);
     assert.equal(m.deferred, m.delays.length);
     assert.ok(Math.abs(sum(m.dayG) - m.totalG) < 1e-6);
-    assert.ok(m.totalG < p0.totalG, "the governor never emits more than always-run");
+    // Empirical on the committed traces, not structural: deferral targets are chosen on
+    // the peer FORECAST and charged on the national ACTUAL, and about 12% of deferred
+    // tasks land on a slot that is dirtier on the actual than their arrival slot. The
+    // aggregate still held on every committed seed and window; a regenerated trace could
+    // legitimately flip it. The perfect-signal test below is the structural version.
+    assert.ok(m.totalG < p0.totalG, "on the committed traces, the governor emits less than always-run");
+  }
+});
+
+test("perfect signal (peer == actual): P2 never exceeds P0 and shifting never exceeds naive, by construction", async () => {
+  // The structural version of the two trace-bound assertions above. When the signal the
+  // scheduler sees IS the series it is charged on, every deferral target is the argmin of
+  // a range that contains the arrival slot, degraded work costs 0.4x, and a terminated
+  // task costs nothing — so each task and each session emits no more than its baseline.
+  for (const id of ["W1", "W2"]) {
+    const real = loadWindow(id);
+    const W = { ...real, peerMean: real.actual, peerMax: real.actual };
+    const tasks = generateWorkload(101, W.slots);
+    const p0 = runP0(tasks, W);
+    for (const f of [0.6, 0.8, 1.0]) {
+      const m = await runP2(tasks, W, f * median(p0.dayG), WORKLOAD.degradedEnergyFraction);
+      assert.ok(m.totalG <= p0.totalG, `${id} f=${f}: governor ${m.totalG} > always-run ${p0.totalG}`);
+    }
+    const plan = schedule(W, 303);
+    const base = naive(W, plan);
+    const run = await governed(W, plan, 303, 1.0, FLEET.budgetFactor * median(base.nightly));
+    assert.ok(run.totalG <= base.totalG, `${id}: governed ${run.totalG} > naive ${base.totalG}`);
   }
 });
 
@@ -107,7 +133,10 @@ test("E3 invariants: every vehicle charges exactly once, in full, inside its win
   assert.equal(sum(Object.values(run.actions)), sessions, "every session got exactly one verdict");
   assert.equal(run.approvalsRequested + run.gateRefused, sessions);
   assert.ok(run.shifted <= run.approvalsGranted);
-  assert.ok(run.totalG < base.totalG, "shifting can only reduce emissions here");
+  // Empirical on the committed traces (4.44% of W1 and 2.34% of W2 sessions have a
+  // peer-chosen window that is dirtier on the actual series than charging at plug-in;
+  // the aggregate still held on every seed and approval rate). See the perfect-signal test.
+  assert.ok(run.totalG < base.totalG, "on the committed traces, shifting reduces emissions");
   assert.equal(run.auditValid, true);
   assert.ok(run.shiftHours.every((h) => h > 0), "a shift never moves a charge earlier than plug-in");
 });

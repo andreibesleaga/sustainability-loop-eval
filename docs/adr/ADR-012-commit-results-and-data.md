@@ -27,7 +27,7 @@ is synthetic, and carries the provenance of its inputs.
 - A reader can check every number in the article without running a single script, and without a network connection.
 - A reader who does run the scripts gets byte-identical JSON back for everything except the live measurement — which is itself a check on the determinism claim.
 - The repository carries data files. This is accepted: they are small, and they are the evidence.
-- Regeneration is manual and ordered. There is no single command that rebuilds everything and checks the Markdown against the JSON; that is recorded as debt in ARCHITECTURE.md section 11.
+- Regeneration is manual and ordered. There is no single command that rebuilds everything and checks the Markdown against the JSON; that is recorded as debt in ARCHITECTURE.md section 11. *(Status 2026-08-31: closed in v1.1.0 — `npm run all` rebuilds everything and `npm run check:docs`, run as fitness function F12 inside `npm test`, checks the Markdown against the JSON. ARCHITECTURE.md section 11 lists it under "Fixed in v1.1.0".)*
 
 ## Alternatives considered
 
