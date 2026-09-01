@@ -80,15 +80,22 @@
     {
       "id": "F12",
       "property": "Documentation agrees with results/: every registered headline number in README.md and docs/ matches the value in results/*.json it is drawn from",
-      "cases": 59,
+      "cases": 71,
       "passed": true,
-      "notes": "all 59 registered claims across 8 documents match results/"
+      "notes": "all 71 registered claims across 10 documents match results/"
+    },
+    {
+      "id": "F13",
+      "property": "Self-declared estimates: with trusted metering an under-declaring agent is never stricter than an honest one and lags every rung by at most one action; without trusted metering a zero-declarer is never caught",
+      "cases": 1500,
+      "passed": true,
+      "notes": "1000 random under-declaration sequences: lie never stricter than truth, and every rung reached at most one action late when commit() is charged the true grams; 500 sequences with commit() charged the declared zero: all verdicts stayed allow while true emissions ran past 1.25 x budget — the metering port is what makes the ladder mean anything against a dishonest estimate (R15)"
     }
   ],
   "totals": {
-    "functions": 12,
+    "functions": 13,
     "allPassed": true,
-    "totalCases": 13392
+    "totalCases": 14904
   },
   "kaibanVersion": "2.0.0"
 }

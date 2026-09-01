@@ -96,6 +96,30 @@ export function naive(W, plan) {
 }
 
 /**
+ * Ungated argmin arm (audit 2026-08-31, limitation R13): every session moves to the
+ * cleanest window the peer signal shows — no gate, no budget, no owner consent. It
+ * isolates what the scheduler alone achieves, so the governed arms can be read against
+ * it: in this scenario the gate can only refuse a shift, never add saving, because
+ * allow/degrade/escalate all yield the same shift and block/terminate fall back to naive.
+ */
+export function argminUngated(W, plan) {
+  const nightly = [];
+  const shiftHours = [];
+  let shifted = 0;
+  for (let d = 0; d < plan.length; d++) {
+    let nightG = 0;
+    for (const plugIn of plan[d]) {
+      const deadline = d * SLOTS_PER_DAY + FLEET.deadlineSlotOffset;
+      const start = bestStart(W, plugIn, deadline);
+      if (start !== plugIn) { shifted++; shiftHours.push((start - plugIn) * SLOT_HOURS); }
+      nightG += emissions(W, start, FLEET.energyKWh);
+    }
+    nightly.push(nightG);
+  }
+  return { totalG: sum(nightly), nightly, sessions: plan.length * FLEET.vehicles, shifted, shiftHours };
+}
+
+/**
  * Governed arm. Per session: propose the cleanest window, put the proposal through the
  * gate, then ask the car's owner. Simulated approver: deterministic coin from a seeded
  * PRNG at `approvalRate`. Falls back to the naive charge on a gate refusal or a refused
@@ -168,6 +192,16 @@ async function main() {
       gPerSession: ms(naives.map((n) => n.totalG / n.sessions), 1),
       sessions: naives[0].sessions,
     } };
+    // The scheduler alone (R13): what the governed arms are to be read against.
+    const ungated = plans.map((p) => argminUngated(W, p));
+    arms.argmin_ungated = {
+      totalGCO2e: ms(ungated.map((x) => x.totalG), 0),
+      gPerSession: ms(ungated.map((x) => x.totalG / x.sessions), 1),
+      pctAvoidedVsNaive: ms(ungated.map((x, i) => 100 - (100 * x.totalG) / naives[i].totalG), 2),
+      sessionsShifted: ms(ungated.map((x) => x.shifted), 1),
+      meanShiftHours: ms(ungated.map((x) => mean(x.shiftHours)), 2),
+      note: "no gate, no budget, no owner consent — the scheduler alone; the governed arms below can only fall short of it (R13)",
+    };
     for (const rate of FLEET.approvalRates) {
       const runs = [];
       for (let i = 0; i < SEEDS.length; i++) runs.push(await governed(W, plans[i], SEEDS[i], rate, budgets[i]));

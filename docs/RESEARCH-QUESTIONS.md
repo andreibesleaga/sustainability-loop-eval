@@ -53,7 +53,7 @@ record, and this package guarantees the rest.
 - `decide()` is non-monotone in the estimate, or has a side effect, or a rung boundary is off by one (F11).
 - A headline number typed into a document no longer matches the file it points at (F12).
 
-**Current answer.** All twelve pass, over **13,392** cases in total — of
+**Current answer.** All thirteen pass, over **14,904** cases in total — of
 which F7's 24 and F12's are static checks rather than generated cases. At
 v1.0.0, the snapshot the article cites, it was nine functions over **10,994**
 cases; the difference is properties added, not properties fixed. Upstream, the

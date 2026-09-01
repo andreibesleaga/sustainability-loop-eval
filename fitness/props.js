@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * The twelve fitness-function properties (F1–F12), each as one exported function
+ * The thirteen fitness-function properties (F1–F13), each as one exported function
  * returning a summary { id, property, cases, passed, notes }. Called from both
  * the node:test files (fitness/fN.test.js, which assert on `passed`) and from
  * report.js (which collects the summaries and renders results/fitness.md) so the
@@ -684,5 +684,77 @@ export function f12DocsAgreeWithResults() {
     notes: ok
       ? `all ${checks.length} registered claims across ${new Set(checks.map((c) => c.docFile)).size} documents match results/`
       : `${mismatches.length}/${checks.length} mismatch: ${mismatches.map((m) => `${m.docFile}:${m.line} ${m.label} doc=${m.found} results=${m.expected}`).join(" | ")}`,
+  };
+}
+
+// ── F13 — Self-declared estimates: what trusted metering does and does not save ──
+// Why it matters: the validator reads the ACTING agent's own estimate
+// (`payload.estimatedGramsCO2e`). That number is attacker-controlled input, and the
+// core's monotonicity (F11) is no defence against a strategically small one. This
+// property states exactly what protects the budget and what does not:
+//   (a) WITH trusted metering — commit() charges the grams actually emitted — an
+//       under-declaring agent never obtains a stricter verdict than an honest one at the
+//       same step (monotone), and it crosses every rung AT MOST ONE ACTION after the
+//       honest agent would have: ratio_lie(k+1) >= spent_k / B = ratio_truth(k), so the
+//       lie buys exactly one action of slack per rung, never more;
+//   (b) WITHOUT trusted metering — commit() charges what the agent declared — an agent
+//       that declares zero is never caught: every verdict stays `allow` however far past
+//       `terminate` its true emissions run.
+// (b) is why the architecture needs a METERING port beside signal/forecast/human/
+// actuation (limitation R15); (a) is the guarantee that port buys.
+export function f13AdversarialEstimates({ lagCases = 1000, unmeteredCases = 500, sequenceLength = 30 } = {}) {
+  const rng = mulberry32(13);
+  const cases = lagCases + unmeteredCases;
+  let passed = 0;
+  const failures = [];
+
+  // (a) trusted metering: lying is bounded to one action of lag per rung.
+  for (let i = 0; i < lagCases; i++) {
+    const budgetG = randFloat(rng, 100, 10000);
+    const honest = createCarbonGovernor({ budgetG });
+    const liar = createCarbonGovernor({ budgetG });
+    const n = randInt(rng, 2, sequenceLength);
+    let ok = true;
+    let previousTruth = 0;
+    for (let k = 0; k < n && ok; k++) {
+      const trueG = randFloat(rng, 0, budgetG / 4);
+      const declared = trueG * randFloat(rng, 0, 1); // any under-declaration, down to "nothing"
+      const truth = severityOf(honest.decide(trueG).action);
+      const lie = severityOf(liar.decide(declared).action);
+      if (lie > truth) { ok = false; failures.push({ case: "lie-stricter-than-truth", i, k, trueG, declared }); }
+      if (k > 0 && lie < previousTruth) { ok = false; failures.push({ case: "lag-exceeds-one-action", i, k, lie, previousTruth }); }
+      honest.commit(trueG);
+      liar.commit(trueG); // trusted metering: both are charged what was actually emitted
+      previousTruth = truth;
+    }
+    if (ok) passed++;
+  }
+
+  // (b) declared metering: a zero-declarer is never caught, however much it emits.
+  for (let i = 0; i < unmeteredCases; i++) {
+    const budgetG = randFloat(rng, 100, 10000);
+    const gov = createCarbonGovernor({ budgetG });
+    const n = randInt(rng, 13, sequenceLength); // 13 x (>= budget/10) guarantees > 1.25 x budget
+    let trueSpent = 0;
+    let allAllow = true;
+    for (let k = 0; k < n; k++) {
+      const trueG = randFloat(rng, budgetG / 10, budgetG / 2);
+      if (gov.decide(0).action !== "allow") allAllow = false;
+      gov.commit(0); // unmetered: the budget is charged what was declared — nothing
+      trueSpent += trueG;
+    }
+    const ok = allAllow && trueSpent > budgetG * 1.25;
+    if (ok) passed++; else failures.push({ case: "unmetered", i, allAllow, trueSpent, budgetG });
+  }
+
+  return {
+    id: "F13",
+    property: "Self-declared estimates: with trusted metering an under-declaring agent is never stricter than an honest one and lags every rung by at most one action; without trusted metering a zero-declarer is never caught",
+    cases,
+    passed: passed === cases,
+    notes:
+      passed === cases
+        ? `${lagCases} random under-declaration sequences: lie never stricter than truth, and every rung reached at most one action late when commit() is charged the true grams; ${unmeteredCases} sequences with commit() charged the declared zero: all verdicts stayed allow while true emissions ran past 1.25 x budget — the metering port is what makes the ladder mean anything against a dishonest estimate (R15)`
+        : `${cases - passed}/${cases} failed, e.g. ${JSON.stringify(failures[0])}`,
   };
 }

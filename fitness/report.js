@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Runs the same twelve property functions used by fitness/fN.test.js (imported from
+ * Runs the same thirteen property functions used by fitness/fN.test.js (imported from
  * fitness/props.js, so there is no duplicated logic) and writes BOTH
  * results/fitness.json and results/fitness.md. Neither file is hand-written any more:
  * every number and every note in the markdown comes from the run that produced it.
@@ -23,6 +23,7 @@ import {
   f10AuditAnchoring,
   f11CoreInvariants,
   f12DocsAgreeWithResults,
+  f13AdversarialEstimates,
 } from "./props.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -57,6 +58,7 @@ const TITLES = {
   F10: "Audit anchoring (edits vs. truncation)",
   F11: "Governor core invariants",
   F12: "Documentation agrees with results/",
+  F13: "Self-declared estimates: metering bounds the lie to one action",
 };
 
 /** Which functions test upstream's shipped code, and which test this package's own. */
@@ -65,6 +67,7 @@ const WHOSE = {
   F4: "this package", F5: "shipped gate + this package's harness", F6: "shipped gate",
   F7: "this repository", F8: "shipped gate", F9: "shipped gate",
   F10: "this package", F11: "this package + shipped severity table", F12: "this repository",
+  F13: "this package (the trust boundary of the core)",
 };
 
 const results = [
@@ -80,6 +83,7 @@ const results = [
   await f10AuditAnchoring(),
   f11CoreInvariants(),
   f12DocsAgreeWithResults(),
+  f13AdversarialEstimates(),
 ];
 
 const totals = {

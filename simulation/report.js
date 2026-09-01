@@ -55,8 +55,16 @@ export function renderChargingMd(doc, FLEET) {
     out += `## ${id} (${p.label}) ${p.from} → ${p.to} — ${p.nights} nights x ${FLEET.vehicles} EVs = ${arms.naive.sessions} sessions\n\n`;
     out += `| arm | total gCO2e | gCO2e / session | % avoided vs naive | sessions shifted | approvals requested | approvals granted | gate refused shift | mean shift (h) | nights over budget | audit valid |\n|---|---|---|---|---|---|---|---|---|---|---|\n`;
     out += `| naive (charge on plug-in) | ${v(arms.naive.totalGCO2e)} | ${v(arms.naive.gPerSession)} | — | 0 | 0 | 0 | 0 | 0 | n/a | n/a |\n`;
+    // The ungated scheduler (R13) has no gate, no budget and no owner, so the
+    // governance columns are not "zero" for it — they do not exist. It is printed
+    // separately rather than in the governed loop so that nothing is implied by an
+    // empty cell.
+    const u = arms.argmin_ungated;
+    if (u) {
+      out += `| ungated argmin (scheduler alone, no gate) | ${v(u.totalGCO2e)} | ${v(u.gPerSession)} | **${v(u.pctAvoidedVsNaive)}** | ${v(u.sessionsShifted)} | n/a | n/a | n/a | ${v(u.meanShiftHours)} | n/a | n/a |\n`;
+    }
     for (const [k, a] of Object.entries(arms)) {
-      if (k === "naive") continue;
+      if (k === "naive" || k === "argmin_ungated") continue;
       out += `| governed, approval rate ${k.split("approval")[1]} | ${v(a.totalGCO2e)} | ${v(a.gPerSession)} | **${v(a.pctAvoidedVsNaive)}** | ${v(a.sessionsShifted)} | ${v(a.approvalsRequested)} | ${v(a.approvalsGranted)} | ${v(a.gateRefusedShift)} | ${v(a.meanShiftHours)} | ${v(a.nightsOverBudget)} of ${a.nights} | ${a.auditChainValidAllSeeds} |\n`;
     }
     const full = arms["governed_approval1.00"];
@@ -67,6 +75,11 @@ export function renderChargingMd(doc, FLEET) {
     const a = arms["governed_approval1.00"];
     return `${v(a.nightsOverBudget)} of ${a.nights} in ${doc.provenance[id].label}`;
   }).join(" and ");
-  out += `## Notes\n\n- A refused gate verdict (block/terminate) or a declined owner consent does **not** withhold charge; it withholds the *optimisation*, and the car charges naively. That is why a stricter budget cannot make this scenario unsafe, only less effective.\n- The nightly budget is deliberately tight (${FLEET.budgetFactor} x the median naive night), so the cars that plug in late in the evening find the budget largely committed and lose their shift. This is the visible cost of pacing a budget that a must-serve load cannot actually respect: at full approval the fleet still ends over budget on ${over}. Pacing shapes the spend; it does not cap it.\n- Sensitivity: dropping human approval from 100% to 80% is a direct, near-linear haircut on the saving — the human is the bottleneck in the loop, not the model.\n- The gate is asked about the *proposed* clean window, and the budget is then charged with the grams actually emitted by whatever window was used.\n- Synthetic: fleet size, plug-in distribution, energy per session, and the approver. Real: the carbon intensity.\n`;
+  // R13: what the gate contributes over the scheduler alone, in this scenario.
+  const gateDelta = Object.entries(doc.results)
+    .filter(([, arms]) => arms.argmin_ungated)
+    .map(([id, arms]) => `${arms.argmin_ungated.pctAvoidedVsNaive.mean}% ungated vs ${arms["governed_approval1.00"].pctAvoidedVsNaive.mean}% governed in ${doc.provenance[id].label}`)
+    .join(", ");
+  out += `## Notes\n\n- A refused gate verdict (block/terminate) or a declined owner consent does **not** withhold charge; it withholds the *optimisation*, and the car charges naively. That is why a stricter budget cannot make this scenario unsafe, only less effective.\n- The nightly budget is deliberately tight (${FLEET.budgetFactor} x the median naive night), so the cars that plug in late in the evening find the budget largely committed and lose their shift. This is the visible cost of pacing a budget that a must-serve load cannot actually respect: at full approval the fleet still ends over budget on ${over}. Pacing shapes the spend; it does not cap it.\n- **What the gate contributes here (R13):** the ungated argmin arm is the same scheduler with no gate, no budget and no owner consent — ${gateDelta}. In this scenario governance can only *subtract* carbon saving: \`allow\`, \`degrade\` and \`escalate\` all yield the same shift, while \`block\` and \`terminate\` fall back to naive charging. What the gate buys is authority, auditability and a bounded human cost, not additional carbon. Read the E3 headline as the price of governing a saving the scheduler already had.\n- Sensitivity: dropping human approval from 100% to 80% is a direct, near-linear haircut on the saving — the human is the bottleneck in the loop, not the model.\n- The gate is asked about the *proposed* clean window, and the budget is then charged with the grams actually emitted by whatever window was used.\n- Synthetic: fleet size, plug-in distribution, energy per session, and the approver. Real: the carbon intensity.\n`;
   return out;
 }

@@ -75,7 +75,7 @@ function evidence() {
       coreCodeLines: core.code,
       fitnessFunctions: fitness.totals.functions,
       fitnessCases: fitness.totals.totalCases,
-      // "12/12 green": the numerator is the function count only while every OTHER function
+      // "13/13 green": the numerator is the function count only while every OTHER function
       // passed. F12's own status is the outcome of this very check and must not be one of
       // its inputs — reading it back from the previous fitness.json would make one red run
       // self-perpetuating (the second run would see allPassed=false and fail on that).
@@ -117,19 +117,19 @@ const REGISTRY = [
   ["README.md", "E3 summer avoided, full approval", /avoided in winter[^\n%]{0,40}?and (\d+\.\d+)% in summer/i, C("results|W2|governed_approval1.00|pctAvoidedVsNaive|mean")],
   ["README.md", "E3 winter avoided, 80% approval", /\((\d+\.\d+)% and \d+\.\d+% at 80% approval\)/i, C("results|W1|governed_approval0.80|pctAvoidedVsNaive|mean")],
   ["README.md", "E3 summer avoided, 80% approval", /\(\d+\.\d+% and (\d+\.\d+)% at 80% approval\)/i, C("results|W2|governed_approval0.80|pctAvoidedVsNaive|mean")],
-  ["README.md", "fitness functions all green (numerator of 12/12)", /(\d+)\/12 green over/i, K("fitnessGreen")],
-  ["README.md", "fitness functions, total cases (v1.1.0, not the v1.0.0 sentence)", /12\/12 green over (\d[\d,]*) cases/i, K("fitnessCases"), "thousands"],
+  ["README.md", "fitness functions all green (numerator of 13/13)", /(\d+)\/13 green over/i, K("fitnessGreen")],
+  ["README.md", "fitness functions, total cases (v1.1.0, not the v1.0.0 sentence)", /13\/13 green over (\d[\d,]*) cases/i, K("fitnessCases"), "thousands"],
   ["README.md", "data-plane median latency", /median (\d+\.\d+) ms/i, D("summary|latencyMedianMsOverall")],
   ["README.md", "documents measured", /(\d+) documents,? (?:all valid|100% valid)/i, D("summary|documentsMeasured")],
   ["README.md", "documents conformant (the '100% valid' half)", /\d+ documents, (\d+)% valid/i, D("summary|conformanceRate")],
   ["README.md", "log requests", /(\d+) requests from \d+ clients/i, D("railwayLogs|totalRequests")],
   ["README.md", "distinct clients", /\d+ requests from (\d+) clients/i, D("railwayLogs|distinctClientIps")],
   ["README.md", "governor core line count", /carbon-governor\.js\)[^\n]{0,20}?\((\d+) lines/i, K("coreLines")],
-  ["README.md", "adapter unit-test count", /(\d+) unit tests, the twelve/i, K("unitTests")],
+  ["README.md", "adapter unit-test count", /(\d+) unit tests, the thirteen/i, K("unitTests")],
 
   // ── RESEARCH.md (the full write-up) ────────────────────────────────────────
   ["RESEARCH.md", "fitness total cases (findings bullet)", /all green over ([\d,]+) cases/i, K("fitnessCases"), "thousands"],
-  ["RESEARCH.md", "fitness total cases (command table)", /12\/12 green over ([\d,]+) cases;/i, K("fitnessCases"), "thousands"],
+  ["RESEARCH.md", "fitness total cases (command table)", /13\/13 green over ([\d,]+) cases;/i, K("fitnessCases"), "thousands"],
   ["RESEARCH.md", "adapter unit-test count", /\| `npm test` \| (\d+) unit tests/i, K("unitTests")],
   ["RESEARCH.md", "gateway demonstration documents (not in E1)", /serves (\d+) adapter and wire-format demonstration documents/i, I("demoDocs")],
   ["RESEARCH.md", "human decisions if deferral were automatic, winter", /automatic: ([\d.]+) \(winter\) and [\d.]+ \(summer\) over 28 days/i, S("results|W1|policies|P2_f0.8|humanDecisionsIfDeferralAutomatic|mean")],
@@ -140,11 +140,11 @@ const REGISTRY = [
 
   // ── docs/FITNESS-FUNCTIONS.md ──────────────────────────────────────────────
   ["docs/FITNESS-FUNCTIONS.md", "adapter unit-test count", /There are \*\*(\d+)\*\* of those/i, K("unitTests")],
-  ["docs/FITNESS-FUNCTIONS.md", "fitness total cases", /12\/12 green over ([\d,]+) cases/i, K("fitnessCases"), "thousands"],
+  ["docs/FITNESS-FUNCTIONS.md", "fitness total cases", /13\/13 green over ([\d,]+) cases/i, K("fitnessCases"), "thousands"],
   ["docs/FITNESS-FUNCTIONS.md", "F10 cases", /(\d+) cases over a real chain/i, K("f10Cases")],
 
   // ── docs/RESEARCH-QUESTIONS.md ─────────────────────────────────────────────
-  ["docs/RESEARCH-QUESTIONS.md", "fitness total cases", /All twelve pass, over \*\*(\d[\d,]*)\*\* cases/i, K("fitnessCases"), "thousands"],
+  ["docs/RESEARCH-QUESTIONS.md", "fitness total cases", /All thirteen pass, over \*\*(\d[\d,]*)\*\* cases/i, K("fitnessCases"), "thousands"],
   ["docs/RESEARCH-QUESTIONS.md", "F7 static checks", /which F7's (\d+)/i, K("f7Cases")],
   ["docs/RESEARCH-QUESTIONS.md", "E2 winter saving at f=0.8", /Governor versus always-run \| \*\*[−-](\d+\.\d+)%/i, S("results|W1|policies|P2_f0.8|pctVsP0|mean"), "neg"],
   ["docs/RESEARCH-QUESTIONS.md", "E2 summer saving at f=0.8", /Governor versus always-run \|[^|]*\| \*\*[−-](\d+\.\d+)%/i, S("results|W2|policies|P2_f0.8|pctVsP0|mean"), "neg"],
@@ -170,7 +170,7 @@ const REGISTRY = [
   // ── docs/architecture/ARCHITECTURE.md ──────────────────────────────────────
   ["docs/architecture/ARCHITECTURE.md", "governor core total lines", /governor core is (\d+) lines/i, K("coreLines")],
   ["docs/architecture/ARCHITECTURE.md", "governor core code lines", /governor core is \d+ lines \((\d+) of them code\)/i, K("coreCodeLines")],
-  ["docs/architecture/ARCHITECTURE.md", "fitness total cases", /twelve fitness functions pass, over ([\d,]+) cases/i, K("fitnessCases"), "thousands"],
+  ["docs/architecture/ARCHITECTURE.md", "fitness total cases", /thirteen fitness functions pass, over ([\d,]+) cases/i, K("fitnessCases"), "thousands"],
   ["docs/architecture/ARCHITECTURE.md", "F2 cases (quality scenario Q1)", /\| F2, ([\d,]+) cases \|/i, K("f2Cases"), "thousands"],
   ["docs/architecture/ARCHITECTURE.md", "F1 + F9 cases (quality scenario Q2)", /F1 and F9, ([\d,]+) cases/i, K("f1f9Cases"), "thousands"],
   ["docs/architecture/ARCHITECTURE.md", "F4 + F5 cases (quality scenario Q4)", /F4 and F5, ([\d,]+) cases/i, K("f4f5Cases"), "thousands"],
@@ -180,6 +180,25 @@ const REGISTRY = [
   ["docs/architecture/ARCHITECTURE.md", "governor core code lines (quality scenario Q10)", /\| \d+ lines, of which (\d+) are code/i, K("coreCodeLines")],
   ["docs/architecture/ARCHITECTURE.md", "human decisions if deferral were automatic, winter", /sensitivity: ([\d.]+) \(winter\) and [\d.]+ \(summer\)/i, S("results|W1|policies|P2_f0.8|humanDecisionsIfDeferralAutomatic|mean")],
   ["docs/architecture/ARCHITECTURE.md", "human decisions if deferral were automatic, summer", /sensitivity: [\d.]+ \(winter\) and ([\d.]+) \(summer\)/i, S("results|W2|policies|P2_f0.8|humanDecisionsIfDeferralAutomatic|mean")],
+
+  // ── docs/LIMITATIONS.md ────────────────────────────────────────────────────
+  // R13 quotes the ungated arm against the governed one. Both sides are pinned, so
+  // the claim "the gate can only reduce the saving here" cannot go stale silently.
+  ["docs/LIMITATIONS.md", "R13 ungated argmin saving, winter", /ungated argmin-only arm avoids (\d+\.\d+)% \(winter\)/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/LIMITATIONS.md", "R13 ungated argmin saving, summer", /arm avoids \d+\.\d+% \(winter\) and (\d+\.\d+)% \(summer\)/i, C("results|W2|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/LIMITATIONS.md", "R13 governed saving, winter", /against the governed (\d+\.\d+)% and \d+\.\d+%/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],
+  ["docs/LIMITATIONS.md", "R13 governed saving, summer", /against the governed \d+\.\d+% and (\d+\.\d+)%/i, C("results|W2|governed_approval1.00|pctAvoidedVsNaive|mean")],
+
+  ["docs/architecture/ARCHITECTURE.md", "R13 ungated argmin saving, winter", /ungated argmin-only arm avoids (\d+\.\d+)% \/ \d+\.\d+%/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/architecture/ARCHITECTURE.md", "R13 ungated argmin saving, summer", /ungated argmin-only arm avoids \d+\.\d+% \/ (\d+\.\d+)%/i, C("results|W2|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/architecture/ARCHITECTURE.md", "R13 governed saving, winter", /against the governed (\d+\.\d+)% \/ \d+\.\d+%/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],
+  ["docs/architecture/ARCHITECTURE.md", "R13 governed saving, summer", /against the governed \d+\.\d+% \/ (\d+\.\d+)%/i, C("results|W2|governed_approval1.00|pctAvoidedVsNaive|mean")],
+
+  // ── docs/adr/ADR-011 (the same R13 comparison, restated where the decision lives) ─
+  ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 ungated argmin saving, winter", /argmin-only shift avoids (\d+\.\d+)%\n\(winter\)/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 ungated argmin saving, summer", /\(winter\) and (\d+\.\d+)% \(summer\) against the governed/i, C("results|W2|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 governed saving, winter", /against the governed (\d+\.\d+)% and \d+\.\d+%/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],
+  ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 governed saving, summer", /against the governed \d+\.\d+% and (\d+\.\d+)%/i, C("results|W2|governed_approval1.00|pctAvoidedVsNaive|mean")],
 
   // ── docs/adr/ADR-013 ───────────────────────────────────────────────────────
   ["docs/adr/ADR-013-fitness-functions-as-test-layer.md", "fitness functions at v1.1.0", /at v1\.1\.0 it is (\d+) of \1 over/i, K("fitnessFunctions")],

@@ -49,12 +49,12 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 Demonstration only — no number in `results/` comes from the demos.
 `npm install` prints advisories from the one dependency's own tree; they are
 explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
-everything: 33 unit tests, the twelve architecture checks through the real
+everything: 33 unit tests, the thirteen architecture checks through the real
 gate, and a check that every number in these pages still matches `results/`.
 
 ## Headline results
 
-- **The safety properties hold in shipped code.** 12/12 green over 13,392 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
+- **The safety properties hold in shipped code.** 13/13 green over 14,904 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
 - **The data plane is real and cheap to read.** 12 documents, 100% valid, median 44.6 ms and about 1.3 kB per fetch; 120 requests from 26 clients in the log window — reachability shown, adoption not yet.
 - **The governor cuts emissions — by also doing less work.** At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against −1.54% and −2.97% for plain threshold deferral. About 15% of tasks run reduced and a few are dropped; read the emissions next to the completed counts, never alone.
 - **Charging:** 32.51% of session emissions avoided in winter and 16.04% in summer at full approval (25.93% and 12.77% at 80% approval) — cars only shift *when* they charge, never how much, and every car still charges fully.
@@ -99,7 +99,7 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 | [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) | How it is built and why |
 | [Product design](docs/architecture/PRODUCT.md) | Who it is for, requirements, use cases |
 | [Decision records](docs/adr/) | Eighteen short "why" notes |
-| [Fitness functions](docs/FITNESS-FUNCTIONS.md) | What each of the twelve checks proves |
+| [Fitness functions](docs/FITNESS-FUNCTIONS.md) | What each of the thirteen checks proves |
 | [Search protocol](docs/SEARCH-PROTOCOL.md) | How the novelty claims were tested by trying to refute them |
 | [Artifact inventory](docs/ARTIFACT-INVENTORY.md) | Every artifact the article cites and how it was checked |
 | [Development guide](docs/DEVELOPMENT.md) | Run, extend, regenerate, cite |

@@ -30,9 +30,9 @@ never as 0%.
 
 | Command | What it does | Network |
 |---|---|---|
-| `npm test` | The 33 adapter unit tests, then the twelve architecture fitness functions through the real gate, then `check:docs` | none |
-| `npm run fitness` | The twelve fitness functions on their own | none |
-| `npm run fitness:report` | Re-runs the same twelve properties and writes `results/fitness.json` **and** `results/fitness.md` | none |
+| `npm test` | The 33 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
+| `npm run fitness` | The thirteen fitness functions on their own | none |
+| `npm run fitness:report` | Re-runs the same thirteen properties and writes `results/fitness.json` **and** `results/fitness.md` | none |
 | `npm run check:docs` | F12: compares every hand-typed headline number in the docs against `results/` | none |
 | `npm run dataplane` | Fetches and checks every document the public gateway serves, then summarises its request logs | live gateway |
 | `npm run fetch-traces` | Fetches and caches the real grid-carbon traces. Run once. | NESO API |

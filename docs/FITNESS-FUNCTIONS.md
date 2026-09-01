@@ -9,7 +9,7 @@ right value", a fitness function asks "does the *architecture* still hold the
 property we designed it for" (isolation, fail-safety, determinism, an ordering
 guarantee) — and it asks the *real* running system, not a description of it.
 
-## Why these twelve
+## Why these thirteen
 
 The article's central architectural claim is a governance gate that aggregates
 validator verdicts onto a severity ladder (`allow < degrade < escalate < block
@@ -21,7 +21,9 @@ description of it, not a mock of it.
 **Which claim is whose.** F1, F2, F5, F6, F8 and F9 test *shipped upstream* code.
 F3 and F4 test *this package's* rung semantics, because the runtime ships the
 vocabulary but not the meaning (ADR-002, ADR-006). F7, F10, F11 and F12 test this
-repository's own structure, invariants and documentation.
+repository's own structure, invariants and documentation. F13 tests the *trust
+boundary* of this package's core: what the ladder can still promise when the
+number it decides on is supplied by the agent being governed.
 
 - **F1** total order / most-severe-wins — the ladder means nothing if
   aggregation can pick less than the max. The carbon estimate is varied across
@@ -66,8 +68,11 @@ repository's own structure, invariants and documentation.
   reasoning about it to be sound. See below.
 - **F12** documentation agrees with `results/` — a number typed into a document
   by hand is a number that can go stale. See below.
+- **F13** self-declared estimates — the gate decides on a number the acting agent
+  supplies about itself. What the architecture can and cannot promise about that
+  is a property, not a caveat. See below.
 
-## The three added in v1.1.0
+## The four added in v1.1.0
 
 ### F10 — audit anchoring: edits are caught; truncation needs an anchor
 
@@ -108,6 +113,33 @@ and as `npm run check:docs`.
 
 The point is narrow: **prose is part of the artifact.** A package whose README
 says 13% where the JSON says 12.8% has a defect, and it is not in the JSON.
+
+### F13 — self-declared estimates: metering bounds the lie to one action
+
+Every rung in this system is reached because of `payload.estimatedGramsCO2e` — a
+number the *acting agent* supplies about its own future behaviour. That is
+attacker-controlled input, and monotonicity (F11) is no defence against a
+strategically small one. F13 states exactly what protects the budget and what
+does not:
+
+- **With a trusted metering port** — `commit()` is charged the grams actually
+  emitted, not the grams declared — an under-declaring agent is *never* given a
+  more lenient outcome than a lag of one action. Formally, over 1,000 random
+  under-declaration sequences: the liar's verdict is never stricter than the
+  honest agent's at the same step, and never less strict than the honest agent's
+  verdict at the *previous* step. Under-declaring buys exactly one action of
+  slack per rung and no more, because the next decision is taken against a budget
+  the meter has already corrected.
+- **Without one** — `commit()` charged what was declared — an agent that declares
+  zero is never caught. Over 500 sequences the verdict stayed `allow` for every
+  action while true emissions ran past 1.25 × budget, the `terminate` line.
+
+This is the executable form of limitation **R15**, and the reason the port
+inventory in ARCHITECTURE §5 needs a **metering port** beside signal, forecast,
+human and actuation. The evaluation in this package does not have one: the
+simulations charge the model's own physics, which is a trusted meter by
+construction, and the demo charges a self-declared estimate. A deployment that
+skips the meter has the ladder's vocabulary and none of its guarantee.
 
 ## What F7 checks, exactly
 
@@ -162,14 +194,14 @@ of the tests rather than of the architecture.
 ## Current results
 
 `results/fitness.md` is rendered from the run, so it is the authority. As of
-v1.1.0: **12/12 green over 13,392 cases.** Version 1.0.0 — the snapshot the
+v1.1.0: **13/13 green over 14,904 cases.** Version 1.0.0 — the snapshot the
 article cites — was 9/9 over 10,994 cases. The difference is properties added,
 not properties fixed.
 
 ## How to extend
 
-To add F13: write `f13…` in `fitness/props.js` returning the same summary
-shape, add `fitness/f13.test.js` with a one-line docstring stating the
+To add F14: write `f14…` in `fitness/props.js` returning the same summary
+shape, add `fitness/f14.test.js` with a one-line docstring stating the
 property and why it matters architecturally, add the call to
 `fitness/report.js`'s `results` array, and add it to the list above. Keep each
 property real: it must exercise the actual shipped code path (the real

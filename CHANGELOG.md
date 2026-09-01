@@ -13,17 +13,41 @@ prosecution before anything was changed. No experiment was re-run against new da
 
 ### Which numbers changed and which did not
 
-- **No headline result changed.** `results/simulation.*`, `results/charging.*` and
-  `results/dataplane.*` are byte-identical to v1.1.0 (re-verified by re-running the
-  seeded experiments). Every number the article prints still reproduces.
-- **Fitness totals: 12/12 over 13,366 → 12/12 over 13,392.** F12 grew from 33 to 59
-  registered claims because more hand-typed numbers were bound to `results/` (see below).
-  Nothing failed; the registry got larger.
+- **No headline result changed.** `results/simulation.*` and `results/dataplane.*` are
+  byte-identical to v1.1.0, and so is every pre-existing row of `results/charging.*`
+  (re-verified by re-running the seeded experiments). Every number the article prints
+  still reproduces.
+- **`results/charging.*` gained one arm and lost nothing.** The new `argmin_ungated`
+  key and its table row are pure additions; the `naive` and `governed_approval*` arms
+  are unchanged value for value. It is the R13 comparison made runnable rather than
+  asserted: **32.85% / 16.53% avoided by the scheduler alone** against **32.51% /
+  16.04%** governed (winter / summer).
+- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,904.** Two reasons, both additive:
+  F12 grew from 33 to 71 registered claims because more hand-typed numbers were bound to
+  `results/` (see below), and **F13** was added with 1,500 cases. Nothing failed; the
+  suite got larger.
 - **Adapter unit tests: 32 → 33** (one structural test added; the "26" the docs said was
   already stale at v1.1.0 — the actual count then was 32).
 
 ### Added
 
+- **Fitness function F13 — self-declared estimates** (`fitness/props.js`,
+  `fitness/f13.test.js`, 1,500 cases). The gate decides on a number the *acting agent*
+  supplies about itself, so what the architecture can promise about that is now a
+  property rather than a caveat. Proven both ways: **with** a trusted metering port
+  (`commit()` charged the grams actually emitted) an under-declaring agent is never
+  given a stricter verdict than an honest one and reaches every rung **at most one
+  action late** — under-declaring buys exactly one action of slack per rung and no more;
+  **without** one, an agent that declares zero is never caught, staying `allow` for
+  every action while its true emissions run past 1.25 × budget. This is limitation R15
+  in executable form and the argument for a metering port in the port inventory.
+- **Ungated argmin arm in E3** (`simulation/charging.js`'s `argminUngated()`, reported
+  as `argmin_ungated` in `results/charging.json` and as its own row in
+  `results/charging.md`): the same scheduler with no gate, no budget and no owner
+  consent. It isolates what the *scheduler* achieves so the governed arms can be read
+  against it, and makes R13 measurable rather than argued — in this scenario the gate
+  can only subtract carbon saving, and what it buys is authority, auditability and a
+  bounded human cost.
 - **Limitations R11–R17** in `docs/LIMITATIONS.md` and ARCHITECTURE §11, each with a
   number measured on the committed traces where one could be: synchronised shifting onto
   one slot (R11); the two experiments are joined by assumption — no measured run consumes
@@ -45,7 +69,7 @@ prosecution before anything was changed. No experiment was re-run against new da
   (simulate, charging, `fitness:report` twice, `git diff --exit-code results/`) on Node
   22 and 24. Offline only — nothing live runs in CI.
 - **`.env.example`**; `madge` pinned to 8.0.0 in `npm run arch` / `arch:graph`.
-- **F12 registry**: the "12/12 green" numerator (from F1–F11's pass flags, never from
+- **F12 registry**: the "13/13 green" numerator (from F1–F11's pass flags, never from
   F12's own), the "100% valid" half of the data-plane sentence, the 80%-approval
   charging figures, the unit-test count (counted from the test files), the quality-
   scenario case sums (Q2, Q4, Q6, Q10), the human-decisions sensitivity numbers, the "22

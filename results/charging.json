@@ -155,6 +155,29 @@
         },
         "sessions": 1350
       },
+      "argmin_ungated": {
+        "totalGCO2e": {
+          "mean": 2981000,
+          "sd": 0
+        },
+        "gPerSession": {
+          "mean": 2208.1,
+          "sd": 0
+        },
+        "pctAvoidedVsNaive": {
+          "mean": 32.85,
+          "sd": 0.12
+        },
+        "sessionsShifted": {
+          "mean": 1339.5,
+          "sd": 3.2
+        },
+        "meanShiftHours": {
+          "mean": 6.29,
+          "sd": 0.03
+        },
+        "note": "no gate, no budget, no owner consent — the scheduler alone; the governed arms below can only fall short of it (R13)"
+      },
       "governed_approval1.00": {
         "totalGCO2e": {
           "mean": 2995957,
@@ -307,6 +330,29 @@
           "sd": 2.6
         },
         "sessions": 1350
+      },
+      "argmin_ungated": {
+        "totalGCO2e": {
+          "mean": 3561400,
+          "sd": 1596
+        },
+        "gPerSession": {
+          "mean": 2638.1,
+          "sd": 1.2
+        },
+        "pctAvoidedVsNaive": {
+          "mean": 16.53,
+          "sd": 0.06
+        },
+        "sessionsShifted": {
+          "mean": 1089.7,
+          "sd": 9.1
+        },
+        "meanShiftHours": {
+          "mean": 8.93,
+          "sd": 0.03
+        },
+        "note": "no gate, no budget, no owner consent — the scheduler alone; the governed arms below can only fall short of it (R13)"
       },
       "governed_approval1.00": {
         "totalGCO2e": {

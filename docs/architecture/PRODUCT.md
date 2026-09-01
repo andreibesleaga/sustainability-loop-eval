@@ -11,7 +11,7 @@ imports nothing) maps a carbon budget onto a five-rung verdict ladder
 shipped by **kaiban-distributed** 2.0.0 — the package's single runtime dependency,
 imported from npm and not mocked. One actuation harness (`governor/harness.js`,
 also importing nothing) is the only path from a verdict to something running.
-Three evaluations sit around that core: twelve **architecture fitness functions**,
+Three evaluations sit around that core: thirteen **architecture fitness functions**,
 a **live measurement** of a public sustainability data plane, and a
 **trace-driven simulation** on real half-hourly Great Britain grid-carbon data.
 Everything is deterministic, everything is committed, and every result file says
@@ -25,7 +25,7 @@ test runner, no build step.
 - **Problem.** Carbon-aware computing today listens but does not speak: systems consume grid feeds and publish nothing machine-readable about themselves, so no system can react to another. The architecture that closes that loop makes claims — a total-ordered verdict ladder, a fail-closed gate, a human bound to the top rungs, a portable core — and claims like those normally live in prose, where nothing can falsify them.
 - **Goals.** (a) Make every architectural claim executable against the *shipped* gate, not a copy. (b) Measure whether the published data plane actually exists and is usable as a control signal. (c) Show what the governor does under real grid conditions, including what it costs. (d) Keep the whole thing readable: one dependency, no build, small files. (e) Make every run reproducible byte for byte. (f) Label real, reference and synthetic parts everywhere, including inside the result files.
 - **Non-goals.** A production carbon governor. A merge into any released runtime. A multi-party deployment with third-party publishers. An evaluation of the charging-protocol MCP servers. A hard carbon cap. Any claim about human approvers' real behaviour.
-- **Acceptance criteria.** (a) `npm install` installs exactly one runtime dependency. (b) `npm test` runs the adapter unit tests and then the twelve fitness functions against the real gate, and all of them pass. (c) `npm run simulate` and `npm run charging` reproduce `results/*.json` byte for byte, offline. (d) `npm run dataplane` measures the live gateway and writes a result file whose only unstable numbers are latencies. (e) `npm run demo` reaches a real verdict from a real document in seconds, and falls back to a committed fixture offline while saying so. (f) Every number quoted in the article appears in `results/`.
+- **Acceptance criteria.** (a) `npm install` installs exactly one runtime dependency. (b) `npm test` runs the adapter unit tests and then the thirteen fitness functions against the real gate, and all of them pass. (c) `npm run simulate` and `npm run charging` reproduce `results/*.json` byte for byte, offline. (d) `npm run dataplane` measures the live gateway and writes a result file whose only unstable numbers are latencies. (e) `npm run demo` reaches a real verdict from a real document in seconds, and falls back to a committed fixture offline while saying so. (f) Every number quoted in the article appears in `results/`.
 
 ## 3. SPEC — Functional and Non-Functional
 
@@ -70,7 +70,7 @@ test runner, no build step.
 ## 4. User Stories
 
 1. *As a reviewer of the article, I want every architectural claim to be executable, so that I can check it instead of believing it.*
-   - Given a fresh clone, when I run `npm test`, the adapter unit tests run and then twelve fitness functions run against the shipped gate, reporting pass or fail per property.
+   - Given a fresh clone, when I run `npm test`, the adapter unit tests run and then thirteen fitness functions run against the shipped gate, reporting pass or fail per property.
 
 2. *As a software architect, I want to read the whole policy in one sitting, so that I can judge whether the design is sound.*
    - Given `governor/carbon-governor.js`, when I open it, the budget, the pacing ratio and the four rungs are visible in 104 lines with no imports to follow.
