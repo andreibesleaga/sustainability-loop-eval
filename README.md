@@ -98,7 +98,6 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 | [Limitations](docs/LIMITATIONS.md) | Every limitation, once, canonically |
 | [**Roadmap**](docs/ROADMAP.md) | What was proved, what was not, and what to build next — the post-audit addendum |
 | [**Executive case**](docs/EXECUTIVE-CASE.md) | One page: the honest numbers, why it is new, why it can pay, who it serves |
-| [Runbook](docs/RUNBOOK.md) | How to implement, test and present every work package — with ready-to-paste agent briefs |
 | [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) | How it is built and why |
 | [Product design](docs/architecture/PRODUCT.md) | Who it is for, requirements, use cases |
 | [Decision records](docs/adr/) | Eighteen short "why" notes |
@@ -142,8 +141,7 @@ What that unlocks (all measured or simulated here, on real GB grid data):
   compute spend and compliance-grade audit — not carbon prices; the carbon is real
   where load can genuinely move; the governance is what makes any of it
   trustworthy between organisations. One page of measured numbers and verified
-  absences: [the executive case](docs/EXECUTIVE-CASE.md). How to build the rest:
-  [the runbook](docs/RUNBOOK.md).
+  absences: [the executive case](docs/EXECUTIVE-CASE.md).
 
 **Why this is unique — every reason, checked, in one list.** (1) It is the only
 standard-shaped place on the web where a system self-publishes *runtime*
