@@ -30,7 +30,7 @@ never as 0%.
 
 | Command | What it does | Network |
 |---|---|---|
-| `npm test` | The 33 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
+| `npm test` | The 46 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
 | `npm run fitness` | The thirteen fitness functions on their own | none |
 | `npm run fitness:report` | Re-runs the same thirteen properties and writes `results/fitness.json` **and** `results/fitness.md` | none |
 | `npm run check:docs` | F12: compares every hand-typed headline number in the docs against `results/` | none |
@@ -38,6 +38,9 @@ never as 0%.
 | `npm run fetch-traces` | Fetches and caches the real grid-carbon traces. Run once. | NESO API |
 | `npm run simulate` | Experiment E2 — the governor versus the baselines | none, reads the cache |
 | `npm run charging` | Experiment E3 — the gated charging shift | none, reads the cache |
+| `npm run bounds` | The maximum-optimisation calculus: deterministic ceilings for every scenario, written to `results/bounds.json` + `results/bounds.md` | none |
+| `npm run routing` | E6/E6b: routed EV charging (when AND where) and geo-migration, forecast-scored, written to `results/routing.*` | none |
+| `npm run loop` | E5: the multi-party closed loop — N systems publishing and reading each other's documents, written to `results/loop.*` | none |
 | `npm run demo` | One real document, one decision, all five verdicts | one document, with a fixture fallback |
 | `npm run agent` | The same with a real language model, and you on the human port | gateway plus the OpenRouter API |
 | `npm run arch` | Checks for circular imports with `madge` | none |

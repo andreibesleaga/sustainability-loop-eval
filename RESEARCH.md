@@ -53,7 +53,7 @@ verdict plus every block verdict*.
 
 The honest version, with the numbers and the catches together.
 
-- **The safety properties hold in shipped code.** Thirteen executable checks against the real gate, all green over 14,925 cases. The gate always picks the worst verdict, refuses on bad input instead of allowing, never runs anything above "degrade" without a human, never runs "terminate" at all, and its audit log catches tampering. (Nine of the thirteen, over 10,994 cases, are what the article cites; four were added afterwards. See **Versions** below.)
+- **The safety properties hold in shipped code.** Thirteen executable checks against the real gate, all green over 14,966 cases. The gate always picks the worst verdict, refuses on bad input instead of allowing, never runs anything above "degrade" without a human, never runs "terminate" at all, and its audit log catches tampering. (Nine of the thirteen, over 10,994 cases, are what the article cites; four were added afterwards. See **Versions** below.)
 - **The data plane is real and cheap to read.** Twelve live documents, all valid, median 44.6 ms and about 1.3 kB per fetch.
 - **The governor cuts emissions.** About 16% less carbon in winter and 20% less in summer than just running everything, against 1.5% and 3.0% for ordinary carbon-aware scheduling.
 - **But it does less work to get there.** Around 15% of tasks run in a reduced mode and some are dropped. Read the emissions column next to the completed and dropped columns, never alone.
@@ -94,7 +94,7 @@ them is upstream's job.
 |---|---|---|
 | `npm run demo` | Reads one real document from the public gateway, turns its carbon figure into estimates for five actions, sends them through the real gate, prints all five verdicts and what each one means. Falls back to a saved copy offline, and says so. | A real verdict in seconds |
 | `npm run agent` | A real language model (`anthropic/claude-sonnet-5` via OpenRouter, plain HTTPS, no SDK) reads a real peer document and proposes a task. The proposal goes through the same real gate. If the verdict is `escalate`, **you** approve or refuse at the terminal; if it is `block`, you are asked whether to authorise a reduced run instead; if it is `terminate`, you are not asked at all. Needs `OPENROUTER_API_KEY` (put it in a gitignored `.env`); without one it explains and exits. | You are the human in the loop |
-| `npm test` | 33 unit tests for the adapters' own arithmetic, then the thirteen architecture checks through the real `kaiban-distributed` gate, then `check:docs`. | 13/13 green over 14,925 cases; the runtime's own governance suite (4 files, 71 tests) passes at commit `17ad362` |
+| `npm test` | 46 unit tests for the adapters' own arithmetic, then the thirteen architecture checks through the real `kaiban-distributed` gate, then `check:docs`. | 13/13 green over 14,966 cases; the runtime's own governance suite (4 files, 71 tests) passes at commit `17ad362` |
 | `npm run fitness` | The thirteen architecture checks on their own. | as above |
 | `npm run dataplane` | Fetches and checks every document in the gateway's subject registry, five times each, then summarises the gateway's real request logs. | 12 documents, 100% valid, all 8 mandatory fields on each, median 44.6 ms and 1296.5 bytes, not-endorsed notice on 9/9 real-organization documents, 2 organizations honestly recorded as publishing nothing, 120 requests from 26 clients over the roughly one-week log window |
 | `npm run simulate` | Replays a made-up agent workload over real Great Britain grid data, January and July 2026, under the policies and ten random seeds. | At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against **−1.54%** and **−2.97%** for plain threshold deferral. 7996.6 and 7698.8 of about 8075 tasks completed; 1238.2 and 1220.9 run reduced; 545.7 and 853 human decisions over 28 days (about 19 and 30 a day); 14 and 14.4 of 28 days over budget. Peer signal matches the real grid at r = 0.96 and 0.986. |
@@ -283,6 +283,9 @@ criteria themselves are designed, not built.
 | File | What it is |
 |---|---|
 | `fitness.json`, `fitness.md` | The thirteen properties, their case counts and their notes. Both rendered from the run; neither is hand-written. |
+| `bounds.json`, `bounds.md` | The maximum-optimisation calculus: deterministic ceilings (per horizon, signal and deferrable fraction; perfect-signal, interruptible and spatial bounds) that every seeded arm must sit under. |
+| `loop.json`, `loop.md` | E5 — the multi-party closed loop, measured: the published plane spreads the herd only by paying grams, fresh mutual observation oscillates, and the effect washes out at large N. |
+| `routing.json`, `routing.md` | E6/E6b — routed charging (when AND where) and daily geo-migration, forecast-scored with the spatial-Goodhart warning stated by the tool itself. |
 | `simulation.json`, `simulation.md` | Experiment E2: every policy, budget level, window and seed, and a plain reading of them. |
 | `charging.json`, `charging.md` | Experiment E3: the gated charging shift at two approval rates. |
 | `dataplane.json`, `dataplane.md` | Experiment E1: per-document measurements and the request-log summary. The only file whose numbers move between runs. |
@@ -314,6 +317,8 @@ moved.
 - [**Fitness functions**](docs/FITNESS-FUNCTIONS.md) — what each of the thirteen checks is, and why it matters.
 - [**Limitations**](docs/LIMITATIONS.md) — the canonical list, and where every other file states it.
 - [**Roadmap**](docs/ROADMAP.md) — the post-audit addendum: what this evaluation proved, what it did not, what a real "when and where" deferral mechanism would be, and the work packages that would settle it. Written after submission; it never edits the article.
+- [**Executive case**](docs/EXECUTIVE-CASE.md) — one page: the measured numbers, the verified absences that make it new, the economics, and who it serves.
+- [**Runbook**](docs/RUNBOOK.md) — the execution manual: standing constraints and a ready-to-paste agent brief per work package.
 - [**Glossary**](docs/architecture/ARCHITECTURE.md#12-glossary) — every term, including the five rungs, the deferral queue, the budget factor, and pacing versus capping.
 - [**Search protocol**](docs/SEARCH-PROTOCOL.md) — how the novelty claims were tested by trying to refute them.
 - [**Artifact inventory**](docs/ARTIFACT-INVENTORY.md) — every artifact the article cites, where it lives, how its figure was checked.

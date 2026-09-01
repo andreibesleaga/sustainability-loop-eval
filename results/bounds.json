@@ -1,0 +1,434 @@
+{
+  "generatedBy": "simulation/bounds.js (npm run bounds)",
+  "note": "Deterministic expectation calculus over the committed traces — no PRNG, no seeds, no network. Ceilings and floors, not simulations: the seeded experiments must land under these bounds, and any future arm that beats its bound is a bug.",
+  "workloadShape": {
+    "deferralHorizonsSweptH": [
+      6,
+      12,
+      24,
+      48
+    ],
+    "deferrableFractionsSwept": [
+      0.5,
+      1
+    ],
+    "energyPerTaskKWh": 0.05,
+    "baseHorizonH": 6
+  },
+  "fleet": {
+    "vehicles": 50,
+    "energyKWh": 20,
+    "chargeSlots": 6,
+    "plugInSlotRange": [
+      34,
+      38
+    ],
+    "deadlineSlotOffset": 62
+  },
+  "results": {
+    "W1": {
+      "label": "winter",
+      "e2Potential": {
+        "baselineMeanGPerKWh": 152.86,
+        "h6": {
+          "peer": {
+            "deferrableMeanGPerKWh": 132.74,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 142.8,
+                "pctSavedVsArrival": 6.58
+              },
+              "f1": {
+                "meanGPerKWh": 132.74,
+                "pctSavedVsArrival": 13.16
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 130.59,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 141.72,
+                "pctSavedVsArrival": 7.29
+              },
+              "f1": {
+                "meanGPerKWh": 130.59,
+                "pctSavedVsArrival": 14.57
+              }
+            }
+          }
+        },
+        "h12": {
+          "peer": {
+            "deferrableMeanGPerKWh": 118.06,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 135.46,
+                "pctSavedVsArrival": 11.38
+              },
+              "f1": {
+                "meanGPerKWh": 118.06,
+                "pctSavedVsArrival": 22.76
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 115.38,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 134.12,
+                "pctSavedVsArrival": 12.26
+              },
+              "f1": {
+                "meanGPerKWh": 115.38,
+                "pctSavedVsArrival": 24.52
+              }
+            }
+          }
+        },
+        "h24": {
+          "peer": {
+            "deferrableMeanGPerKWh": 100.45,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 126.65,
+                "pctSavedVsArrival": 17.14
+              },
+              "f1": {
+                "meanGPerKWh": 100.45,
+                "pctSavedVsArrival": 34.28
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 97.57,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 125.21,
+                "pctSavedVsArrival": 18.09
+              },
+              "f1": {
+                "meanGPerKWh": 97.57,
+                "pctSavedVsArrival": 36.17
+              }
+            }
+          }
+        },
+        "h48": {
+          "peer": {
+            "deferrableMeanGPerKWh": 82.96,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 117.91,
+                "pctSavedVsArrival": 22.86
+              },
+              "f1": {
+                "meanGPerKWh": 82.96,
+                "pctSavedVsArrival": 45.73
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 79.4,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 116.13,
+                "pctSavedVsArrival": 24.03
+              },
+              "f1": {
+                "meanGPerKWh": 79.4,
+                "pctSavedVsArrival": 48.06
+              }
+            }
+          }
+        }
+      },
+      "e3": {
+        "nights": 27,
+        "sessionsPerNight": 50,
+        "kWhPerNight": 1000,
+        "windowMeanGPerKWh": 152.86,
+        "peak": {
+          "fromSlot": 32,
+          "toSlot": 38,
+          "label": "16:00-19:00 UTC"
+        },
+        "peakKWhMovedPerNight_argmin_peer": 333.3,
+        "arms": {
+          "naive": {
+            "gPerSession": 3288.4,
+            "pctAvoidedVsNaive": 0,
+            "decomposition": null,
+            "peakEnergySharePct": 33.33,
+            "meanStartDelayHours": 0
+          },
+          "argmin_peer": {
+            "gPerSession": 2208.1,
+            "pctAvoidedVsNaive": 32.85,
+            "decomposition": {
+              "peakAvoidancePp": 7.03,
+              "cleanSeekingPp": 25.82
+            },
+            "peakEnergySharePct": 0,
+            "meanStartDelayHours": 6.24
+          },
+          "argmin_actual": {
+            "gPerSession": 2174.8,
+            "pctAvoidedVsNaive": 33.86,
+            "decomposition": {
+              "peakAvoidancePp": 7.03,
+              "cleanSeekingPp": 26.83
+            },
+            "peakEnergySharePct": 1.73,
+            "meanStartDelayHours": 6.06
+          },
+          "interruptible_peer": {
+            "gPerSession": 2206,
+            "pctAvoidedVsNaive": 32.92,
+            "decomposition": {
+              "peakAvoidancePp": 7.03,
+              "cleanSeekingPp": 25.88
+            },
+            "peakEnergySharePct": 0.49,
+            "meanStartDelayHours": 7.94
+          },
+          "interruptible_actual": {
+            "gPerSession": 2166.2,
+            "pctAvoidedVsNaive": 34.13,
+            "decomposition": {
+              "peakAvoidancePp": 7.03,
+              "cleanSeekingPp": 27.09
+            },
+            "peakEnergySharePct": 2.1,
+            "meanStartDelayHours": 7.19
+          }
+        }
+      },
+      "spatial": {
+        "scoredOn": "peer regional FORECAST series only — the regional endpoints publish no actual (limitation R2), so this ceiling cannot be validated against a regional ground truth",
+        "peers": [
+          "North Scotland",
+          "London",
+          "South Wales"
+        ],
+        "meanCheapestPeerGPerKWh": 57.42,
+        "meanPeerSignalGPerKWh": 126.8,
+        "pctBelowPeerSignal": 54.72,
+        "argminShareOfSlotsPct": {
+          "North Scotland": 90.63,
+          "London": 5.58,
+          "South Wales": 3.79
+        }
+      },
+      "forecastAccuracy": {
+        "caveat": "error of the forecast the HISTORICAL endpoint returns beside the settled actual; issue horizon unstated by the API — not a 48-hour-ahead figure (see WP-3)",
+        "slots": 1344,
+        "mapePct": 6.55,
+        "maeGPerKWh": 8.8,
+        "forecastHighPctOfSlots": 58.3
+      }
+    },
+    "W2": {
+      "label": "summer",
+      "e2Potential": {
+        "baselineMeanGPerKWh": 124.18,
+        "h6": {
+          "peer": {
+            "deferrableMeanGPerKWh": 103.21,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 113.69,
+                "pctSavedVsArrival": 8.44
+              },
+              "f1": {
+                "meanGPerKWh": 103.21,
+                "pctSavedVsArrival": 16.89
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 101.69,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 112.94,
+                "pctSavedVsArrival": 9.05
+              },
+              "f1": {
+                "meanGPerKWh": 101.69,
+                "pctSavedVsArrival": 18.11
+              }
+            }
+          }
+        },
+        "h12": {
+          "peer": {
+            "deferrableMeanGPerKWh": 87.2,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 105.69,
+                "pctSavedVsArrival": 14.89
+              },
+              "f1": {
+                "meanGPerKWh": 87.2,
+                "pctSavedVsArrival": 29.78
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 85.66,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 104.92,
+                "pctSavedVsArrival": 15.51
+              },
+              "f1": {
+                "meanGPerKWh": 85.66,
+                "pctSavedVsArrival": 31.02
+              }
+            }
+          }
+        },
+        "h24": {
+          "peer": {
+            "deferrableMeanGPerKWh": 74.06,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 99.12,
+                "pctSavedVsArrival": 20.18
+              },
+              "f1": {
+                "meanGPerKWh": 74.06,
+                "pctSavedVsArrival": 40.36
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 72.38,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 98.28,
+                "pctSavedVsArrival": 20.86
+              },
+              "f1": {
+                "meanGPerKWh": 72.38,
+                "pctSavedVsArrival": 41.71
+              }
+            }
+          }
+        },
+        "h48": {
+          "peer": {
+            "deferrableMeanGPerKWh": 62.24,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 93.21,
+                "pctSavedVsArrival": 24.94
+              },
+              "f1": {
+                "meanGPerKWh": 62.24,
+                "pctSavedVsArrival": 49.88
+              }
+            }
+          },
+          "oracle": {
+            "deferrableMeanGPerKWh": 60.57,
+            "byFraction": {
+              "f0.5": {
+                "meanGPerKWh": 92.37,
+                "pctSavedVsArrival": 25.61
+              },
+              "f1": {
+                "meanGPerKWh": 60.57,
+                "pctSavedVsArrival": 51.22
+              }
+            }
+          }
+        }
+      },
+      "e3": {
+        "nights": 27,
+        "sessionsPerNight": 50,
+        "kWhPerNight": 1000,
+        "windowMeanGPerKWh": 124.18,
+        "peak": {
+          "fromSlot": 32,
+          "toSlot": 38,
+          "label": "16:00-19:00 UTC"
+        },
+        "peakKWhMovedPerNight_argmin_peer": 258,
+        "arms": {
+          "naive": {
+            "gPerSession": 3160.5,
+            "pctAvoidedVsNaive": 0,
+            "decomposition": null,
+            "peakEnergySharePct": 33.33,
+            "meanStartDelayHours": 0
+          },
+          "argmin_peer": {
+            "gPerSession": 2638.3,
+            "pctAvoidedVsNaive": 16.52,
+            "decomposition": {
+              "peakAvoidancePp": 21.42,
+              "cleanSeekingPp": -4.9
+            },
+            "peakEnergySharePct": 7.53,
+            "meanStartDelayHours": 7.21
+          },
+          "argmin_actual": {
+            "gPerSession": 2623,
+            "pctAvoidedVsNaive": 17.01,
+            "decomposition": {
+              "peakAvoidancePp": 21.42,
+              "cleanSeekingPp": -4.41
+            },
+            "peakEnergySharePct": 7.16,
+            "meanStartDelayHours": 7.36
+          },
+          "interruptible_peer": {
+            "gPerSession": 2597.9,
+            "pctAvoidedVsNaive": 17.8,
+            "decomposition": {
+              "peakAvoidancePp": 21.42,
+              "cleanSeekingPp": -3.62
+            },
+            "peakEnergySharePct": 12.72,
+            "meanStartDelayHours": 9.67
+          },
+          "interruptible_actual": {
+            "gPerSession": 2566.2,
+            "pctAvoidedVsNaive": 18.81,
+            "decomposition": {
+              "peakAvoidancePp": 21.42,
+              "cleanSeekingPp": -2.61
+            },
+            "peakEnergySharePct": 12.59,
+            "meanStartDelayHours": 10.31
+          }
+        }
+      },
+      "spatial": {
+        "scoredOn": "peer regional FORECAST series only — the regional endpoints publish no actual (limitation R2), so this ceiling cannot be validated against a regional ground truth",
+        "peers": [
+          "North Scotland",
+          "London",
+          "South Wales"
+        ],
+        "meanCheapestPeerGPerKWh": 0.02,
+        "meanPeerSignalGPerKWh": 83.66,
+        "pctBelowPeerSignal": 99.98,
+        "argminShareOfSlotsPct": {
+          "North Scotland": 100,
+          "London": 0,
+          "South Wales": 0
+        }
+      },
+      "forecastAccuracy": {
+        "caveat": "error of the forecast the HISTORICAL endpoint returns beside the settled actual; issue horizon unstated by the API — not a 48-hour-ahead figure (see WP-3)",
+        "slots": 1344,
+        "mapePct": 8.25,
+        "maeGPerKWh": 8.9,
+        "forecastHighPctOfSlots": 45.1
+      }
+    }
+  }
+}

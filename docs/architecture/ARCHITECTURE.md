@@ -496,12 +496,12 @@ Each quality goal from section 1, as a scenario that a script can settle.
 | Q4 | Human in the loop | A verdict of `escalate`, `block` or `terminate` arrives with no approval, or with a refusal; and `terminate` arrives *with* an approval | F4 and F5, 4,100 cases, plus `simulation/policies.test.js` | **Green (the harness is the actuation path used by every adapter as of v1.1.0)** — before v1.1.0 the harness was the tested path but not provably the only one, because nothing checked that the adapters went through it |
 | Q5 | Nothing runs unaudited | Actions of every operation type the gate defines are evaluated; the audit length must equal executed plus refused | F5, 2,100 cases | Green |
 | Q6 | Evidence integrity | One field of one audit record is changed after the fact; and the tail of the chain is truncated | F6 plus F10, 800 cases. `verify()` must fail at the edited index; truncation is caught by `verifyAnchored()` and, honestly recorded, **not** by `verify()` alone | Green |
-| Q7 | Portability of the core | Static check of the import graph: `governor/carbon-governor.js` and `governor/harness.js` import nothing, the gate adapter imports only the runtime and the core, adapters do not import each other, every actuating adapter imports the harness, and the one external-library exception is named | F7, 24 checks | Green |
+| Q7 | Portability of the core | Static check of the import graph: `governor/carbon-governor.js` and `governor/harness.js` import nothing, the gate adapter imports only the runtime and the core, adapters do not import each other, every actuating adapter imports the harness, and the one external-library exception is named | F7, 30 checks | Green |
 | Q8 | Determinism | The same estimate sequence through two fresh gates | F8, 300 steps; decisions and audit records must be byte-identical | Green |
 | Q9 | Traceability | Every number in the article can be pointed at a file in `results/`, and every hand-typed number in the docs still matches it | F12 (`tools/check-numbers.js`), plus the inventory in [`docs/ARTIFACT-INVENTORY.md`](../ARTIFACT-INVENTORY.md) for artifacts the scripts do not measure | Green for the numbers a script produces; the inventory is still maintained by hand |
 | Q10 | Simplicity | The governor core stays readable in one sitting | 104 lines, of which 57 are code and the rest are comments and blanks; zero imports; F7 keeps it that way and F12 keeps this row honest | Green |
 
-All thirteen fitness functions pass, over 14,925 cases in total. Version 1.0.0
+All thirteen fitness functions pass, over 14,966 cases in total. Version 1.0.0
 — the snapshot the article cites — had nine, over 10,994 cases; the difference is
 properties added, not properties fixed. The same gate and audit code carries its
 own upstream governance suite (4 files, 71 tests), which also passes

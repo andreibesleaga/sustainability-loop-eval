@@ -22,7 +22,7 @@ prosecution before anything was changed. No experiment was re-run against new da
   are unchanged value for value. It is the R13 comparison made runnable rather than
   asserted: **32.85% / 16.53% avoided by the scheduler alone** against **32.51% /
   16.04%** governed (winter / summer).
-- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,925.** Two reasons, both additive:
+- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,966.** Two reasons, both additive:
   F12 grew from 33 to 92 registered claims because more hand-typed numbers were bound to
   `results/` (see below), and **F13** was added with 1,500 cases. Nothing failed; the
   suite got larger.
@@ -31,6 +31,85 @@ prosecution before anything was changed. No experiment was re-run against new da
 
 ### Added
 
+- **E5, E6 and E6b — the invention's first real simulations** (`npm run loop`,
+  `npm run routing`; `simulation/loop.js` + `loop.test.js`, `simulation/routing.js` +
+  `routing.test.js`; `results/loop.*`, `results/routing.*`). All deterministic, no
+  PRNG, byte-identical re-runs. **E5 (the multi-party closed loop, the article's own
+  open problem):** N systems publish per-slot energy histograms on their own cadence
+  and place work against grid intensity plus α × the (stale) published crowd — three
+  findings: the plane spreads the herd **only by paying grams** (every heeding cell
+  pays more intensity than the blind herd — information alone cannot both spread and
+  stay clean, the measured case for the gate's allocation role); fresh mutual
+  observation **oscillates** (complete daily swaps at N ≥ 5 — the cobweb); the effect
+  **washes out as N grows**. **E6 (routed charging, when AND where):** (region,
+  window) argmin over the committed regional forecasts with the drive priced in —
+  up to +78 pp over the best home window at zero move cost, forecast-scored, with the
+  tool printing its own spatial-Goodhart warning (a region publishing zero attracts
+  all the load; the summer table's ~100% rows are that warning, not a saving).
+  Verified alongside (lit-E): no production system routes vehicles on grid carbon,
+  and Northern Scotland took >86% of GB's 4.6 TWh H1-2025 wind curtailment (£116m) —
+  the router keeps choosing the region the grid pays to switch off. **E6b
+  (geo-migration):** a runtime re-homing daily avoids 64.42% vs a fixed London home
+  with 3 moves in 28 winter days; the 0/5/20 kWh switch-cost sweep barely moves it.
+  Forecast accuracy is now measured inside `npm run bounds` (national MAPE/MAE per
+  window, horizon caveat in the output). Unit tests 37 → 46.
+- **`docs/RUNBOOK.md` (new)** — the execution manual: the standing-constraints block
+  and a ready-to-paste agent brief for every work package, the verification recipe,
+  and the presentation plan.
+- **`docs/EXECUTIVE-CASE.md` (new)** — one page: the honest measured numbers, the
+  five verified absences that make the composition new, the economics with fetched
+  anchors, who it serves, and the two Mermaid diagrams (the inter-system loop; the
+  six-port hexagon).
+- **`docs/ROADMAP.md` (fourth pass)** — §3d composition matrix C1–C17 (incl. routed
+  EVs, green inference routing, geo-migrating kaiban networks, prosumer fleets);
+  §3e the fifteen scenarios; "who could publish today" with verified telemetry
+  (Kepler/RAPL/DCGM, Matter 1.3, OpenADR 3's marginal-GHG signals, IETF GREEN WG,
+  RFC 9547) and adoption evidence (security.txt 1.25% of top-1M, llms.txt,
+  Cloudflare); prosumer precedents (SEG, Octopus Outgoing, 7,000-Powerwall/37 MW SA
+  VPP, SunSpec, bi-directional zonal DFS); WP-17 and the E5/E6 findings folded into
+  the plan.
+- **`docs/ROADMAP.md` (third pass) — the invention put back at the centre.** New §3c
+  states what the article actually claims — the closed cybernetic loop *between*
+  systems through documents published at `/.well-known/sustainability-data` (each
+  participant a reporter and a sensor; stigmergic regulation through a shared medium,
+  `robots.txt`-shaped, with no coordinator) — and that ARCHITECTURE §8's own words
+  ("the outer loop … is open in every experiment") mean the invention has never been
+  exercised end to end (R2/R5/R12 are three facets of that one fact). Adds the
+  inter-system uses the earlier sections under-sold: agentic runtimes as mutual
+  back-pressure (AI-to-AI ECN via well-known documents), datacenter↔tenant
+  self-regulation, websites governing agentic crawl/inference load by publishing cost,
+  Scope-3 cascades, device fleets as publishers. Names the **sixth port —
+  publication** (the invention's defining edge; only implemented in the separate
+  publisher packages, never contracted or tested here — §4 Gap 2 updated). New
+  **WP-17 (E5, the closed-loop arm)**: N governed systems consuming each other's
+  *published documents* — no exogenous trace — measuring whether mutual observation
+  damps or amplifies the herd, vs publication cadence and staleness; subsumes WP-8,
+  extends WP-12, and is the joint headline with it. Innovation inventory grows items
+  9–11 (the multi-actor closed loop itself; the publication port; carbon back-pressure
+  for the agentic web).
+- **`npm run bounds` — the maximum-optimisation calculus** (`simulation/bounds.js` →
+  `results/bounds.json` + `results/bounds.md`, with `simulation/bounds.test.js`, 4 unit
+  tests): deterministic expectations over the committed traces — no PRNG, no network —
+  computing the CEILINGS every experiment must sit under. E2 temporal potential by
+  horizon (6/12/24/48 h) × deciding signal (causal peer vs oracle) × deferrable
+  fraction; E3 perfect-signal and interruptible bounds (a perfect signal is worth ~1
+  point over the free forecast; interruptibility ~0.3 pp in winter E3); the
+  peak-avoidance vs clean-seeking decomposition as a run (winter 7.03 + 25.82 pp,
+  summer 21.42 − 4.9 pp) — delivering roadmap WP-2b; the forecast-scored spatial
+  ceiling; and the monetisable quantity 333.3 / 258 kWh per night moved out of the
+  16:00–19:00 evening block. Unit tests 33 → 37.
+- **`docs/ROADMAP.md` (second pass)** — the owner's answers to all eight questions
+  folded in verbatim with a decision under each; a ten-sentence plain-words summary;
+  the bounds calculus (§2f); the honest economics with verified anchors — UK ETS
+  £58.27/t, EU ETS €83.45/t, Octopus Agile structure, 1 GW/150k-EV existence proof
+  (§2g); the innovation inventory (§2h) including "a paced budget is a staggering
+  mechanism" — governance as the anti-herd, to be tested against SI 2021/1467's
+  mandated randomised delay; the emitters map onto verified global shares — 37.4 Gt
+  fossil CO2 2024, 73.2% of GHG from energy, data centres 415 TWh → ~945 TWh by 2030 —
+  with out-of-scope rows stated honestly (§2i); new work packages WP-14 tiered
+  governance (rules first, humans for what matters; 545.7 → 442.9 and 853 → 637
+  decisions per window under rule one), WP-15 real workload trace, WP-16 price-signal
+  twin; publishing commands (§9; the paper snapshot is the existing v1.0.0 tag).
 - **`docs/ROADMAP.md`** — a post-audit addendum answering, in plain language, what this
   evaluation proved, what it did not, and what to build next. It does **not** change the
   submitted article. Its core findings: pure deferral (P1) bought −1.54% / −2.97% while

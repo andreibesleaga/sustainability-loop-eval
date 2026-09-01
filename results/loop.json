@@ -1,0 +1,326 @@
+{
+  "generatedBy": "simulation/loop.js (npm run loop)",
+  "note": "E5: the multi-party closed loop the article marks as its open problem, as a deterministic delayed-best-response dynamic over the committed national actual traces. Each system publishes its per-slot energy histogram on its own cadence phase and places deferrable work against grid intensity plus alpha x the (stale) published crowd. alpha=0 is the blind herd; the question each cell answers is whether the plane DAMPS the herd or AMPLIFIES it.",
+  "model": {
+    "slotsPerDay": 48,
+    "unitsPerDay": 24,
+    "unitKWh": 0.05,
+    "slotCap": 4,
+    "warmupDays": 14,
+    "Ns": [
+      2,
+      5,
+      10,
+      25
+    ],
+    "alphas": [
+      0,
+      0.5,
+      2
+    ],
+    "stalenessDays": [
+      1,
+      7
+    ]
+  },
+  "results": {
+    "W1": {
+      "label": "winter",
+      "cells": {
+        "N2_a0_s1": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N2_a0_s7": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N2_a0.5_s1": {
+          "meanIntensityGPerKWh": 82.37,
+          "peakConcurrencyRatio": 1.61,
+          "top5PctSlotShare": 26.19,
+          "oscillationL1": 1.41
+        },
+        "N2_a0.5_s7": {
+          "meanIntensityGPerKWh": 81.81,
+          "peakConcurrencyRatio": 1.89,
+          "top5PctSlotShare": 25.15,
+          "oscillationL1": 0.978
+        },
+        "N2_a2_s1": {
+          "meanIntensityGPerKWh": 99.1,
+          "peakConcurrencyRatio": 1.51,
+          "top5PctSlotShare": 16.67,
+          "oscillationL1": 1.564
+        },
+        "N2_a2_s7": {
+          "meanIntensityGPerKWh": 99.52,
+          "peakConcurrencyRatio": 2.07,
+          "top5PctSlotShare": 14.88,
+          "oscillationL1": 0.869
+        },
+        "N5_a0_s1": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N5_a0_s7": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N5_a0.5_s1": {
+          "meanIntensityGPerKWh": 83.57,
+          "peakConcurrencyRatio": 1.38,
+          "top5PctSlotShare": 31.85,
+          "oscillationL1": 1.891
+        },
+        "N5_a0.5_s7": {
+          "meanIntensityGPerKWh": 81.06,
+          "peakConcurrencyRatio": 1.92,
+          "top5PctSlotShare": 28.45,
+          "oscillationL1": 1.285
+        },
+        "N5_a2_s1": {
+          "meanIntensityGPerKWh": 92.9,
+          "peakConcurrencyRatio": 1.51,
+          "top5PctSlotShare": 25.89,
+          "oscillationL1": 2
+        },
+        "N5_a2_s7": {
+          "meanIntensityGPerKWh": 94.46,
+          "peakConcurrencyRatio": 2.69,
+          "top5PctSlotShare": 20.42,
+          "oscillationL1": 1.153
+        },
+        "N10_a0_s1": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N10_a0_s7": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N10_a0.5_s1": {
+          "meanIntensityGPerKWh": 83.53,
+          "peakConcurrencyRatio": 1.21,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.929
+        },
+        "N10_a0.5_s7": {
+          "meanIntensityGPerKWh": 79.89,
+          "peakConcurrencyRatio": 1.72,
+          "top5PctSlotShare": 31.46,
+          "oscillationL1": 1.43
+        },
+        "N10_a2_s1": {
+          "meanIntensityGPerKWh": 89.89,
+          "peakConcurrencyRatio": 1.42,
+          "top5PctSlotShare": 29.76,
+          "oscillationL1": 1.994
+        },
+        "N10_a2_s7": {
+          "meanIntensityGPerKWh": 91.6,
+          "peakConcurrencyRatio": 2.71,
+          "top5PctSlotShare": 25.77,
+          "oscillationL1": 1.496
+        },
+        "N25_a0_s1": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N25_a0_s7": {
+          "meanIntensityGPerKWh": 76.55,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.359
+        },
+        "N25_a0.5_s1": {
+          "meanIntensityGPerKWh": 83.09,
+          "peakConcurrencyRatio": 1.13,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.942
+        },
+        "N25_a0.5_s7": {
+          "meanIntensityGPerKWh": 79.92,
+          "peakConcurrencyRatio": 1.37,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.522
+        },
+        "N25_a2_s1": {
+          "meanIntensityGPerKWh": 87.27,
+          "peakConcurrencyRatio": 1.37,
+          "top5PctSlotShare": 32.74,
+          "oscillationL1": 2
+        },
+        "N25_a2_s7": {
+          "meanIntensityGPerKWh": 91.93,
+          "peakConcurrencyRatio": 2.06,
+          "top5PctSlotShare": 32.9,
+          "oscillationL1": 1.719
+        }
+      }
+    },
+    "W2": {
+      "label": "summer",
+      "cells": {
+        "N2_a0_s1": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N2_a0_s7": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N2_a0.5_s1": {
+          "meanIntensityGPerKWh": 75.24,
+          "peakConcurrencyRatio": 1.76,
+          "top5PctSlotShare": 28.27,
+          "oscillationL1": 1.417
+        },
+        "N2_a0.5_s7": {
+          "meanIntensityGPerKWh": 75.85,
+          "peakConcurrencyRatio": 1.63,
+          "top5PctSlotShare": 19.94,
+          "oscillationL1": 0.587
+        },
+        "N2_a2_s1": {
+          "meanIntensityGPerKWh": 86.62,
+          "peakConcurrencyRatio": 1.66,
+          "top5PctSlotShare": 16.96,
+          "oscillationL1": 1.385
+        },
+        "N2_a2_s7": {
+          "meanIntensityGPerKWh": 86.8,
+          "peakConcurrencyRatio": 1.62,
+          "top5PctSlotShare": 11.9,
+          "oscillationL1": 0.487
+        },
+        "N5_a0_s1": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N5_a0_s7": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N5_a0.5_s1": {
+          "meanIntensityGPerKWh": 75.24,
+          "peakConcurrencyRatio": 1.25,
+          "top5PctSlotShare": 32.44,
+          "oscillationL1": 2
+        },
+        "N5_a0.5_s7": {
+          "meanIntensityGPerKWh": 76.57,
+          "peakConcurrencyRatio": 2.23,
+          "top5PctSlotShare": 28.57,
+          "oscillationL1": 1.064
+        },
+        "N5_a2_s1": {
+          "meanIntensityGPerKWh": 78.35,
+          "peakConcurrencyRatio": 1.37,
+          "top5PctSlotShare": 26.19,
+          "oscillationL1": 1.994
+        },
+        "N5_a2_s7": {
+          "meanIntensityGPerKWh": 89.46,
+          "peakConcurrencyRatio": 2.29,
+          "top5PctSlotShare": 17.2,
+          "oscillationL1": 0.936
+        },
+        "N10_a0_s1": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N10_a0_s7": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N10_a0.5_s1": {
+          "meanIntensityGPerKWh": 74.56,
+          "peakConcurrencyRatio": 1.15,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 2
+        },
+        "N10_a0.5_s7": {
+          "meanIntensityGPerKWh": 75.63,
+          "peakConcurrencyRatio": 1.95,
+          "top5PctSlotShare": 30.89,
+          "oscillationL1": 1.255
+        },
+        "N10_a2_s1": {
+          "meanIntensityGPerKWh": 76.11,
+          "peakConcurrencyRatio": 1.3,
+          "top5PctSlotShare": 29.46,
+          "oscillationL1": 2
+        },
+        "N10_a2_s7": {
+          "meanIntensityGPerKWh": 85.45,
+          "peakConcurrencyRatio": 2.97,
+          "top5PctSlotShare": 27.05,
+          "oscillationL1": 1.371
+        },
+        "N25_a0_s1": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N25_a0_s7": {
+          "meanIntensityGPerKWh": 71.46,
+          "peakConcurrencyRatio": 1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.872
+        },
+        "N25_a0.5_s1": {
+          "meanIntensityGPerKWh": 74.49,
+          "peakConcurrencyRatio": 1.1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 2
+        },
+        "N25_a0.5_s7": {
+          "meanIntensityGPerKWh": 75.56,
+          "peakConcurrencyRatio": 1.36,
+          "top5PctSlotShare": 33.29,
+          "oscillationL1": 1.425
+        },
+        "N25_a2_s1": {
+          "meanIntensityGPerKWh": 74.99,
+          "peakConcurrencyRatio": 1.18,
+          "top5PctSlotShare": 32.74,
+          "oscillationL1": 2
+        },
+        "N25_a2_s7": {
+          "meanIntensityGPerKWh": 86.59,
+          "peakConcurrencyRatio": 1.83,
+          "top5PctSlotShare": 32.8,
+          "oscillationL1": 1.621
+        }
+      }
+    }
+  }
+}

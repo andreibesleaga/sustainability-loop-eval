@@ -174,7 +174,7 @@ npm run arch:graph       # madge: the full import graph — this is what produce
 unit tests. The `node:test` files elsewhere (`simulation/lib.test.js`,
 `simulation/policies.test.js`, `dataplane/measure.test.js`) cover the adapters'
 own arithmetic instead — statistics, trace loading, policy semantics, document
-checking. There are **33** of those, and `npm test` runs them first.
+checking. There are **46** of those, and `npm test` runs them first.
 
 Each property lives once, in `fitness/props.js`, as an exported function
 returning `{ id, property, cases, passed, notes }`; the `fitness/fN.test.js`
@@ -194,7 +194,7 @@ of the tests rather than of the architecture.
 ## Current results
 
 `results/fitness.md` is rendered from the run, so it is the authority. As of
-v1.1.0: **13/13 green over 14,925 cases.** Version 1.0.0 — the snapshot the
+v1.1.0: **13/13 green over 14,966 cases.** Version 1.0.0 — the snapshot the
 article cites — was 9/9 over 10,994 cases. The difference is properties added,
 not properties fixed.
 

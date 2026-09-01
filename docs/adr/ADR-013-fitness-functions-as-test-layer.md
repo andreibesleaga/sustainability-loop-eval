@@ -27,7 +27,7 @@ against the real shipped gate.
 ## Consequences
 
 - The architectural claims are checkable in seconds and cannot rot silently.
-- The result is a table a reviewer can read (`results/fitness.md`). At v1.0.0 — the snapshot the article cites — that was **9 of 9 green over 10,994 cases**; at v1.1.0 it is 13 of 13 over 14,925.
+- The result is a table a reviewer can read (`results/fitness.md`). At v1.0.0 — the snapshot the article cites — that was **9 of 9 green over 10,994 cases**; at v1.1.0 it is 13 of 13 over 14,966.
 - Two of the thirteen, F7 and F12, are static checks rather than properties over generated cases. Their check counts are included in the total.
 - Adding a property is a fixed, small ritual: a function in `props.js`, a test file, one line in `report.js`, an entry in `FITNESS-FUNCTIONS.md`.
 

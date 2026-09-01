@@ -35,11 +35,14 @@
     "fetch-traces": "node simulation/fetch-traces.js",
     "simulate": "node simulation/run.js",
     "charging": "node simulation/charging.js",
+    "bounds": "node simulation/bounds.js",
+    "routing": "node simulation/routing.js",
+    "loop": "node simulation/loop.js",
     "demo": "node demo/demo.js",
     "agent": "node --env-file-if-exists=.env demo/agent.js",
     "arch": "npx --yes madge@8.0.0 --circular --extensions js governor fitness simulation dataplane demo shared",
     "arch:graph": "npx --yes madge@8.0.0 --extensions js governor fitness simulation dataplane demo shared",
-    "all": "npm run fitness:report && npm run simulate && npm run charging && npm run dataplane"
+    "all": "npm run fitness:report && npm run simulate && npm run charging && npm run bounds && npm run routing && npm run loop && npm run dataplane"
   },
   "dependencies": {
     "kaiban-distributed": "2.0.0"

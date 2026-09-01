@@ -1,0 +1,220 @@
+{
+  "generatedBy": "simulation/routing.js (npm run routing)",
+  "note": "E6: routed EV charging (region + window argmin) as deterministic expectation over the committed regional forecast traces. Advisory and forecast-scored by construction (no regional actual exists — R2).",
+  "fleet": {
+    "vehicles": 50,
+    "energyKWh": 20,
+    "chargeSlots": 6,
+    "plugInSlotRange": [
+      34,
+      38
+    ],
+    "deadlineSlotOffset": 62
+  },
+  "homeRegion": "London",
+  "moveKWhSweep": [
+    0,
+    2,
+    5
+  ],
+  "results": {
+    "W1": {
+      "label": "winter",
+      "nights": 27,
+      "homeRegion": "London",
+      "regions": [
+        "North Scotland",
+        "London",
+        "South Wales"
+      ],
+      "scoring": "forecast-scored (GB publishes no regional actual — limitation R2); stay-home arms additionally scored on the national actual so the one checkable comparison is shown",
+      "arms": {
+        "naive_home": {
+          "gPerSessionForecast": 3653.1,
+          "gPerSessionActual": 3288.4
+        },
+        "best_window_home": {
+          "gPerSessionForecast": 2303.8,
+          "gPerSessionActual": 2202.4,
+          "pctAvoidedVsNaiveForecast": 36.93,
+          "pctAvoidedVsNaiveActual": 33.02
+        }
+      },
+      "migration": {
+        "switchKWhSweep": [
+          0,
+          5,
+          20
+        ],
+        "dailyLoadKWh": 1000,
+        "arms": {
+          "switchKWh0": {
+            "totalGPerDay": 60500,
+            "pctAvoidedVsFixedHome": 64.42,
+            "moves": 3,
+            "daysInRegion": {
+              "North Scotland": 27,
+              "London": 1,
+              "South Wales": 0
+            }
+          },
+          "switchKWh5": {
+            "totalGPerDay": 60553,
+            "pctAvoidedVsFixedHome": 64.39,
+            "moves": 3,
+            "daysInRegion": {
+              "North Scotland": 27,
+              "London": 1,
+              "South Wales": 0
+            }
+          },
+          "switchKWh20": {
+            "totalGPerDay": 60712,
+            "pctAvoidedVsFixedHome": 64.3,
+            "moves": 3,
+            "daysInRegion": {
+              "North Scotland": 27,
+              "London": 1,
+              "South Wales": 0
+            }
+          }
+        },
+        "fixedHomeGPerDay": 170052
+      },
+      "routed": {
+        "moveKWh0": {
+          "gPerSessionForecast": 506.7,
+          "pctAvoidedVsNaiveForecast": 86.13,
+          "pctAvoidedVsBestHomeForecast": 78.01,
+          "sessionsRoutedAwayPct": 100,
+          "chosenRegionSharePct": {
+            "North Scotland": 100,
+            "London": 0,
+            "South Wales": 0
+          }
+        },
+        "moveKWh2": {
+          "gPerSessionForecast": 558.7,
+          "pctAvoidedVsNaiveForecast": 84.71,
+          "pctAvoidedVsBestHomeForecast": 75.75,
+          "sessionsRoutedAwayPct": 100,
+          "chosenRegionSharePct": {
+            "North Scotland": 100,
+            "London": 0,
+            "South Wales": 0
+          }
+        },
+        "moveKWh5": {
+          "gPerSessionForecast": 619.6,
+          "pctAvoidedVsNaiveForecast": 83.04,
+          "pctAvoidedVsBestHomeForecast": 73.11,
+          "sessionsRoutedAwayPct": 96.3,
+          "chosenRegionSharePct": {
+            "North Scotland": 96.3,
+            "London": 3.7,
+            "South Wales": 0
+          }
+        }
+      }
+    },
+    "W2": {
+      "label": "summer",
+      "nights": 27,
+      "homeRegion": "London",
+      "regions": [
+        "North Scotland",
+        "London",
+        "South Wales"
+      ],
+      "scoring": "forecast-scored (GB publishes no regional actual — limitation R2); stay-home arms additionally scored on the national actual so the one checkable comparison is shown",
+      "arms": {
+        "naive_home": {
+          "gPerSessionForecast": 3635.6,
+          "gPerSessionActual": 3160.5
+        },
+        "best_window_home": {
+          "gPerSessionForecast": 3147.3,
+          "gPerSessionActual": 2654.9,
+          "pctAvoidedVsNaiveForecast": 13.43,
+          "pctAvoidedVsNaiveActual": 16
+        }
+      },
+      "migration": {
+        "switchKWhSweep": [
+          0,
+          5,
+          20
+        ],
+        "dailyLoadKWh": 1000,
+        "arms": {
+          "switchKWh0": {
+            "totalGPerDay": 21,
+            "pctAvoidedVsFixedHome": 99.99,
+            "moves": 1,
+            "daysInRegion": {
+              "North Scotland": 28,
+              "London": 0,
+              "South Wales": 0
+            }
+          },
+          "switchKWh5": {
+            "totalGPerDay": 21,
+            "pctAvoidedVsFixedHome": 99.99,
+            "moves": 1,
+            "daysInRegion": {
+              "North Scotland": 28,
+              "London": 0,
+              "South Wales": 0
+            }
+          },
+          "switchKWh20": {
+            "totalGPerDay": 21,
+            "pctAvoidedVsFixedHome": 99.99,
+            "moves": 1,
+            "daysInRegion": {
+              "North Scotland": 28,
+              "London": 0,
+              "South Wales": 0
+            }
+          }
+        },
+        "fixedHomeGPerDay": 152469
+      },
+      "routed": {
+        "moveKWh0": {
+          "gPerSessionForecast": 0,
+          "pctAvoidedVsNaiveForecast": 100,
+          "pctAvoidedVsBestHomeForecast": 100,
+          "sessionsRoutedAwayPct": 100,
+          "chosenRegionSharePct": {
+            "North Scotland": 100,
+            "London": 0,
+            "South Wales": 0
+          }
+        },
+        "moveKWh2": {
+          "gPerSessionForecast": 0,
+          "pctAvoidedVsNaiveForecast": 100,
+          "pctAvoidedVsBestHomeForecast": 100,
+          "sessionsRoutedAwayPct": 100,
+          "chosenRegionSharePct": {
+            "North Scotland": 100,
+            "London": 0,
+            "South Wales": 0
+          }
+        },
+        "moveKWh5": {
+          "gPerSessionForecast": 0,
+          "pctAvoidedVsNaiveForecast": 100,
+          "pctAvoidedVsBestHomeForecast": 100,
+          "sessionsRoutedAwayPct": 100,
+          "chosenRegionSharePct": {
+            "North Scotland": 100,
+            "London": 0,
+            "South Wales": 0
+          }
+        }
+      }
+    }
+  }
+}

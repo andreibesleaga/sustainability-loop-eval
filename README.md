@@ -49,12 +49,12 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 Demonstration only — no number in `results/` comes from the demos.
 `npm install` prints advisories from the one dependency's own tree; they are
 explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
-everything: 33 unit tests, the thirteen architecture checks through the real
+everything: 46 unit tests, the thirteen architecture checks through the real
 gate, and a check that every number in these pages still matches `results/`.
 
 ## Headline results
 
-- **The safety properties hold in shipped code.** 13/13 green over 14,925 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
+- **The safety properties hold in shipped code.** 13/13 green over 14,966 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
 - **The data plane is real and cheap to read.** 12 documents, 100% valid, median 44.6 ms and about 1.3 kB per fetch; 120 requests from 26 clients in the log window — reachability shown, adoption not yet.
 - **The governor cuts emissions — by also doing less work.** At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against −1.54% and −2.97% for plain threshold deferral. About 15% of tasks run reduced and a few are dropped; read the emissions next to the completed counts, never alone.
 - **Charging:** 32.51% of session emissions avoided in winter and 16.04% in summer at full approval (25.93% and 12.77% at 80% approval) — cars only shift *when* they charge, never how much, and every car still charges fully.
@@ -94,9 +94,11 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 |---|---|
 | [**RESEARCH.md**](RESEARCH.md) | The full write-up: findings, numbers, corrections, versions, everything below in context |
 | [Research questions](docs/RESEARCH-QUESTIONS.md) | The three questions, what would falsify each, the current answers |
-| [Results: fitness](results/fitness.md) · [data plane](results/dataplane.md) · [simulation](results/simulation.md) · [charging](results/charging.md) | The four experiments' full tables and caveats |
+| [Results: fitness](results/fitness.md) · [data plane](results/dataplane.md) · [simulation](results/simulation.md) · [charging](results/charging.md) · [bounds](results/bounds.md) · [loop](results/loop.md) · [routing](results/routing.md) | The experiments' full tables and caveats, the ceilings they must sit under, and the first closed-loop and routed-charging measurements |
 | [Limitations](docs/LIMITATIONS.md) | Every limitation, once, canonically |
 | [**Roadmap**](docs/ROADMAP.md) | What was proved, what was not, and what to build next — the post-audit addendum |
+| [**Executive case**](docs/EXECUTIVE-CASE.md) | One page: the honest numbers, why it is new, why it can pay, who it serves |
+| [Runbook](docs/RUNBOOK.md) | How to implement, test and present every work package — with ready-to-paste agent briefs |
 | [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) | How it is built and why |
 | [Product design](docs/architecture/PRODUCT.md) | Who it is for, requirements, use cases |
 | [Decision records](docs/adr/) | Eighteen short "why" notes |
@@ -108,6 +110,62 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 
 ![The loop](docs/architecture/c4/loop-overview.png)
+
+## The invention, in short
+
+Carbon-aware computing has been one-way: systems *read* grid feeds and publish
+nothing, so no system can react to another. This work closes that loop: **every
+system publishes its own live sustainability data at
+`/.well-known/sustainability-data`** (an IETF Internet-Draft), reads its peers',
+and a five-rung governed gate — worst verdict wins, humans bound to the top rungs,
+every decision in a tamper-evident audit chain — turns what it reads into
+**audited, reversible action**, which changes what it publishes next.
+`robots.txt` with numbers, for carbon. Within everything verified, no other
+standard occupies that role.
+
+What that unlocks (all measured or simulated here, on real GB grid data):
+
+- **Systems regulating each other** — agentic AI runtimes as mutual back-pressure;
+  datacenters publishing so tenants yield; websites pricing agentic crawl load.
+  `npm run loop` is the first measurement of such a multi-party loop — including the
+  honest finding that a published signal alone spreads the crowd *only by paying
+  grams*, so the gate's allocation role is load-bearing, not decorative.
+- **When AND where** — EVs routed between charging regions, LLM calls routed to
+  green datacenters, whole agentic runtimes re-homing to green grids
+  (`npm run routing`), each with its cost priced in and a self-printed warning that
+  a region publishing zero attracts all the load.
+- **Fifteen scenarios** from prosumer households and grid-side orchestration to
+  green CI/CD and mesh task markets — every one the same hexagon (signal, forecast,
+  human, actuation, metering, publication ports around a 104-line governor core)
+  with different adapters: [ROADMAP §3e](docs/ROADMAP.md).
+- **The benefits, honestly split:** the money is time-of-use arbitrage, avoided
+  compute spend and compliance-grade audit — not carbon prices; the carbon is real
+  where load can genuinely move; the governance is what makes any of it
+  trustworthy between organisations. One page of measured numbers and verified
+  absences: [the executive case](docs/EXECUTIVE-CASE.md). How to build the rest:
+  [the runbook](docs/RUNBOOK.md).
+
+**Why this is unique — every reason, checked, in one list.** (1) It is the only
+standard-shaped place on the web where a system self-publishes *runtime*
+sustainability metrics — every checked alternative is links-only, annual, or locked
+behind tenant auth. (2) It is the only *cybernetic* framing that closes the loop
+*between* organisations — every published closed loop lives inside one operator.
+(3) Its governance is proven in shipped code, adversarially, including what happens
+when the governed agent lies (the metering theorem, F13). (4) It measured the
+thundering-herd effect the field names and declines to measure — and found the
+regulator got there first (GB's mandatory randomised delay). (5) It is the first
+simulation anywhere of routing vehicles — or workloads, or whole runtimes — on
+published grid carbon, priced honestly, warning included. (6) Every number ships
+with the ceiling it cannot exceed and the exact command that reproduces it
+byte-for-byte. (7) And the parts it does not have — real third-party publishers, a
+regional ground truth, a marginal signal — are stated as plainly as the parts it
+does. The composition is new; the honesty is the proof it can be trusted.
+
+Every external claim behind these statements was verified against live sources on
+2026-09-01 — the verified-literature record, with each source URL and every
+unconfirmed item marked, is in [ROADMAP §3b–§3c](docs/ROADMAP.md) and the
+[executive case](docs/EXECUTIVE-CASE.md); every internal number traces to
+[`results/`](results/) and is enforced by fitness function F12.
 
 ## Versions and corrections
 

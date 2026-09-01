@@ -60,11 +60,14 @@ function evidence() {
   const charging = readJson("results/charging.json");
   const dataplane = readJson("results/dataplane.json");
   const fitness = readJson("results/fitness.json");
+  const bounds = readJson("results/bounds.json");
+  const loop = readJson("results/loop.json");
+  const routing = readJson("results/routing.json");
   const gatewayIndex = readJson("data/dataplane/index.json").body; // the committed registry snapshot
   const core = lineCounts("governor/carbon-governor.js");
   const fn = (id) => fitness.functions.find((f) => f.id === id);
   return {
-    simulation, charging, dataplane, fitness,
+    simulation, charging, dataplane, fitness, bounds, loop, routing,
     index: {
       // "22 adapter and wire-format demonstration documents" = the two demonstration
       // collections the gateway's registry snapshot lists; not part of E1's twelve.
@@ -113,6 +116,8 @@ const C = (p) => ["charging", p];
 const D = (p) => ["dataplane", p];
 const K = (p) => ["computed", p];
 const I = (p) => ["index", p];
+const B = (p) => ["bounds", p];
+const RT = (p) => ["routing", p];
 
 const REGISTRY = [
   // ── README.md ──────────────────────────────────────────────────────────────
@@ -222,7 +227,46 @@ const REGISTRY = [
   ["docs/architecture/ARCHITECTURE.md", "R13 governed saving, winter", /against the governed (\d+\.\d+)% \/ \d+\.\d+%/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],
   ["docs/architecture/ARCHITECTURE.md", "R13 governed saving, summer", /against the governed \d+\.\d+% \/ (\d+\.\d+)%/i, C("results|W2|governed_approval1.00|pctAvoidedVsNaive|mean")],
 
-  // ── docs/adr/ADR-011 (the same R13 comparison, restated where the decision lives) ─
+  // ── docs/ROADMAP.md — the bounds calculus (results/bounds.json) ─────────────
+  ["docs/ROADMAP.md", "E2 ceiling h6 peer f0.5, winter", /6 h horizon, half the work deferrable, causal \(peer\) signal \| \*\*(\d+\.\d+)%\*\*/i, B("results|W1|e2Potential|h6|peer|byFraction|f0.5|pctSavedVsArrival")],
+  ["docs/ROADMAP.md", "E2 ceiling h6 peer f0.5, summer", /6 h horizon, half the work deferrable, causal \(peer\) signal \| \*\*\d+\.\d+%\*\* \| \*\*(\d+\.\d+)%\*\*/i, B("results|W2|e2Potential|h6|peer|byFraction|f0.5|pctSavedVsArrival")],
+  ["docs/ROADMAP.md", "E2 ceiling h12 peer f1.0, winter", /12 h horizon, everything deferrable, causal signal \| \*\*(\d+\.\d+)%\*\*/i, B("results|W1|e2Potential|h12|peer|byFraction|f1|pctSavedVsArrival")],
+  ["docs/ROADMAP.md", "E2 ceiling h12 peer f1.0, summer", /12 h horizon, everything deferrable, causal signal \| \*\*\d+\.\d+%\*\* \| \*\*(\d+\.\d+)%\*\*/i, B("results|W2|e2Potential|h12|peer|byFraction|f1|pctSavedVsArrival")],
+  ["docs/ROADMAP.md", "E2 ceiling h48 oracle f1.0, winter", /48 h horizon, everything deferrable, oracle signal \| \*\*(\d+\.\d+)%\*\*/i, B("results|W1|e2Potential|h48|oracle|byFraction|f1|pctSavedVsArrival")],
+  ["docs/ROADMAP.md", "E2 ceiling h48 oracle f1.0, summer", /48 h horizon, everything deferrable, oracle signal \| \*\*\d+\.\d+%\*\* \| \*\*(\d+\.\d+)%\*\*/i, B("results|W2|e2Potential|h48|oracle|byFraction|f1|pctSavedVsArrival")],
+  ["docs/ROADMAP.md", "E3 oracle-signal bound, winter", /E3 with the oracle signal: (\d+\.\d+)%/i, B("results|W1|e3|arms|argmin_actual|pctAvoidedVsNaive")],
+  ["docs/ROADMAP.md", "E3 peer-signal argmin (in the oracle sentence)", /vs (\d+\.\d+)% on the peer forecast/i, B("results|W1|e3|arms|argmin_peer|pctAvoidedVsNaive")],
+  ["docs/ROADMAP.md", "E3 interruptible bound, winter", /\((\d+\.\d+)% vs \d+\.\d+% winter\)/i, B("results|W1|e3|arms|interruptible_actual|pctAvoidedVsNaive")],
+  ["docs/ROADMAP.md", "E3 contiguous-oracle bound beside interruptible", /\(\d+\.\d+% vs (\d+\.\d+)% winter\)/i, B("results|W1|e3|arms|argmin_actual|pctAvoidedVsNaive")],
+  ["docs/ROADMAP.md", "spatial ceiling below peer mean, winter", /averages \*\*(\d+\.\d+)% below\*\*/i, B("results|W1|spatial|pctBelowPeerSignal")],
+  ["docs/ROADMAP.md", "North Scotland argmin share, summer", /argmin in \*\*(\d+)% of slots\*\*/i, B("results|W2|spatial|argminShareOfSlotsPct|North Scotland")],
+  ["docs/ROADMAP.md", "WP-2b decomposition peak-avoidance, winter", /winter (\d+\.\d+) pp peak-avoidance/i, B("results|W1|e3|arms|argmin_peer|decomposition|peakAvoidancePp")],
+  ["docs/ROADMAP.md", "WP-2b decomposition clean-seeking, winter", /peak-avoidance \+ (\d+\.\d+) pp clean-seeking/i, B("results|W1|e3|arms|argmin_peer|decomposition|cleanSeekingPp")],
+  ["docs/ROADMAP.md", "WP-2b decomposition peak-avoidance, summer", /summer (\d+\.\d+) pp \+ \*\*−[\d.]+ pp\*\*/i, B("results|W2|e3|arms|argmin_peer|decomposition|peakAvoidancePp")],
+  ["docs/ROADMAP.md", "WP-2b decomposition clean-seeking, summer (negative)", /summer [\d.]+ pp \+ \*\*(−[\d.]+) pp\*\*/i, B("results|W2|e3|arms|argmin_peer|decomposition|cleanSeekingPp")],
+  ["docs/ROADMAP.md", "peak kWh moved per night, winter", /moves \*\*(\d+\.\d+) kWh per night \(winter\)/i, B("results|W1|e3|peakKWhMovedPerNight_argmin_peer")],
+  ["docs/ROADMAP.md", "peak kWh moved per night, summer", /kWh per night \(winter\) \/ (\d+) \(summer\)\*\*/i, B("results|W2|e3|peakKWhMovedPerNight_argmin_peer")],
+  ["docs/ROADMAP.md", "degrade-rung task count cited in the economics", /energy of \*\*(\d[\d,]*\.\d) winter tasks\*\*/i, S("results|W1|policies|P2_f0.8|degraded|mean"), "thousands"],
+  ["docs/ROADMAP.md", "WP-14 human-decision drop, winter", /545\.7 → (\d+\.\d+) \(winter\)/i, S("results|W1|policies|P2_f0.8|humanDecisionsIfDeferralAutomatic|mean")],
+  ["docs/ROADMAP.md", "WP-14 human-decision drop, summer", /853 → (\d+) \(summer\)/i, S("results|W2|policies|P2_f0.8|humanDecisionsIfDeferralAutomatic|mean")],
+
+  // ── E5/E6/E6b + forecast accuracy, where their numbers are quoted ───────────
+  ["docs/ROADMAP.md", "E6b migration avoided vs fixed home, winter", /re-homing calculus lands at \*\*(\d+\.\d+)% avoided/i, RT("results|W1|migration|arms|switchKWh0|pctAvoidedVsFixedHome")],
+  ["docs/ROADMAP.md", "E6b migration move count, winter", /with just (\d+) moves in 28 winter days/i, RT("results|W1|migration|arms|switchKWh0|moves")],
+  ["docs/ROADMAP.md", "forecast MAPE winter (bounds-measured)", /MAPE (\d+\.\d+)% in winter/i, B("results|W1|forecastAccuracy|mapePct")],
+  ["docs/ROADMAP.md", "forecast MAPE summer (bounds-measured)", /in winter and (\d+\.\d+)% in summer/i, B("results|W2|forecastAccuracy|mapePct")],
+  ["docs/EXECUTIVE-CASE.md", "fitness total cases (hex diagram)", /13 fitness functions, ([\d,]+) cases/i, K("fitnessCases"), "thousands"],
+  ["docs/EXECUTIVE-CASE.md", "governor core line count", /(\d+) lines, zero imports/i, K("coreLines")],
+  ["docs/EXECUTIVE-CASE.md", "E6 routed gain over best-home, winter m0", /beats best-home by up to \*\*\+(\d+\.\d+) pp\*\*/i, RT("results|W1|routed|moveKWh0|pctAvoidedVsBestHomeForecast")],
+  ["docs/EXECUTIVE-CASE.md", "E6b avoided vs fixed home", /\*\*(\d+\.\d+)% avoided vs fixed home with 3 moves/i, RT("results|W1|migration|arms|switchKWh0|pctAvoidedVsFixedHome")],
+  ["docs/EXECUTIVE-CASE.md", "peak kWh moved per night, winter", /argmin moves \*\*(\d+\.\d+)\s*kWh\/night\*\*/i, B("results|W1|e3|peakKWhMovedPerNight_argmin_peer")],
+  ["docs/EXECUTIVE-CASE.md", "forecast MAPE winter", /MAPE (\d+\.\d+)% \/ \d+\.\d+%/i, B("results|W1|forecastAccuracy|mapePct")],
+  ["docs/EXECUTIVE-CASE.md", "forecast MAPE summer", /MAPE \d+\.\d+% \/ (\d+\.\d+)%/i, B("results|W2|forecastAccuracy|mapePct")],
+  ["docs/EXECUTIVE-CASE.md", "E2 P1 winter (honest numbers row)", /\*\*−(\d+\.\d+)% \/ −\d+\.\d+%\*\* — and the ceiling/i, S("results|W1|policies|P1|pctVsP0|mean"), "neg"],
+  ["docs/EXECUTIVE-CASE.md", "E3 avoided winter (honest numbers row)", /\*\*(\d+\.\d+)% \/ \d+\.\d+%\*\* avoided — but decomposed/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/EXECUTIVE-CASE.md", "human decisions winter (gate cost row)", /\((\d+\.\d+)\/\d+ decisions per window/i, S("results|W1|policies|P2_f0.8|humanDecisions|mean")],
+
+  // ── docs/adr/ADR-011  // ── docs/adr/ADR-011 (the same R13 comparison, restated where the decision lives) ─
   ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 ungated argmin saving, winter", /argmin-only shift avoids (\d+\.\d+)%\n\(winter\)/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
   ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 ungated argmin saving, summer", /\(winter\) and (\d+\.\d+)% \(summer\) against the governed/i, C("results|W2|argmin_ungated|pctAvoidedVsNaive|mean")],
   ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 governed saving, winter", /against the governed (\d+\.\d+)% and \d+\.\d+%/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],
