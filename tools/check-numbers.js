@@ -81,6 +81,11 @@ function evidence() {
       // self-perpetuating (the second run would see allPassed=false and fail on that).
       fitnessGreen: fitness.functions.filter((f) => f.id !== "F12").every((f) => f.passed) ? fitness.totals.functions : 0,
       unitTests: unitTestCount(),
+      // The registry's own shape. Safe to register because it is a COUNT, not a verdict:
+      // adding an entry changes it by a known amount and converges in one pass. Never do
+      // this with F12's own pass flag — see the comment on fitnessGreen above.
+      registryClaims: REGISTRY.length,
+      registryDocs: new Set(REGISTRY.map((r) => r[0])).size,
       f2Cases: fn("F2")?.cases,
       f7Cases: fn("F7")?.cases,
       f10Cases: fn("F10")?.cases,
@@ -166,6 +171,29 @@ const REGISTRY = [
   // ── docs/ARTIFACT-INVENTORY.md ─────────────────────────────────────────────
   ["docs/ARTIFACT-INVENTORY.md", "gateway documents", /\| (\d+) documents \(9 real organizations/i, D("summary|documentsMeasured")],
   ["docs/ARTIFACT-INVENTORY.md", "gateway demonstration documents (not in E1)", /also serves (\d+) adapter and wire-format/i, I("demoDocs")],
+
+  // ── docs/ROADMAP.md (the post-audit addendum; every figure it argues from is bound) ─
+  ["docs/ROADMAP.md", "E2 P1 saving, winter", /\*\*P1\*\* \| defer deferrable[^|]*\| \*\*−(\d+\.\d+)%\*\*/i, S("results|W1|policies|P1|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2 P1 saving, summer", /\*\*P1\*\* \| defer deferrable[^|]*\| \*\*−\d+\.\d+%\*\* \| \*\*−(\d+\.\d+)%\*\*/i, S("results|W2|policies|P1|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2 P1t saving, winter", /trailing 7-day median[^|]*\| \*\*−(\d+\.\d+)%\*\*/i, S("results|W1|policies|P1t|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2 P1t saving, summer", /trailing 7-day median[^|]*\| \*\*−\d+\.\d+%\*\* \| \*\*−(\d+\.\d+)%\*\*/i, S("results|W2|policies|P1t|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2 P2 saving at f=0.8, winter", /defer \*and\* degrade \*and\* drop \| \*\*−(\d+\.\d+)%\*\*/i, S("results|W1|policies|P2_f0.8|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2 P2 saving at f=0.8, summer", /defer \*and\* degrade \*and\* drop \| \*\*−\d+\.\d+%\*\* \| \*\*−(\d+\.\d+)%\*\*/i, S("results|W2|policies|P2_f0.8|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2 degraded tasks, winter", /governor \*\*degraded ([\d.]+) \(winter\)/i, S("results|W1|policies|P2_f0.8|degraded|mean")],
+  ["docs/ROADMAP.md", "E2 degraded tasks, summer", /and ([\d.]+) \(summer\)\*\* to 40% energy/i, S("results|W2|policies|P2_f0.8|degraded|mean")],
+  ["docs/ROADMAP.md", "E2 dropped tasks, winter", /\*\*dropped ([\d.]+) and [\d.]+\*\* outright/i, S("results|W1|policies|P2_f0.8|dropped|mean")],
+  ["docs/ROADMAP.md", "E2 dropped tasks, summer", /\*\*dropped [\d.]+ and ([\d.]+)\*\* outright/i, S("results|W2|policies|P2_f0.8|dropped|mean")],
+  ["docs/ROADMAP.md", "E2 human decisions at f=0.8, winter", /countable human cost\*\* — ([\d.]+) \(winter\)/i, S("results|W1|policies|P2_f0.8|humanDecisions|mean")],
+  ["docs/ROADMAP.md", "E3 ungated argmin saving, winter", /\(`argmin_ungated`\) \| \*\*([\d.]+)%\*\*/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/ROADMAP.md", "E3 ungated argmin saving, summer", /\(`argmin_ungated`\) \| \*\*[\d.]+%\*\* \| \*\*([\d.]+)%\*\*/i, C("results|W2|argmin_ungated|pctAvoidedVsNaive|mean")],
+  ["docs/ROADMAP.md", "E3 governed saving, winter", /through the governance gate \| ([\d.]+)%/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],
+  ["docs/ROADMAP.md", "E3 governed saving, summer", /through the governance gate \| [\d.]+% \| ([\d.]+)%/i, C("results|W2|governed_approval1.00|pctAvoidedVsNaive|mean")],
+  ["docs/ROADMAP.md", "E3 mean realised shift, winter", /mean realised shift \| — \| \*\*([\d.]+) h/i, C("results|W1|argmin_ungated|meanShiftHours|mean")],
+  ["docs/ROADMAP.md", "E3 mean realised shift, summer", /mean realised shift \| — \| \*\*[\d.]+ h \/ ([\d.]+) h/i, C("results|W2|argmin_ungated|meanShiftHours|mean")],
+  ["docs/ROADMAP.md", "fitness functions", /(\d+) fitness functions over [\d,]+ cases against the real/i, K("fitnessFunctions")],
+  ["docs/ROADMAP.md", "fitness total cases", /\d+ fitness functions over ([\d,]+) cases against the real/i, K("fitnessCases"), "thousands"],
+  ["docs/ROADMAP.md", "registry size (claims)", /F12 enforces it across\s+(\d+) registered claims/i, K("registryClaims")],
+  ["docs/ROADMAP.md", "registry size (documents)", /registered claims in (\d+) documents/i, K("registryDocs")],
 
   // ── docs/architecture/ARCHITECTURE.md ──────────────────────────────────────
   ["docs/architecture/ARCHITECTURE.md", "governor core total lines", /governor core is (\d+) lines/i, K("coreLines")],

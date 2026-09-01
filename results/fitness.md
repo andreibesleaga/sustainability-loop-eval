@@ -25,9 +25,9 @@ kaiban-distributed checkout for the upstream rows.
 | F9 | Aggregation equivalence (reference vs. shipped) | shipped gate | 2,000 | yes |
 | F10 | Audit anchoring (edits vs. truncation) | this package | 300 | yes |
 | F11 | Governor core invariants | this package + shipped severity table | 2,005 | yes |
-| F12 | Documentation agrees with results/ | this repository | 71 | yes |
+| F12 | Documentation agrees with results/ | this repository | 92 | yes |
 | F13 | Self-declared estimates: metering bounds the lie to one action | this package (the trust boundary of the core) | 1,500 | yes |
-| **Total** | **13 fitness functions, 13/13 green** | | **14,904** | **yes** |
+| **Total** | **13 fitness functions, 13/13 green** | | **14,925** | **yes** |
 | Upstream unit (kaiban-distributed) | 4 test files, `action-gate / audit-log / policy-engine / registry` | upstream | 71 | 71/71 |
 | Upstream e2e (kaiban-distributed, real Redis) | 11 test files, board/HITL, A2A, routing, scaling, security | upstream | 69 | 69/69 |
 
@@ -53,14 +53,14 @@ names) and `results/kaiban-upstream-e2e.json` + `results/kaiban-upstream-e2e-raw
 - **F9 — Aggregation equivalence (reference vs. shipped).** all 2000 random verdict sets (varying carbon action + extras) agreed with mostSevere()
 - **F10 — Audit anchoring (edits vs. truncation).** 150 random single-field edits all broke verify() at exactly the edited index; 150 random tail truncations were reported VALID by verify() in 150/150 cases (tamper-evident, not tamper-resistant) and were caught by verifyAnchored() in all 150
 - **F11 — Governor core invariants.** 500 monotone, 500 idempotence/no-side-effect, 500 commit/reset (each also proving commit() throws rather than absorbing a bad value) and 500 rung-boundary cases held; GATE_ACTION_SEVERITY matches LADDER for all 5 rungs (true)
-- **F12 — Documentation agrees with results/.** all 71 registered claims across 10 documents match results/
+- **F12 — Documentation agrees with results/.** all 92 registered claims across 11 documents match results/
 - **F13 — Self-declared estimates: metering bounds the lie to one action.** 1000 random under-declaration sequences: lie never stricter than truth, and every rung reached at most one action late when commit() is charged the true grams; 500 sequences with commit() charged the declared zero: all verdicts stayed allow while true emissions ran past 1.25 x budget — the metering port is what makes the ladder mean anything against a dishonest estimate (R15)
 
 ## Reading this, plainly
 
 The governance gate this package evaluates is not a mock: it is `kaiban-distributed`'s
 shipped `ActionGate`, exercised in-process with the Carbon-Verdict Governor as its
-validator. Across 14,904 property-test cases and static checks, every property held: the gate
+validator. Across 14,925 property-test cases and static checks, every property held: the gate
 resolves to the single most-severe verdict (F1, F9), fails closed on internal errors and
 bad input while treating `enabled:false` as an honest all-or-nothing deployment switch
 rather than a bypass (F2), its severity ladder is monotone with exact rung boundaries

@@ -501,7 +501,7 @@ Each quality goal from section 1, as a scenario that a script can settle.
 | Q9 | Traceability | Every number in the article can be pointed at a file in `results/`, and every hand-typed number in the docs still matches it | F12 (`tools/check-numbers.js`), plus the inventory in [`docs/ARTIFACT-INVENTORY.md`](../ARTIFACT-INVENTORY.md) for artifacts the scripts do not measure | Green for the numbers a script produces; the inventory is still maintained by hand |
 | Q10 | Simplicity | The governor core stays readable in one sitting | 104 lines, of which 57 are code and the rest are comments and blanks; zero imports; F7 keeps it that way and F12 keeps this row honest | Green |
 
-All thirteen fitness functions pass, over 14,904 cases in total. Version 1.0.0
+All thirteen fitness functions pass, over 14,925 cases in total. Version 1.0.0
 — the snapshot the article cites — had nine, over 10,994 cases; the difference is
 properties added, not properties fixed. The same gate and audit code carries its
 own upstream governance suite (4 files, 71 tests), which also passes
@@ -514,7 +514,7 @@ end-to-end suite of 69 tests against a real Redis broker
 ## 11. Risks and technical debt
 
 Written plainly, because these are the things that would change the conclusions.
-R1 to R17 below are the canonical list (R11–R17 from the 2026-08-31 audit); [`docs/LIMITATIONS.md`](../LIMITATIONS.md)
+R1 to R18 below are the canonical list (R11–R17 from the 2026-08-31 audit, R18 from the 2026-09-01 literature pass); [`docs/LIMITATIONS.md`](../LIMITATIONS.md)
 indexes every other place in the repository where a limitation is stated, so a
 reader can check that they all say the same thing.
 
@@ -537,6 +537,7 @@ reader can check that they all say the same thing.
 | R15 | **Self-declared estimates, no metering port** | The validator reads the agent's own `estimatedGramsCO2e`; under-declaring is allowed. No port supplies the trusted actual grams `commit()` needs (the traces do, here). Publishing a control input is strategic (Goodhart). | A metering port; attestation on published documents |
 | R16 | **Arrival hour decides the verdict** | Daily reset + growing pacing ratio: 00:00–06:00 arrivals 100% allowed, 23:00 arrivals dropped 11.4% (winter) / 23.8% (summer) at f = 0.8; 35.7% / 51.2% of deferred work crosses midnight, 4.4% / 6.4% of grams are yesterday's. No fairness cut reported. | A rolling budget window; a fairness column |
 | R17 | **Average intensity, not marginal** | Attributional accounting (energy × slot average); shifted load is often served by the marginal plant, so real abatement can be smaller. Traces are CO2-only, labelled gCO2e (ADR-015). | Re-score with a marginal series; state both |
+| R18 | **No randomised delay in E3** | `bestStart()` is a deterministic argmin, so every vehicle picks the same clean window. SI 2021/1467 reg. 11 requires a random delay up to 600 s (capability 1800 s) on every GB charge point, precisely to prevent coincident switching. The modelled fleet could not lawfully operate; expected effect on the numbers is small at 30-minute resolution. | Randomised-delay arm; state the gap wherever E3 is described |
 
 ### Technical debt
 

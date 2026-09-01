@@ -80,9 +80,9 @@
     {
       "id": "F12",
       "property": "Documentation agrees with results/: every registered headline number in README.md and docs/ matches the value in results/*.json it is drawn from",
-      "cases": 71,
+      "cases": 92,
       "passed": true,
-      "notes": "all 71 registered claims across 10 documents match results/"
+      "notes": "all 92 registered claims across 11 documents match results/"
     },
     {
       "id": "F13",
@@ -95,7 +95,7 @@
   "totals": {
     "functions": 13,
     "allPassed": true,
-    "totalCases": 14904
+    "totalCases": 14925
   },
   "kaibanVersion": "2.0.0"
 }

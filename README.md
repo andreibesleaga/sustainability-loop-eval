@@ -54,7 +54,7 @@ gate, and a check that every number in these pages still matches `results/`.
 
 ## Headline results
 
-- **The safety properties hold in shipped code.** 13/13 green over 14,904 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
+- **The safety properties hold in shipped code.** 13/13 green over 14,925 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
 - **The data plane is real and cheap to read.** 12 documents, 100% valid, median 44.6 ms and about 1.3 kB per fetch; 120 requests from 26 clients in the log window — reachability shown, adoption not yet.
 - **The governor cuts emissions — by also doing less work.** At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against −1.54% and −2.97% for plain threshold deferral. About 15% of tasks run reduced and a few are dropped; read the emissions next to the completed counts, never alone.
 - **Charging:** 32.51% of session emissions avoided in winter and 16.04% in summer at full approval (25.93% and 12.77% at 80% approval) — cars only shift *when* they charge, never how much, and every car still charges fully.
@@ -64,8 +64,8 @@ The honest catches — the governor paces a budget rather than capping it,
 humans are the bottleneck (~19–30 approvals/day simulated), the workload is
 synthetic, the gateway is the author's own — are spelled out with every number
 in [RESEARCH.md](RESEARCH.md#what-we-found) and
-[docs/LIMITATIONS.md](docs/LIMITATIONS.md), which also carries seven further
-limitations measured in a 2026-08-31 audit (R11–R17): shifted load synchronises
+[docs/LIMITATIONS.md](docs/LIMITATIONS.md), which also carries eight further
+limitations from the 2026-08-31 audit and its 2026-09-01 follow-up (R11–R18): shifted load synchronises
 onto one slot, no experiment consumes the gateway's own documents as its signal,
 and in the charging run the saving is the scheduler's, not the gate's.
 
@@ -96,6 +96,7 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 | [Research questions](docs/RESEARCH-QUESTIONS.md) | The three questions, what would falsify each, the current answers |
 | [Results: fitness](results/fitness.md) · [data plane](results/dataplane.md) · [simulation](results/simulation.md) · [charging](results/charging.md) | The four experiments' full tables and caveats |
 | [Limitations](docs/LIMITATIONS.md) | Every limitation, once, canonically |
+| [**Roadmap**](docs/ROADMAP.md) | What was proved, what was not, and what to build next — the post-audit addendum |
 | [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) | How it is built and why |
 | [Product design](docs/architecture/PRODUCT.md) | Who it is for, requirements, use cases |
 | [Decision records](docs/adr/) | Eighteen short "why" notes |

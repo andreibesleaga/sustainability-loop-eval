@@ -22,8 +22,8 @@ prosecution before anything was changed. No experiment was re-run against new da
   are unchanged value for value. It is the R13 comparison made runnable rather than
   asserted: **32.85% / 16.53% avoided by the scheduler alone** against **32.51% /
   16.04%** governed (winter / summer).
-- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,904.** Two reasons, both additive:
-  F12 grew from 33 to 71 registered claims because more hand-typed numbers were bound to
+- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,925.** Two reasons, both additive:
+  F12 grew from 33 to 92 registered claims because more hand-typed numbers were bound to
   `results/` (see below), and **F13** was added with 1,500 cases. Nothing failed; the
   suite got larger.
 - **Adapter unit tests: 32 → 33** (one structural test added; the "26" the docs said was
@@ -31,6 +31,29 @@ prosecution before anything was changed. No experiment was re-run against new da
 
 ### Added
 
+- **`docs/ROADMAP.md`** — a post-audit addendum answering, in plain language, what this
+  evaluation proved, what it did not, and what to build next. It does **not** change the
+  submitted article. Its core findings: pure deferral (P1) bought −1.54% / −2.97% while
+  the governor's −16.45% / −20.27% is mostly `degrade` and `drop`; E3's shifting-only
+  32.85% / 16.53% decomposes (arithmetic against the window's own mean intensity) into
+  **21% peak-avoidance / 79% clean-seeking in winter but 129% / −29% in summer**, because
+  Britain's cleanest summer hours are midday and an overnight deadline cannot reach them.
+  Includes a literature section verified live on 2026-09-01 (Wiesner Middleware '21 —
+  Great Britain 4.3% at ±2 h and 7.4% at ±8 h, and *why* GB is the flat case;
+  Sukprasert EuroSys '24 — spatial migration dominates temporal; Google — a 1–2% *power*
+  drop and no fleet-wide carbon figure at all; Meta — scheduling secondary to batteries;
+  CarbonScaler/CarbonFlex — the large numbers come from elasticity and from South
+  Australia, and both name the "thundering herd" without measuring it), a measurement of
+  NESO's national forecast error from the committed traces (**MAPE 6.55% winter / 8.25%
+  summer**, horizon caveat stated), and 13 work packages with session estimates and seven
+  open questions.
+- **Limitation R18 — the E3 fleet has no randomised delay.** `bestStart()` is a
+  deterministic argmin, so every vehicle picks the same clean window; *The Electric
+  Vehicles (Smart Charge Points) Regulations 2021* (SI 2021/1467) reg. 11 requires a
+  random delay of up to 600 s (remote capability 1800 s) on every GB charge point for
+  exactly that reason. The modelled fleet could not lawfully operate in Great Britain.
+  Found by audit; expected effect on the headline numbers is small at 30-minute
+  resolution, and it is now stated rather than left for a reviewer.
 - **Fitness function F13 — self-declared estimates** (`fitness/props.js`,
   `fitness/f13.test.js`, 1,500 cases). The gate decides on a number the *acting agent*
   supplies about itself, so what the architecture can promise about that is now a
