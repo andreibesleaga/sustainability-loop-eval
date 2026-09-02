@@ -29,6 +29,20 @@ prosecution before anything was changed. No experiment was re-run against new da
 - **Adapter unit tests: 32 → 33** (one structural test added; the "26" the docs said was
   already stale at v1.1.0 — the actual count then was 32).
 
+### Fixed
+
+- **A wrong hand-typed number, caught by widening the registry.** The WP-17
+  delivery notes here and in the ROADMAP claimed energy-consumption coverage of
+  "12/12" on the committed gateway documents; the measured value in
+  `results/plane.json` is **9/12 (75%)** (intensity: 3/12, 25%). The write-up in
+  `results/plane.md` was always right; the two prose sites were wrong, and they
+  were wrong precisely because `plane.json` was not yet wired into the F12
+  registry. Both are corrected, and every WP-17 number is now registered
+  (see *Added*), so this class of drift fails the build from now on.
+- `results/plane.md` carried a duplicated "signal member" bullet — an editing
+  accident in the renderer string in `simulation/plane.js`. Deduplicated and
+  regenerated; `results/plane.json` is byte-identical.
+
 ### Descoped
 
 - **WP-16 (price-signal twin) will not be implemented** (owner decision, 2026-09-02).
@@ -41,6 +55,35 @@ prosecution before anything was changed. No experiment was re-run against new da
 
 ### Added
 
+- **`docs/OVERVIEW.md` — the whole system in plain words**, one page for anyone:
+  the invention, the five verdicts, what is real vs simulated vs designed-only,
+  every headline finding with its honest caveat, and what is still open. Every
+  number on the page is F12-registered, so the page cannot drift from `results/`.
+- **The F12 registry grew from 137 claims in 12 documents to 165 in 13.**
+  `results/plane.json` is now part of the registry's evidence; the WP-17
+  staleness and coverage numbers (in the ROADMAP and the new overview) and every
+  number `docs/OVERVIEW.md` quotes are bound. The staleness "+6.1%" is a
+  *computed* registry value derived from its own two registered cadence rows, so
+  the percentage can never drift from its numerator. Fitness totals therefore
+  move 14,983 → **15,011 cases** — the difference is registry entries added,
+  nothing else; F7 also grew 35 → 37 static checks by auto-scanning the two new
+  test files.
+- **WP-6 delivered — six Gherkin feature files, executed against the real code**
+  (`features/*.feature` + `simulation/features.test.js`): one plain-English spec per
+  port, ≤1 page each, readable by a reviewer or a regulator, and every one of the
+  25 scenarios runs — a ~50-line Gherkin reader and a step table drive the shipped
+  gate, `runP2`, the charging fleet, the forecast adapter and the plane's document
+  functions; an unmapped sentence fails the suite loudly. The E3 safety invariant
+  ("a refusal withholds the optimisation, never power or charge"), fail-closed,
+  terminate-never-overridable, the one-action metering bound and
+  stale-documents-never-invented are all acceptance criteria now, not prose.
+- **WP-7 delivered — the dynamic views** (`docs/architecture/DYNAMICS.md`): five
+  committed Mermaid diagrams (C4 L3 six-port component view with built vs
+  designed-not-built named in the picture; the E2 decision sequence with ADR-016's
+  gate-once-on-arrival visible; the E3/E6 session including WP-17's publish-back
+  edge; the task state machine; the budget sawtooth), each with a what-to-notice
+  caption and a grounding table to code and ADRs. All five blocks machine-validated
+  with the Mermaid parser.
 - **WP-5 delivered — the metering port contract** (`docs/ports/METERING.md` +
   `simulation/metering.test.js`, 4 offline cases): the self-declared-estimate /
   metered-actual reconciliation that F13 proves is now *stated where the port is
@@ -59,7 +102,7 @@ prosecution before anything was changed. No experiment was re-run against new da
   a well-optimised peer always looks clean regardless of grid state — degenerate as
   a congestion signal — whereas `energy-consumption` (load) is the number that says
   the shared resource is busy; measured coverage on the committed documents is 3/12
-  for intensity against 12/12 for the load-side members. That yields a concrete
+  (25%) for intensity against 9/12 (75%) for energy-consumption. That yields a concrete
   recommendation for the Internet-Draft: **publishing load is cheaper, more widely
   available, and more useful for regulation than publishing intensity.** Closes the
   format half of limitation R12; R5 (no independent publishers) stays open and is

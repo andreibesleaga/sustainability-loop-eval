@@ -36,8 +36,10 @@ The hexagon's whole point is that ports compose, so this is the picture of the h
 rather than of the files. Notice that only the **signal**, **human** and **actuation**
 ports have adapters on an executed path: the **forecast** port has a written contract
 and a conformance adapter that no experiment yet decides with, the **metering** port
-does not exist at all — the traces stand in for it, which is exactly what fitness
-function F13 shows is load-bearing (R15) — and the **publication** port exists here
+has a written contract (`docs/ports/METERING.md`, WP-5) whose reference implementation
+is the inlined `exec()`+`commit()` pair — a trusted meter is still what the traces
+stand in for, which is exactly what fitness function F13 shows is load-bearing
+(R15) — and the **publication** port exists here
 only as a document shape inside `simulation/plane.js`. The core in the middle imports
 nothing (ADR-003) and the gate it is registered into is the shipped one, not a copy
 (ADR-002).
@@ -78,8 +80,8 @@ flowchart TB
   DEC["<b>verdict and one audit record</b><br/>returned to the calling adapter,<br/>which then calls the harness"]
 
   PHUM["<b>HUMAN port</b><br/>authority in<br/><i>governor/harness.js, built</i>"]
-  PMET["<b>METERING port</b><br/>trusted actual grams in<br/><i>MISSING - the traces stand in. R15, F13</i>"]
-  PPUB["<b>PUBLICATION port</b><br/>the loop's output edge<br/><i>a document shape in simulation/plane.js.<br/>No contract, no test</i>"]
+  PMET["<b>METERING port</b><br/>trusted actual grams in<br/><i>contract in docs/ports/METERING.md - the traces<br/>stand in for a trusted meter. R15, F13</i>"]
+  PPUB["<b>PUBLICATION port</b><br/>the loop's output edge<br/><i>a document shape in simulation/plane.js,<br/>tested in plane.test.js. No contract page yet</i>"]
   PEERS["<b>Peer systems</b><br/><i>external</i><br/>read the published document as the SIGNAL port<br/>of their own governor - this is where the loop closes"]
   PLANE["<b>publishDocument</b><br/><i>simulation/plane.js - adapter</i><br/>a Draft-shaped document whose mandatory members are<br/>derived from the committed gateway documents at run time"]
 
@@ -186,7 +188,7 @@ sequenceDiagram
   Note over Q,C: a later slot, possibly after midnight
   Q->>X: execute the SAME decision and the SAME approval - no second gate call, no second audit record
   X->>C: commit energy x the national ACTUAL at the slot the work RAN in
-  Note over X,C: no metering port supplies that number - the trace stands in for one - R15 and F13
+  Note over X,C: the metering contract (docs/ports/METERING.md) names that number - the trace stands in for a trusted meter - R15 and F13
   SL->>L: verify the chain at the end of the arm
   L-->>SL: valid, and one record per task
 ```
@@ -365,7 +367,7 @@ flowchart TB
 
 | Diagram | Grounded in |
 |---|---|
-| 1 | `governor/carbon-governor.js`, `governor/gate.js`, `governor/harness.js`; the adapters in `simulation/`, `dataplane/`, `demo/`; the port list in ROADMAP §3d; the contract in `docs/ports/FORECAST.md`; ADR-002, ADR-003, ADR-005, ADR-006 |
+| 1 | `governor/carbon-governor.js`, `governor/gate.js`, `governor/harness.js`; the adapters in `simulation/`, `dataplane/`, `demo/`; the port list in ROADMAP §3d; the contracts in `docs/ports/FORECAST.md` and `docs/ports/METERING.md`; ADR-002, ADR-003, ADR-005, ADR-006 |
 | 2 | `runP2` in `simulation/run.js`, `gated()` in `governor/gate.js`, `execute()` in `governor/harness.js`; ADR-004, ADR-005, ADR-006, ADR-016; WP-14's `tierRules` branch |
 | 3 | `governed()` and `bestStart()` in `simulation/charging.js`, `e6()` in `simulation/routing.js`, `publishDocument()` in `simulation/plane.js`; ADR-006, ADR-011; R2, R5, R12, R18 |
 | 4 | The plan selection and the deferral queue in `runP2`; `execute()`'s three-line rule; ADR-006, ADR-016 |

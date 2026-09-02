@@ -1,65 +1,56 @@
-# Session checkpoint — 2026-09-02 (hard stop mid-Session-A)
+# Session checkpoint — 2026-09-02 (clean stop after Session A close)
 
-Zero-loss resume point. The session was stopped by the owner while two subagents
-were mid-flight; everything below is the exact state on disk.
+Zero-loss resume point. Unlike the earlier mid-flight checkpoint, **everything on
+disk is verified and the full suite is green** — nothing partial, nothing untrusted.
 
-## Verified DONE this session (safe, green)
+## Verified state (all green, run before this stop)
 
-- **WP-16 DESCOPED** (owner decision): ROADMAP §5 row rewritten with the full
-  how/why/when summary; effort table, ordering chain, portability paragraph,
-  C3/C12 rows, RUNBOOK heading and a CHANGELOG "Descoped" entry all agree.
-- **WP-5 DELIVERED and fully integrated**: `docs/ports/METERING.md` +
-  `simulation/metering.test.js` (4/4 pass, run against the real `commit()` path);
-  F13 section in `docs/FITNESS-FUNCTIONS.md` now points at the contract; the stale
-  "designed, not built: the forecast port" label fixed in README, RESEARCH.md and
-  `docs/LIMITATIONS.md`; R15 row records the contract half closed; ROADMAP row +
-  effort row marked DELIVERED; CHANGELOG "Added" entry written.
-- `npm run check:docs` (137 claims / 12 docs) and `npm run fitness` (13/13) were
-  green AFTER the WP-16 edits but BEFORE WP-5/WP-6 test files landed.
+- `npm test`: **70 unit / 13 fitness over 15,011 cases / 165 registered claims
+  across 13 documents** — all passing.
+- Byte-determinism proved this session: all deterministic result sets regenerate
+  identically (simulate, charging, bounds, loop, routing, plane, fitness:report).
+- Nothing committed; ~55 changed/new paths on top of `97b2c26`. All git writes are
+  the owner's. Suggested WIP commit:
+  `git add -A && git commit -m "Session A: WP-5/6/7 delivered, WP-16 descoped, OVERVIEW + registry expansion, coverage fix"`
 
-## UNVERIFIED — partial subagent output on disk (do not trust yet)
+## Closed this session (on top of the earlier WP-5/WP-16 work)
 
-Two subagents were killed mid-task; their files exist but were never reviewed,
-never integrated, and their tests were never run by the orchestrator:
+- **WP-6 DELIVERED + integrated**: `features/*.feature` ×6 (25 scenarios) +
+  `simulation/features.test.js` thin runner — verified 6/6 twice, real code paths,
+  loud unmapped-step failure. README/ROADMAP/CHANGELOG rows written.
+- **WP-7 DELIVERED + integrated**: `docs/architecture/DYNAMICS.md`, five Mermaid
+  diagrams — all 5 machine-validated with the Mermaid parser (validator kept at
+  the session scratchpad `validate-mermaid.mjs`); five pre-WP-5 labels corrected.
+- **`docs/OVERVIEW.md` NEW** — plain-words one-pager, linked from README top table;
+  every number on it F12-registered.
+- **F12 registry expanded 137→165 claims, 12→13 docs**: `results/plane.json` wired
+  into `tools/check-numbers.js` evidence; WP-17 staleness/coverage numbers bound;
+  `planeStalenessPenaltyPct` computed key added. Totals 14,983→15,011 (F7 35→37).
+- **Two real defects found and fixed** (recorded in CHANGELOG "Fixed"):
+  wrong "12/12" energy-coverage claim in ROADMAP+CHANGELOG (truth: **9/12, 75%**);
+  duplicated "signal member" bullet in the `simulation/plane.js` renderer
+  (regenerated `results/plane.md`; `plane.json` byte-identical).
+- Count-convergence dance completed twice-stable; full `npm test` green.
 
-- **WP-6 (killed while "dropping cross-adapter imports" from the runner)**:
-  `features/{signal,forecast,human,actuation,metering,publication}.feature` +
-  `simulation/features.test.js`. The runner was mid-edit — assume it does NOT run.
-- **WP-7 (killed while re-laying-out the component view)**:
-  `docs/architecture/DYNAMICS.md`. Diagrams present but the C4 L3 component view
-  was being restructured — assume Mermaid may not all render.
+## In flight when stopped (NOT started, nothing on disk)
 
-Next session: review/finish both (or re-run the RUNBOOK §"WP-5/WP-6/WP-7" briefs
-for just WP-6 and WP-7), then integrate.
+Three read-only audit agents (docs consistency, adversarial code/test review,
+paper-vs-repo + scenarios coverage) were launched and killed before producing
+findings. **Resume step 1: relaunch them** — their full briefs are reusable: the
+three prompts cover (1) cross-doc contradictions/link integrity/unregistered
+numbers, (2) adversarial review of metering.test.js, features.test.js + features/,
+the 28 new registry regexes, plane.js, DYNAMICS.md-vs-code, (3) v1.0.0-tag claims
+vs current repo, invention-story consistency, PRODUCT.md use-case coverage,
+ROADMAP C-rows. Then fix findings, re-run `npm test` + determinism, delete this
+checkpoint file.
 
-## Known-red item (deliberate, part of the count-convergence dance)
+## After the audit (remaining packages, ~2 sessions)
 
-Unit-test count claims in the docs still say **60**; the live count is **64**
-(+4 metering) and will rise again when WP-6's runner works. Therefore full
-`npm test` WILL FAIL on count claims until the convergence dance is run:
-`npm run fitness:report` → read printed totals → update every doc site stating
-the unit/fitness-case totals → run `fitness:report` twice more until stable →
-`npm test` green.
+WP-15 (real workload trace — one live OpenRouter run, then deterministic),
+WP-9 (adapter chaos tests), WP-4 (spatial advisory spec, 0.5), WP-12b (capacity
+rungs + new ADR), WP-13 (optional NESO→GSF SDK), WP-11 (final addendum, last).
 
-## Resume order (next session)
+## Owner actions pending
 
-1. Fix/finish `simulation/features.test.js` (WP-6) and `docs/architecture/DYNAMICS.md`
-   (WP-7); verify each in isolation.
-2. Integrate WP-6/WP-7 into README/ROADMAP/CHANGELOG (rows + Added entries, same
-   pattern as WP-5's).
-3. Count-convergence dance, then full `npm test` + byte-determinism re-run.
-4. Delete this checkpoint file.
-5. Then the owner's point 4: full-system overview + audit pass (all docs aligned,
-   facts cross-checked, plain-language summary for anyone — a `docs/OVERVIEW.md`).
-
-Remaining packages after that: WP-15 (real trace, live once), WP-9 (chaos tests),
-WP-4 (advisory spec), WP-12b (capacity rungs + ADR), WP-13 (optional), WP-11 (last).
-
-## Owner actions (unchanged)
-
-- All git writes are yours. Current tree: ~45 changed/new paths on top of
-  `97b2c26`, nothing committed by the assistant (never is).
-- Suggested commit (after next session's convergence, or now as a WIP snapshot):
-  `git add -A && git commit -m "WP-5 delivered, WP-16 descoped, WP-6/WP-7 in progress (checkpoint)"`
-- Still pending from before: rotate the OpenRouter key in `.env`; optional Zenodo
-  licence field.
+- Commit (command above). Rotate the OpenRouter key in `.env`. Optional Zenodo
+  22056634 licence field.

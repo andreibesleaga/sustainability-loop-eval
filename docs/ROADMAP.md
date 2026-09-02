@@ -11,7 +11,7 @@
 
 1. We built a safety gate for AI agents: before an agent acts, the gate says *yes / do
    it smaller / ask a person / no / stop*, and writes the reason where nobody can
-   quietly edit it. That gate is real, shipped, and passed every one of 14,981 attack
+   quietly edit it. That gate is real, shipped, and passed every one of 15,011 attack
    cases. It is the part that lasts.
 2. We then asked the gate to keep an AI workload inside a daily carbon budget, on real
    British grid data. It worked — but most of the "carbon saved" came from doing less
@@ -97,7 +97,7 @@ the governor.
   that the agent cannot route around, plus a record a human can audit later. That place
   is architectural, not a feature. This package's real result is that such a place
   *exists in shipped code* and holds its properties under adversarial testing:
-  13 fitness functions over 14,981 cases against the real `kaiban-distributed`
+  13 fitness functions over 15,011 cases against the real `kaiban-distributed`
   `ActionGate`, not a mock. That result does not depend on carbon being the constraint.
 - **The carbon half: needed, but currently over-claimed by the framing, not by the
   numbers.** See section 2 — the numbers in `results/` are honest; it is easy to *read*
@@ -269,7 +269,7 @@ governance *legitimising and recording* a reduction that a scheduler produced.
 
 | claim | status |
 |---|---|
-| A governance gate can hold ladder semantics, fail-closed, human binding and a tamper-evident record in shipped agentic runtime code | **Proved.** 13 fitness functions, 14,981 cases, real `ActionGate`. |
+| A governance gate can hold ladder semantics, fail-closed, human binding and a tamper-evident record in shipped agentic runtime code | **Proved.** 13 fitness functions, 15,011 cases, real `ActionGate`. |
 | Carbon can be one such constraint, end to end, from a published signal to an audited verdict | **Demonstrated**, on real grid traces and a live data plane. |
 | Carbon-aware *deferral* is worth a large saving | **Under-measured, not disproved.** E3 says 32.85% with room to move; E2 says 1.54% with a 6-hour horizon. |
 | The governor's headline 16–20% is a carbon saving from smarter timing | **No.** Mostly degrade and drop. Say so plainly. |
@@ -1172,7 +1172,7 @@ Here is the gap analysis, honestly scoped: **this package is unusually well test
 its size, and the gaps are specific, not general.**
 
 ### What already exists and does not need redoing
-60 adapter unit tests; 13 architecture fitness functions over 14,981 cases against
+60 adapter unit tests; 13 architecture fitness functions over 15,011 cases against
 shipped code; F7 enforcing the hexagonal import graph *structurally* (an adapter that
 imports another adapter fails the build); F12 binding 137 hand-typed numbers across 12
 documents to `results/`; an arc42 architecture document; 17+ ADRs; determinism proved
@@ -1250,8 +1250,8 @@ land in `results/`, prose lands in this file, the README *Corrections* section, 
 | **WP-3** | **Forecast port + adapter** | **DELIVERED 2026-09-02**: contract page `docs/ports/FORECAST.md` (the template for the other five ports); capture tool `simulation/fetch-forecast.js` (manual, network — like fetch-traces) with the **prospective grading protocol** built in (`--grade` writes MAPE/MAE/bias *by lead time* once a capture's window settles; regional honestly ungradable, R2); a first live capture committed under `data/forecast/` — which immediately taught something: the *available* fw48h horizon varies by time of day (this capture holds 62 of the nominal 96 periods); offline reference adapter `simulation/forecast.js` + conformance suite. | Done. The first graded error curve arrives 48 h after the first capture — by protocol, not by backfill. |
 | **WP-4** | **E4 — spatial, advisory** | Per the owner's answer: advisory and minimal. The ceiling is already computed (`results/bounds.json` spatial section); what remains is a one-page advisory spec — the loop *recommends* a region, records the recommendation in the audit chain, and nothing pretends to move work. | Shrunk from 2 sessions to 0.5. The regional series is forecast-only (R2), so "forecast-scored advice" is the whole claim, stated as such. |
 | **WP-5** | **Metering port + contract** | **DELIVERED 2026-09-02**: contract page `docs/ports/METERING.md` (Purpose / Interface / never-do / Conformance / the F13 guarantee stated where the port is defined / what stays open) + 4-test offline conformance suite `simulation/metering.test.js` run against the REAL `commit()` path and `runP2` — including the one-action bound on an under-declaring agent and the throw-on-junk reading (ADR-005). Honest note kept: the reference implementation is the inlined `exec()`+`commit()` pair; no standalone adapter file, no attestation yet. | Done — closes R15's contract half; trusted measurement/attestation stay open in R15. |
-| **WP-6** | **BDD feature files, one per port** | Gherkin specs executed against the real adapters; the E3 safety invariant becomes a readable acceptance criterion. | Addresses gap 1 and 2. Must not become a parallel implementation — features drive the same code the fitness functions do. |
-| **WP-7** | **Dynamic diagrams** | C4 component view; two sequence diagrams; one task state machine; budget dynamics — committed Mermaid. | Addresses gap 4. Low risk, high explanatory value. |
+| **WP-6** | **BDD feature files, one per port** | **DELIVERED 2026-09-02**: six `.feature` files under `features/` (signal, forecast, human, actuation, metering, publication), each ≤1 page and written for a non-programmer, executed by a thin runner (`simulation/features.test.js`: ~50-line Gherkin reader, step table, loud failure on any unmapped sentence — no framework, no parallel implementation) against the REAL code: the shipped gate, `runP2`, `charging.js`, `forecast.js`, `plane.js`. The E3 safety invariant — a refusal withholds the optimisation, never power or charge — is a scenario, as are terminate-never-overridable, fail-closed on a broken adapter, the one-action metering bound, and stale-documents-served-never-invented. 25 scenarios, 6 runner tests. | Done — gaps 1 and 2 addressed without a parallel implementation: the features drive the same code the fitness functions do. |
+| **WP-7** | **Dynamic diagrams** | **DELIVERED 2026-09-02** as `docs/architecture/DYNAMICS.md`: five committed Mermaid diagrams, each with a what-to-notice caption — the C4 L3 component view of the six ports (built vs designed-not-built named in the picture), the E2 gated decision end to end (gate-once-on-arrival, ADR-016, visible), the E3/E6 charging session including the WP-17 publish-back edge, the task state machine (stopped/refused/paused are three different things), and the budget sawtooth (degrade fires at 0.8, before the budget is spent). All five blocks machine-validated with the Mermaid parser; a grounding table maps every diagram to the code and ADRs it draws. | Done — gap 4 closed; the dynamic view of a control system finally exists. |
 | **WP-8** | **E1↔E2 seam test** | One end-to-end run: real published document → signal → gate → audit record. | Closes limitation R12, the biggest structural gap. |
 | **WP-9** | **Adapter negative/chaos tests** | Malformed JSON, timeout, absurd values, hostile registry entries (the existing hardening gets its test). | Addresses gap 6. |
 | **WP-10** | **Marginal-signal re-scoring** | Re-score E2/E3 against a marginal series if one is obtainable for GB; report both. | Addresses R17. **Now believed not buildable** — Electricity Maps discontinued marginal signals in Jan 2025, NESO is average-only, and WattTime never documents GB explicitly. Downgraded to a written limitation unless a series can be shown to exist. |
@@ -1260,7 +1260,7 @@ land in `results/`, prose lands in this file, the README *Corrections* section, 
 | **WP-14** | **Tiered governance — rules first, humans for what matters** | **DELIVERED 2026-09-02** as the `P2tiered_f0.8` arm: one standing rule authorises deferral of blocked-deferrable work (the approval object names the rule), humans keep escalations + non-deferrable blocks, `terminate` stays absolute. Tests assert emissions/completions/drops **identical** to P2 and human decisions **exactly equal** to the promised sensitivity: 545.7 → 442.9 (winter) and 853 → 637 (summer). | Done — the sensitivity became a mechanism, and the constraint held: the rule moved authorisation, nothing else. |
 | **WP-15** | **Real workload trace** | One live run of a `kaiban-distributed-examples` workflow (OpenRouter), recording durations, token counts and deadlines; the anonymised trace committed as a fixture and replayed as a new E2 arm beside the synthetic one. | Converts E2's biggest "stipulated" caveat into a measurement. Live once, locally; deterministic forever after. |
 | **WP-16** | **Price-signal twin (economics arm)** | **DESCOPED 2026-09-02 (owner decision) — not implemented.** *What it would be:* fetch and commit a half-hourly GB day-ahead price trace the way `fetch-traces.js` commits carbon; score every existing arm on £ as well as gCO2e; report where the two signals agree and where they fight. *How to build it if ever needed:* (1) verify the licence of a price source **before** fetching (Octopus Agile tariff API, or N2EX/EPEX day-ahead — the licence check is the known risk); (2) commit the trace beside `data/simulation/`; (3) add a £ column to every existing arm, same seeds; (4) the same trace unlocks the curtailment/plunge `expedite` arm (C12) and the second-signal-adapter proof (§2i). *When it is needed:* only when an economics/£ claim, the C3/C12 candidate experiments, or a second-grid adapter demonstration is actually wanted — none of the paper's claims or this package's carbon results depend on it. | Descoped: §2g's arithmetic stays labelled illustrative, the portability claim stays architectural, and 1.5 sessions move to the audit and remaining packages. |
-| **WP-17** | **The closed loop with REAL documents** | **DELIVERED 2026-09-02** as `npm run plane`: N systems publish and consume documents in the gateway's own shape (the mandatory member set is derived from the committed documents at run time, so a format drift fails the arm). Two results: **staleness costs carbon** — at E1's measured real-world cadence (23 days) the loop pays **83.3 vs 78.51 g/kWh**, +6.1% over runtime cadence; and **the signal member matters more than the cadence** — a peer's published *carbon-intensity* is its own achieved intensity, so an optimised peer always looks clean (degenerate as a congestion signal), while *energy-consumption* actually says "the shared resource is busy". Coverage on real documents: intensity **3/12**, energy **12/12**. | Done for the format half of R12; R5 (no third-party publishers) stays open and is stated as an adoption problem. **A concrete recommendation for the Internet-Draft falls out: publishing load is cheaper, more available and more useful than publishing intensity.** |
+| **WP-17** | **The closed loop with REAL documents** | **DELIVERED 2026-09-02** as `npm run plane`: N systems publish and consume documents in the gateway's own shape (the mandatory member set is derived from the committed documents at run time, so a format drift fails the arm). Two results: **staleness costs carbon** — at E1's measured real-world cadence (23 days) the loop pays **83.3 vs 78.51 g/kWh**, +6.1% over runtime cadence; and **the signal member matters more than the cadence** — a peer's published *carbon-intensity* is its own achieved intensity, so an optimised peer always looks clean (degenerate as a congestion signal), while *energy-consumption* actually says "the shared resource is busy". Coverage on real documents: intensity **3/12** (25%), energy **9/12** (75%). | Done for the format half of R12; R5 (no third-party publishers) stays open and is stated as an adoption problem. **A concrete recommendation for the Internet-Draft falls out: publishing load is cheaper, more available and more useful than publishing intensity.** |
 | **WP-11** | **Addendum write-up** | This file finalised, README *Corrections* updated, CHANGELOG, and a short "what changed after submission" note suitable for a revision or a follow-up paper. | Last, because it reports WP-1…WP-10. |
 
 ### Ordering
@@ -1300,8 +1300,8 @@ included).
 | WP-3 Forecast port + adapter | 1 | medium — depends on endpoint verification |
 | WP-4 E4 spatial advisory spec | 0.5 | high — ceiling already computed |
 | WP-5 Metering port + contract | **done** | delivered 2026-09-02 (contract + 4-test conformance suite) |
-| WP-6 BDD features per port | 1.5 | medium — scope creep is the risk |
-| WP-7 Dynamic diagrams | 1 | high |
+| WP-6 BDD features per port | **done** | delivered 2026-09-02 (6 features, 25 scenarios, thin runner, no framework) |
+| WP-7 Dynamic diagrams | **done** | delivered 2026-09-02 (5 parser-validated Mermaid views) |
 | WP-8 E1↔E2 seam test | 1 | medium — needs a live or fixtured gateway run |
 | WP-9 Adapter negative/chaos tests | 1 | high |
 | WP-10 Marginal re-scoring | 1–2 | **low** — data availability unknown |
@@ -1442,7 +1442,7 @@ verbatim; each **Decision** line is what the plan now does about it.
   produced by this roadmap is recorded in the README's *Corrections* section and in the
   manuscript's revision notes — never by silently changing the paper.
 - **Every number in this repository stays bound to `results/`.** F12 enforces it across
-  137 registered claims in 12 documents; anything this roadmap produces gets registered
+  165 registered claims in 13 documents; anything this roadmap produces gets registered
   the same way.
 - **Every experiment stays deterministic and offline-reproducible.** Fixed seeds,
   committed traces, byte-identical re-runs, no live network in CI.

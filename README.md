@@ -49,12 +49,12 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 Demonstration only — no number in `results/` comes from the demos.
 `npm install` prints advisories from the one dependency's own tree; they are
 explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
-everything: 60 unit tests, the thirteen architecture checks through the real
+everything: 70 unit tests, the thirteen architecture checks through the real
 gate, and a check that every number in these pages still matches `results/`.
 
 ## Headline results
 
-- **The safety properties hold in shipped code.** 13/13 green over 14,981 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
+- **The safety properties hold in shipped code.** 13/13 green over 15,011 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
 - **The data plane is real and cheap to read.** 12 documents, 100% valid, median 44.6 ms and about 1.3 kB per fetch; 120 requests from 26 clients in the log window — reachability shown, adoption not yet.
 - **The governor cuts emissions — by also doing less work.** At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against −1.54% and −2.97% for plain threshold deferral. About 15% of tasks run reduced and a few are dropped; read the emissions next to the completed counts, never alone.
 - **Charging:** 32.51% of session emissions avoided in winter and 16.04% in summer at full approval (25.93% and 12.77% at 80% approval) — cars only shift *when* they charge, never how much, and every car still charges fully.
@@ -94,13 +94,16 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
 | Page | What it answers |
 |---|---|
+| [**Plain-words overview**](docs/OVERVIEW.md) | The whole system on one page, for anyone — the invention, what was measured, what is honestly still missing |
 | [**RESEARCH.md**](RESEARCH.md) | The full write-up: findings, numbers, corrections, versions, everything below in context |
 | [Research questions](docs/RESEARCH-QUESTIONS.md) | The three questions, what would falsify each, the current answers |
 | [Results: fitness](results/fitness.md) · [data plane](results/dataplane.md) · [simulation](results/simulation.md) · [charging](results/charging.md) · [bounds](results/bounds.md) · [loop](results/loop.md) · [routing](results/routing.md) · [plane](results/plane.md) | The experiments' full tables and caveats, the ceilings they must sit under, and the first closed-loop and routed-charging measurements |
 | [Limitations](docs/LIMITATIONS.md) | Every limitation, once, canonically |
 | [**Roadmap**](docs/ROADMAP.md) | What was proved, what was not, and what to build next — the post-audit addendum |
 | [**Executive case**](docs/EXECUTIVE-CASE.md) | One page: the honest numbers, why it is new, why it can pay, who it serves |
-| [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) | How it is built and why |
+| [Runbook](docs/RUNBOOK.md) | How to implement, test and present every work package — with ready-to-paste agent briefs |
+| [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) · [Dynamic views](docs/architecture/DYNAMICS.md) | How it is built and why — and what it *does*: the six ports, one gated decision, a charging session with publish-back, a task's life, the budget sawtooth |
+| [Port contracts](docs/ports/) · [Feature specs](features/) | What each port promises (forecast, metering so far), and the six plain-English Gherkin specs a regulator could read — every scenario executed against the real code by `npm test` |
 | [Product design](docs/architecture/PRODUCT.md) | Who it is for, requirements, use cases |
 | [Decision records](docs/adr/) | Eighteen short "why" notes |
 | [Fitness functions](docs/FITNESS-FUNCTIONS.md) | What each of the thirteen checks proves |

@@ -30,7 +30,7 @@ never as 0%.
 
 | Command | What it does | Network |
 |---|---|---|
-| `npm test` | The 60 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
+| `npm test` | The 70 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
 | `npm run fitness` | The thirteen fitness functions on their own | none |
 | `npm run fitness:report` | Re-runs the same thirteen properties and writes `results/fitness.json` **and** `results/fitness.md` | none |
 | `npm run check:docs` | F12: compares every hand-typed headline number in the docs against `results/` | none |

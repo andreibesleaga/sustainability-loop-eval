@@ -45,9 +45,9 @@
     {
       "id": "F7",
       "property": "Port isolation (hexagonal): core and harness import nothing, gate.js imports only kaiban-distributed+core (+ node:* built-ins), shared/ is a leaf, adapters never import each other, and every actuating adapter goes through the harness",
-      "cases": 35,
+      "cases": 37,
       "passed": true,
-      "notes": "3 governor/ file(s) checked: carbon-governor.js + harness.js import nothing at all; gate.js imports only kaiban-distributed + the core (+ node:* built-ins); 2 shared/ module(s) import nothing; 18 adapter file(s) + 8 adapter test file(s) in simulation/dataplane/demo import only governor/, shared/, node:* and their own folder; the only external library allowed in an adapter is the optional \"sustainability-wellknown-consumer\" in dataplane/measure.js, alongside its one SUSTAINABILITY_CONSUMER_URL dynamic import; every other import in every adapter resolves statically; 4 actuating adapter(s) (simulation/run.js, simulation/charging.js, demo/demo.js, demo/agent.js) import governor/harness.js"
+      "notes": "3 governor/ file(s) checked: carbon-governor.js + harness.js import nothing at all; gate.js imports only kaiban-distributed + the core (+ node:* built-ins); 2 shared/ module(s) import nothing; 18 adapter file(s) + 10 adapter test file(s) in simulation/dataplane/demo import only governor/, shared/, node:* and their own folder; the only external library allowed in an adapter is the optional \"sustainability-wellknown-consumer\" in dataplane/measure.js, alongside its one SUSTAINABILITY_CONSUMER_URL dynamic import; every other import in every adapter resolves statically; 4 actuating adapter(s) (simulation/run.js, simulation/charging.js, demo/demo.js, demo/agent.js) import governor/harness.js"
     },
     {
       "id": "F8",
@@ -80,9 +80,9 @@
     {
       "id": "F12",
       "property": "Documentation agrees with results/: every registered headline number in README.md and docs/ matches the value in results/*.json it is drawn from",
-      "cases": 137,
+      "cases": 165,
       "passed": true,
-      "notes": "all 137 registered claims across 12 documents match results/"
+      "notes": "all 165 registered claims across 13 documents match results/"
     },
     {
       "id": "F13",
@@ -95,7 +95,7 @@
   "totals": {
     "functions": 13,
     "allPassed": true,
-    "totalCases": 14981
+    "totalCases": 15011
   },
   "kaibanVersion": "2.0.0"
 }

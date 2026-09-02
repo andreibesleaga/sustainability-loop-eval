@@ -63,11 +63,12 @@ function evidence() {
   const bounds = readJson("results/bounds.json");
   const loop = readJson("results/loop.json");
   const routing = readJson("results/routing.json");
+  const plane = readJson("results/plane.json");
   const gatewayIndex = readJson("data/dataplane/index.json").body; // the committed registry snapshot
   const core = lineCounts("governor/carbon-governor.js");
   const fn = (id) => fitness.functions.find((f) => f.id === id);
   return {
-    simulation, charging, dataplane, fitness, bounds, loop, routing,
+    simulation, charging, dataplane, fitness, bounds, loop, routing, plane,
     index: {
       // "22 adapter and wire-format demonstration documents" = the two demonstration
       // collections the gateway's registry snapshot lists; not part of E1's twelve.
@@ -95,6 +96,11 @@ function evidence() {
       f1f9Cases: (fn("F1")?.cases ?? 0) + (fn("F9")?.cases ?? 0),
       f4f5Cases: (fn("F4")?.cases ?? 0) + (fn("F5")?.cases ?? 0),
       f6f10Cases: (fn("F6")?.cases ?? 0) + (fn("F10")?.cases ?? 0),
+      // WP-17's "+6.1%": the staleness penalty, derived from the two registered
+      // cadence rows so the percentage can never drift from its own numerator.
+      planeStalenessPenaltyPct: Math.round(
+        (plane.results.W1.cadences["23 days (E1's measured median)"].meanIntensityGPerKWh /
+          plane.results.W1.cadences["30 min"].meanIntensityGPerKWh - 1) * 1000) / 10,
     },
   };
 }
@@ -115,6 +121,7 @@ const S = (p) => ["simulation", p];
 const C = (p) => ["charging", p];
 const D = (p) => ["dataplane", p];
 const K = (p) => ["computed", p];
+const P = (p) => ["plane", p];
 const I = (p) => ["index", p];
 const B = (p) => ["bounds", p];
 const RT = (p) => ["routing", p];
@@ -289,6 +296,37 @@ const REGISTRY = [
   // ── docs/adr/ADR-013 ───────────────────────────────────────────────────────
   ["docs/adr/ADR-013-fitness-functions-as-test-layer.md", "fitness functions at v1.1.0", /at v1\.1\.0 it is (\d+) of \1 over/i, K("fitnessFunctions")],
   ["docs/adr/ADR-013-fitness-functions-as-test-layer.md", "fitness total cases at v1.1.0", /at v1\.1\.0 it is \d+ of \d+ over ([\d,]+)/i, K("fitnessCases"), "thousands"],
+  // ── WP-17 / results/plane.json — the closed-loop staleness and coverage numbers ─
+  ["docs/ROADMAP.md", "WP-17 intensity at the 23-day cadence", /the loop pays \*\*(\d+\.\d+) vs \d+\.\d+ g\/kWh\*\*/i, P("results|W1|cadences|23 days (E1's measured median)|meanIntensityGPerKWh")],
+  ["docs/ROADMAP.md", "WP-17 intensity at runtime cadence", /the loop pays \*\*\d+\.\d+ vs (\d+\.\d+) g\/kWh\*\*/i, P("results|W1|cadences|30 min|meanIntensityGPerKWh")],
+  ["docs/ROADMAP.md", "WP-17 staleness penalty percent", /\+(\d+\.\d+)% over runtime cadence/i, K("planeStalenessPenaltyPct")],
+  ["docs/ROADMAP.md", "WP-17 intensity coverage (documents carrying)", /intensity \*\*(\d+)\/12\*\* \(25%\)/i, P("memberCoverage|carbon-intensity-gCO2e-per-kWh|documentsCarrying")],
+  ["docs/ROADMAP.md", "WP-17 energy coverage (documents carrying)", /energy \*\*(\d+)\/12\*\* \(75%\)/i, P("memberCoverage|energy-consumption|documentsCarrying")],
+
+  // ── docs/OVERVIEW.md — the plain-language page quotes only registered numbers ─
+  ["docs/OVERVIEW.md", "fitness total cases (headline bullet)", /fitness functions,\s+([\d,]+) cases, all green/i, K("fitnessCases"), "thousands"],
+  ["docs/OVERVIEW.md", "E2 winter saving at f=0.8", /saves [−-](\d+\.\d+)% \(winter\)/i, S("results|W1|policies|P2_f0.8|pctVsP0|mean"), "neg"],
+  ["docs/OVERVIEW.md", "E2 summer saving at f=0.8", /saves [−-]\d+\.\d+% \(winter\) \/ [−-](\d+\.\d+)% \(summer\)/i, S("results|W2|policies|P2_f0.8|pctVsP0|mean"), "neg"],
+  ["docs/OVERVIEW.md", "WP-2 degrade share, winter", /(\d+\.\d+)% of the saving comes from running work smaller/i, S("results|W1|policies|P2_f0.8|degradeShareOfSavingPct|mean")],
+  ["docs/OVERVIEW.md", "WP-2 timing share, winter", /(\d+\.\d+)% from moving it\s+to cleaner hours/i, S("results|W1|policies|P2_f0.8|timingShareOfSavingPct|mean")],
+  ["docs/OVERVIEW.md", "WP-2 drop share, winter", /(\d+\.\d+)% from dropping it/i, S("results|W1|policies|P2_f0.8|dropShareOfSavingPct|mean")],
+  ["docs/OVERVIEW.md", "E2b argmin at P1's settings, winter", /reaches\s+[−-](\d+\.\d+)% \/ [−-]\d+\.\d+% where the threshold/i, S("results|W1|sweep|arms|h6_f0.5|pctVsP0|mean"), "neg"],
+  ["docs/OVERVIEW.md", "E2b argmin at P1's settings, summer", /reaches\s+[−-]\d+\.\d+% \/ [−-](\d+\.\d+)% where the threshold/i, S("results|W2|sweep|arms|h6_f0.5|pctVsP0|mean"), "neg"],
+  ["docs/OVERVIEW.md", "P1 threshold saving, winter", /threshold gets\s+[−-](\d+\.\d+)% \/ [−-]\d+\.\d+%/i, S("results|W1|policies|P1|pctVsP0|mean"), "neg"],
+  ["docs/OVERVIEW.md", "P1 threshold saving, summer", /threshold gets\s+[−-]\d+\.\d+% \/ [−-](\d+\.\d+)%/i, S("results|W2|policies|P1|pctVsP0|mean"), "neg"],
+  ["docs/OVERVIEW.md", "E3 winter avoided, full approval", /(\d+\.\d+)% \/ \d+\.\d+% of session emissions avoided/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],
+  ["docs/OVERVIEW.md", "E3 summer avoided, full approval", /\d+\.\d+% \/ (\d+\.\d+)% of session emissions avoided/i, C("results|W2|governed_approval1.00|pctAvoidedVsNaive|mean")],
+  ["docs/OVERVIEW.md", "human decisions before the rule, winter", /from (\d+\.\d+) to \d+\.\d+ \(winter\)/i, S("results|W1|policies|P2_f0.8|humanDecisions|mean")],
+  ["docs/OVERVIEW.md", "human decisions under rule T1, winter", /from \d+\.\d+ to (\d+\.\d+) \(winter\)/i, S("results|W1|policies|P2tiered_f0.8|humanDecisions|mean")],
+  ["docs/OVERVIEW.md", "human decisions before the rule, summer", /and (\d+) to \d+\s+\(summer\)/i, S("results|W2|policies|P2_f0.8|humanDecisions|mean")],
+  ["docs/OVERVIEW.md", "human decisions under rule T1, summer", /and \d+ to (\d+)\s+\(summer\)/i, S("results|W2|policies|P2tiered_f0.8|humanDecisions|mean")],
+  ["docs/OVERVIEW.md", "intensity at the 23-day cadence", /pays (\d+\.\d+) g\/kWh\s+against \d+\.\d+ at runtime cadence/i, P("results|W1|cadences|23 days (E1's measured median)|meanIntensityGPerKWh")],
+  ["docs/OVERVIEW.md", "intensity at runtime cadence", /pays \d+\.\d+ g\/kWh\s+against (\d+\.\d+) at runtime cadence/i, P("results|W1|cadences|30 min|meanIntensityGPerKWh")],
+  ["docs/OVERVIEW.md", "staleness penalty percent", /\+(\d+\.\d+)% for acting on old news/i, K("planeStalenessPenaltyPct")],
+  ["docs/OVERVIEW.md", "intensity coverage (documents carrying)", /intensity appears on (\d+)\/12/i, P("memberCoverage|carbon-intensity-gCO2e-per-kWh|documentsCarrying")],
+  ["docs/OVERVIEW.md", "energy coverage (documents carrying)", /energy on (\d+)\/12/i, P("memberCoverage|energy-consumption|documentsCarrying")],
+  ["docs/OVERVIEW.md", "adapter unit-test count", /runs (\d+) adapter unit tests/i, K("unitTests")],
+  ["docs/OVERVIEW.md", "fitness total cases (check-yourself section)", /\(([\d,]+) cases\)/i, K("fitnessCases"), "thousands"],
 ];
 
 // ── the checker ──────────────────────────────────────────────────────────────
