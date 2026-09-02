@@ -7,9 +7,15 @@ submitted to *IEEE Software* on 22 August 2026 — preprint DOI
 the code, the data and the results behind every number the article states, so
 you can check them or re-run them yourself.
 
-> **The full research write-up — methods, tests, tables, caveats and
-> conclusions — is one page: [RESEARCH.md](RESEARCH.md).** This README is the
-> short version.
+> **At a glance.** This package is the first measured *closed cybernetic loop*
+> between organisations for sustainability: systems publish what they used at a
+> well-known address, and other systems govern their own actions on what they read.
+> Everything here is real or honestly labelled — the shipped enforcement gate, live
+> grid-carbon data, real published documents, a live-captured workflow trace — and
+> every number in every page is machine-checked against the results it came from.
+> **Start with the plain-words page: [Overview](docs/OVERVIEW.md) and [Executive case](docs/EXECUTIVE-CASE.md) - one page honest numbers, why it is new, why it can pay, who it serves.** The
+> full reference write-up is [RESEARCH.md](RESEARCH.md); what changed and newer
+> is [docs/AFTER-SUBMISSION.md](docs/AFTER-SUBMISSION.md).
 
 ## The idea in plain words
 
@@ -106,7 +112,7 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 | [Limitations](docs/LIMITATIONS.md) | Every limitation, once, canonically |
 | [**Roadmap**](docs/ROADMAP.md) | What was proved, what was not, and what to build next — the post-audit addendum |
 | [**Executive case**](docs/EXECUTIVE-CASE.md) | One page: the honest numbers, why it is new, why it can pay, who it serves |
-| [Runbook](docs/RUNBOOK.md) | How to implement, test and present every work package — with ready-to-paste agent briefs |
+| [Runbook (archived)](archive/RUNBOOK-2026-09.md) | The execution manual that drove the work packages — every one is delivered, so it lives in the archive |
 | [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) · [Dynamic views](docs/architecture/DYNAMICS.md) | How it is built and why — and what it *does*: the six ports, one gated decision, a charging session with publish-back, a task's life, the budget sawtooth |
 | [Port contracts](docs/ports/) · [Feature specs](features/) · [Spatial advisory](docs/SPATIAL-ADVISORY.md) | What each port promises (forecast, metering so far), and the six plain-English Gherkin specs a regulator could read — every scenario executed against the real code by `npm test` |
 | [Product design](docs/architecture/PRODUCT.md) | Who it is for, requirements, use cases |

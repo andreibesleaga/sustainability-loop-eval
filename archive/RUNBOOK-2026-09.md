@@ -1,6 +1,6 @@
 # Runbook — how to implement, test and present everything in ROADMAP §5
 
-This is the execution manual for the work packages in [ROADMAP](ROADMAP.md) §5, written
+This is the execution manual for the work packages in [ROADMAP](../docs/ROADMAP.md) §5, written
 so that a future session — or a delegated agent — can pick up any package cold and
 finish it without re-deriving the repository's discipline. Every agent brief below is
 ready to paste. **The standing constraints come first because every brief inherits

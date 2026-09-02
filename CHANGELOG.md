@@ -1,6 +1,8 @@
 # Changelog
 
-All notable changes to this evaluation package. Dates are ISO. The one thing this file
+All notable changes to this evaluation package — a record of a package that only
+grew: every change after the article's snapshot was additive, every number moved
+is named, and the article's own numbers never changed. Dates are ISO. The one thing this file
 exists to make unambiguous is **which numbers changed and which did not** — see the
 section of that name under each release.
 
@@ -85,7 +87,7 @@ prosecution before anything was changed. No experiment was re-run against new da
 
 - **WP-16 (price-signal twin) will not be implemented** (owner decision, 2026-09-02).
   A summary of how to build it, why it was cut, and when it would ever be needed is
-  kept in ROADMAP §5's WP-16 row (and the original task text stays in RUNBOOK).
+  kept in ROADMAP §5's WP-16 row (and the original task text stays in the archived runbook).
   Consequences, stated where they bite: §2g's £ arithmetic stays labelled
   *illustrative*, the C3/C12 candidate experiments stay candidates, and the
   second-grid signal-adapter proof remains open — the portability claim is
@@ -265,7 +267,7 @@ prosecution before anything was changed. No experiment was re-run against new da
   with 3 moves in 28 winter days; the 0/5/20 kWh switch-cost sweep barely moves it.
   Forecast accuracy is now measured inside `npm run bounds` (national MAPE/MAE per
   window, horizon caveat in the output). Unit tests 37 → 46.
-- **`docs/RUNBOOK.md` (new)** — the execution manual: the standing-constraints block
+- **`docs/RUNBOOK.md` (new; archived 2026-09-02 as `archive/RUNBOOK-2026-09.md` once every package was delivered)** — the execution manual: the standing-constraints block
   and a ready-to-paste agent brief for every work package, the verification recipe,
   and the presentation plan.
 - **`docs/EXECUTIVE-CASE.md` (new)** — one page: the honest measured numbers, the

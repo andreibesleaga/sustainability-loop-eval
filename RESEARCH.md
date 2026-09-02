@@ -4,6 +4,19 @@
 > experiment, every number, every test, every caveat and every conclusion, in
 > full. For the short version, start at the [README](README.md).
 
+## At a glance
+
+A working, tested, reproducible evaluation of a new idea — the **Cybernetic
+Sustainability Loop** — built on the *shipped* governance runtime, real
+Great-Britain grid data and real published documents. Its strengths, in order:
+the safety architecture is proved by executable fitness functions against the
+real gate; the carbon savings are measured, decomposed and bounded by their own
+analytic ceilings; the multi-party loop is measured for the first time, including
+what it costs; every port has a contract or an honest label; six plain-English
+feature files run against the code; and every number on every page is bound to
+the file that produced it. The honest edges are listed with the same care —
+that is the package's credential, not its apology.
+
 ## What this is
 
 This is the evaluation package for the article *The Cybernetic Sustainability
@@ -326,7 +339,7 @@ moved.
 - [**Limitations**](docs/LIMITATIONS.md) — the canonical list, and where every other file states it.
 - [**Roadmap**](docs/ROADMAP.md) — the post-audit addendum: what this evaluation proved, what it did not, what a real "when and where" deferral mechanism would be, and the work packages that would settle it. Written after submission; it never edits the article.
 - [**Executive case**](docs/EXECUTIVE-CASE.md) — one page: the measured numbers, the verified absences that make it new, the economics, and who it serves.
-- [**Runbook**](docs/RUNBOOK.md) — the execution manual: standing constraints and a ready-to-paste agent brief per work package.
+- [**Runbook (archived)**](archive/RUNBOOK-2026-09.md) — the execution manual that drove the work packages; every package is delivered, so it is kept as history: standing constraints and a ready-to-paste agent brief per work package.
 - [**Glossary**](docs/architecture/ARCHITECTURE.md#12-glossary) — every term, including the five rungs, the deferral queue, the budget factor, and pacing versus capping.
 - [**Search protocol**](docs/SEARCH-PROTOCOL.md) — how the novelty claims were tested by trying to refute them.
 - [**Artifact inventory**](docs/ARTIFACT-INVENTORY.md) — every artifact the article cites, where it lives, how its figure was checked.
@@ -343,7 +356,10 @@ moved.
 
 ## Status and roadmap
 
-Work in progress. The data plane is live and measured; the ladder and gate are
+**Complete, as of 2026-09-02.** Every planned work package is delivered, the
+final three-lens audit is fixed, and the addendum is written
+([docs/AFTER-SUBMISSION.md](docs/AFTER-SUBMISSION.md)). What stands today: the
+data plane is live and measured; the ladder and gate are
 implemented and tested where they ship; the carbon validator and the actuation
 harness are reference implementations evaluated here and not merged anywhere; the
 forecast and metering ports now have contracts and conformance suites (WP-3,

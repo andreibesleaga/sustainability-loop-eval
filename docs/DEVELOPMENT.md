@@ -1,5 +1,10 @@
 # Development guide
 
+> **At a glance.** One dependency, plain JavaScript, deterministic everywhere, and a
+> single `npm test` that runs the unit suites, the fitness functions through the
+> real gate, the feature specs and the number-binding check — all offline. Clone,
+> install, test: everything reproduces byte for byte.
+
 How to run this package, how to extend it, and the rules that keep it honest and
 reproducible. Written for someone who has just cloned the repository.
 

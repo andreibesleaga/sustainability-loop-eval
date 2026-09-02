@@ -2,6 +2,10 @@
 
 > Companion document for the article *The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane* (Andrei N. Besleaga, 2026). The product here is an *evaluation and replication package*, not a service. It is a reference architecture plus an early evaluation; nothing in it runs in production for anyone.
 
+> **At a glance.** A reference architecture whose every requirement below is tied
+> to a delivered artifact — an experiment, a fitness function, a feature spec, a
+> contract or a diagram — with nothing left as prose alone.
+
 ## 1. Summary
 
 A small, plain-JavaScript package that makes the article's architecture runnable

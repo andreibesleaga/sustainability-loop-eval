@@ -1,5 +1,8 @@
 # Inventory of the public artifacts the article cites (verified 2026-08-22)
 
+> **At a glance.** Every public artifact the article cites exists and was checked
+> at its source on the date shown — this page is the receipt.
+
 These are the author's public artifacts that the article's status table lists as "Released" or
 "Released prototypes". They are NOT evaluated by the scripts in this package; this file records
 where each one lives and how its stated figure was checked, so that every cell of the article's

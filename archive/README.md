@@ -6,6 +6,7 @@ stays clean and current, and everything historical lands here, dated and frozen.
 | What | Contents |
 |---|---|
 | [audit-2026-09-02/](audit-2026-09-02/) | The final three-lens audit: condensed reports from the documentation-consistency, adversarial-code and paper-alignment auditors, plus `FIXES-APPLIED.md` — every finding and what was done about it |
+| [RUNBOOK-2026-09.md](RUNBOOK-2026-09.md) | The execution manual with the agent briefs that drove the work packages — all delivered, so it retired here |
 | [session-checkpoint-2026-09-02.md](session-checkpoint-2026-09-02.md) | The working session checkpoint used while the work packages were delivered (historical; superseded by the docs and the CHANGELOG) |
 
 Nothing in here is maintained; a claim in an archived file describes the state on

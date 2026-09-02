@@ -1,5 +1,10 @@
 # The forecast port — contract
 
+> **At a glance.** A real, contract-first forecast port — published forward
+> forecasts served verbatim from a committed live capture, refusals instead of
+> inventions past the horizon, full provenance, and a conformance suite an adapter
+> must pass.
+
 The first of the six port contracts (ROADMAP §4 Gap 2; the template the others
 follow). One page: what the port promises, what it may assume, what it must never do,
 and how an adapter proves conformance.

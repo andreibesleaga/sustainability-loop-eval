@@ -18,7 +18,7 @@ architectural characteristic a **fitness function**.
 Make the architecture claims executable, one function per clause of the claim,
 against the real shipped gate.
 
-- Twelve functions, F1 to F12, one architectural property each: total order, fail-closed, monotonicity, human binding, gate-on-path, audit-chain integrity, port isolation, determinism, aggregation equivalence, audit anchoring, core invariants, documentation-agrees-with-results. (Nine at v1.0.0; F10–F12 were added in v1.1.0.)
+- Thirteen functions, F1 to F13, one architectural property each: total order, fail-closed, monotonicity, human binding, gate-on-path, audit-chain integrity, port isolation, determinism, aggregation equivalence, audit anchoring, core invariants, documentation-agrees-with-results, and metering-bounds-the-lie. (Nine at v1.0.0; F10–F12 added in v1.1.0; F13 in the audit pass.)
 - Each property lives once, in `fitness/props.js`, as a function returning `{ id, property, cases, passed, notes }`.
 - `fitness/fN.test.js` asserts on `passed`; `fitness/report.js` renders the same summaries into `results/fitness.json` and `results/fitness.md`. No duplicated logic, and no hand-written result file.
 - Property-style cases use the seeded generator, so they are reproducible rather than flaky.

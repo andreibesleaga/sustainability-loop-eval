@@ -1,5 +1,11 @@
 # Architecture fitness functions
 
+> **At a glance.** Thirteen executable architecture checks run against the *real*
+> shipped gate — worst-verdict-wins, fail-closed, human binding, an absolute
+> terminate, tamper-evident audit, a core that imports nothing, determinism, and a
+> registry that fails the build if any page's numbers drift from the results. This
+> is the package's proof layer; the prose only describes what these functions enforce.
+
 ## What a fitness function is
 
 A term from Ford, Parsons & Kua, *Building Evolutionary Architectures*: an

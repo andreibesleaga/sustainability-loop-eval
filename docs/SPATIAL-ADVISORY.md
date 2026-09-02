@@ -1,5 +1,10 @@
 # The spatial advisory — specification
 
+> **At a glance.** The loop can already say *where* as well as *when*: this page
+> specifies the advisory that recommends a region and window from peer-published
+> signals, prices the move, records the recommendation, and never pretends to move
+> the work itself.
+
 WP-4 (`docs/ROADMAP.md` §5). Modeled on `docs/ports/FORECAST.md` and
 `docs/ports/METERING.md`, the template the port contracts follow. One page: what
 the advisory promises, what it carries, what it must never do, the measured

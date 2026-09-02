@@ -1,5 +1,10 @@
 # Research questions
 
+> **At a glance.** The article's three questions each got a measured, reproducible
+> answer — the safety properties hold in shipped code, the data plane is a usable
+> control signal, and the governor beats the baselines on real grid data — with the
+> conditions that would disprove each stated up front and still standing.
+
 The article asks three questions and answers each with a different method. This
 file states them as testable claims: what is being asked, what the package
 measures, what result would prove the claim wrong, what the current answer is, and

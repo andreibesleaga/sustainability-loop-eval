@@ -1,5 +1,9 @@
 # Search protocol behind the article's novelty claims
 
+> **At a glance.** The novelty claims survived an adversarial prior-art search
+> designed to refute them; this page shows the sweeps, the phrasings and the dates
+> so anyone can repeat the attempt.
+
 The article claims that four *compositions* (not their parts) had no located precedent — the
 Sustainability Signal Plane, the Carbon-Verdict Governor, Gated Grid Actuation, and the Cybernetic
 Sustainability Loop that composes them. Four claims, four sweeps, four rows in the table below. A

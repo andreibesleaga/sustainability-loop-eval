@@ -1,5 +1,11 @@
 # Architecture of `sustainability-loop-eval` (arc42)
 
+> **At a glance.** A hexagonal governor core that imports nothing, six ports with
+> contracts or honest labels, one gate with one total order of verdicts, and every
+> architectural claim turned into an executable fitness function against the shipped
+> runtime — the architecture is *tested*, not described. The dynamic views are in
+> [DYNAMICS.md](DYNAMICS.md); this is the arc42 reference.
+
 This is the architecture document for the open evaluation and replication package
 of the article *The Cybernetic Sustainability Loop: Governed Agentic Systems on a
 Sustainability Data Plane* (Andrei N. Besleaga, 2026).
@@ -28,7 +34,7 @@ with runnable code:
 
 | Question | How it is answered | Where |
 |---|---|---|
-| Does the architecture hold the properties it claims? | Twelve executable checks against the shipped gate | `fitness/`, [`results/fitness.md`](../../results/fitness.md) |
+| Does the architecture hold the properties it claims? | Thirteen executable checks against the shipped gate | `fitness/`, [`results/fitness.md`](../../results/fitness.md) |
 | Is the published data usable as a control signal? | Live measurement of every document on a public gateway | `dataplane/`, [`results/dataplane.md`](../../results/dataplane.md) |
 | What does the governor do on real grid conditions? | Replay on real half-hourly grid-carbon traces | `simulation/`, [`results/simulation.md`](../../results/simulation.md), [`results/charging.md`](../../results/charging.md) |
 
@@ -73,7 +79,7 @@ article; anyone who wants to re-run the numbers or extend the package.
 ### What is inside this repository
 
 - The **Carbon-Verdict Governor** reference core and the adapter that plugs it into the real gate (`governor/`).
-- Twelve **architecture fitness functions** (`fitness/`).
+- Thirteen **architecture fitness functions** (`fitness/`).
 - **Live measurement** of the public data plane (`dataplane/`).
 - **Trace-driven simulation**: an agentic workload and an EV-charging night (`simulation/`).
 - A one-command **demo** and an optional **live agent run** (`demo/demo.js`, `demo/agent.js`).
@@ -163,7 +169,7 @@ Six decisions carry the whole design.
 | Folder | Responsibility |
 |---|---|
 | `governor/` | The reference core, its gate adapter, and the actuation harness. The only part that is architecture rather than evaluation. |
-| `fitness/` | Twelve executable checks of architectural properties, and the code that renders them into `results/fitness.md`. |
+| `fitness/` | Thirteen executable checks of architectural properties, and the code that renders them into `results/fitness.md`. |
 | `shared/` | Leaf utilities used by everything: the seeded generator and one definition of median, p95 and standard deviation. Imports nothing but Node built-ins. |
 | `simulation/` | Two trace-driven experiments and their shared plumbing. |
 | `dataplane/` | Live measurement of the public gateway and analysis of its real request logs. |
@@ -183,7 +189,7 @@ Six decisions carry the whole design.
 | `governor/harness.js` | The human port, and the only path in the package from a verdict to actually running something | Imports nothing. `allow` and `degrade` run automatically; `escalate` and `block` need an approval whose `approved` field is exactly `true`; `terminate` never runs. |
 | `governor/gate.js` | Builds the real `ActionGate` with the governor registered as a validator and a real `AuditLog` behind it; gives it a deterministic injected clock. `gated()` normalises any verdict that is not on the ladder to `block`, keeping the original under `rawAction`; `chainAnchor()` and `verifyAnchored()` live here too | Imports two things plus one Node built-in: `kaiban-distributed`, the core, and `node:crypto` (for the anchor digest) |
 | `fitness/props.js` | The thirteen properties F1–F13, each an exported function returning `{ id, property, cases, passed, notes }` | The property logic lives here once; the test files and the report both call it. Above the size target on purpose — see ADR-001. |
-| `fitness/fN.test.js` | One `node:test` file per property, asserting on `passed` | Twelve files, about 15 lines each |
+| `fitness/fN.test.js` | One `node:test` file per property, asserting on `passed` | Thirteen files, about 15 lines each |
 | `fitness/import-graph.js` | Parses every source file's import statements into the real import graph that F7 checks | A per-statement scanner, not a regex over the whole file |
 | `fitness/report.js` | Runs the same thirteen properties and writes both `results/fitness.json` and `results/fitness.md` | No duplicated logic, and no hand-written result file |
 | `shared/prng.js`, `shared/stats.js` | Seeded random numbers (mulberry32) and one definition of median/p95/sd for the whole package | So property cases are reproducible and every "p95" means the same thing. A leaf: nothing in `shared/` imports anything from the package. |

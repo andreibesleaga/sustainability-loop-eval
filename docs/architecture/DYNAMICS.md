@@ -3,7 +3,8 @@
 The six pictures in [`c4/`](c4/) show what the package *is*. This file shows what it
 *does*: one component view of the six ports, two sequence diagrams, one state machine
 for the life of a task, and one view of the budget's own dynamics. For a control
-system the dynamic view is the interesting one, and until now the package had none
+system the dynamic view is the interesting one, and these five give it — each
+grounded in the code and decision records it draws; before them the package had none
 (ROADMAP §4, gap 4; the sequence diagram gap 3 asks for is diagram 3 below).
 
 Every diagram is committed Mermaid source, inline, so it cannot rot silently and needs

@@ -1,8 +1,12 @@
 # The whole system, in plain words
 
-One page for anyone — a colleague, a reviewer, a regulator, a manager — who wants to
-understand what this project is, what was actually measured, and what is honestly
-still missing. Every headline number on this page is checked automatically against
+One page for anyone — a colleague, a reviewer, a regulator, a manager. **The short
+of it:** a small governor with five verdicts, sitting behind a real enforcement
+gate, cuts carbon on real grid data; systems that publish their footprint at a
+standard address let *other* systems govern themselves on it — a feedback loop
+between organisations that nobody had measured before; and the loop itself was
+run, end to end, on real documents. Below: what the invention is, what was
+measured, and what is honestly still open. Every headline number on this page is checked automatically against
 the files in [`results/`](../results/) by `npm test`; if a checked number drifts
 from the evidence, the build fails.
 

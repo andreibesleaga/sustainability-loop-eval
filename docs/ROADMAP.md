@@ -1,6 +1,11 @@
 # Roadmap — what this evaluation proved, what it did not, and what to build next
 
-> **Status:** addendum, written 2026-09-01 after the multi-lens audit. **The submitted
+> **Status: COMPLETE (2026-09-02).** Every work package this roadmap planned is
+> delivered, measured and integrated — the sweep, the decomposition, the forecast and
+> metering contracts, the feature specs, the dynamic diagrams, the chaos suite, the
+> tiered rule, the real-trace control, the closed loop with real documents, the two
+> anti-herd tests, the spatial advisory spec and the addendum. What follows is the
+> full reasoning and every result, kept as the post-audit record. **The submitted
 > article is not changed by anything in this file.** Where this document disagrees with
 > the article, the article stands as the record of what was submitted and the
 > disagreement is listed in the README's *Corrections* section. Everything here is
@@ -1202,7 +1207,7 @@ sentence that must be a readable, executable acceptance criterion.
 ### Gap 2 — The ports are named but not specified
 
 **CLOSED for forecast and metering by WP-3/WP-5 (2026-09-02):** contracts in `docs/ports/`, each with a conformance suite; the publication port is pinned by `features/publication.feature` and WP-17, its contract page still to write.
-ARCHITECTURE names four ports (signal, forecast, human, actuation). Only some are
+ARCHITECTURE named four ports at the time (six now: signal, forecast, human, actuation, metering, publication). Only some were
 built. None has a written **contract**: its interface, its failure modes, what it may
 assume, what it must never do. And the audit has now identified a **fifth, missing
 port** — metering — whose absence F13 proves is load-bearing; §3c adds the **sixth,

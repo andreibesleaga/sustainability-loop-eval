@@ -1,5 +1,10 @@
 # The metering port — contract
 
+> **At a glance.** The contract that makes the verdict ladder mean something
+> against a dishonest estimate: with a trusted meter, an under-declaring agent is
+> bounded to one action of slack — a property proved by fitness function F13 and
+> stated here where the port is defined.
+
 The fifth of the six port contracts (ROADMAP §5, WP-5; closes limitation R15).
 Modeled on `docs/ports/FORECAST.md`, the template the others follow. One page:
 what the port promises, what it may assume, what it must never do, and how an
@@ -102,12 +107,12 @@ budget.
 
 ## What remains open
 
-Limitation R15 (`docs/LIMITATIONS.md`): *"Estimates are self-declared, and there
-is no metering port — the validator reads the acting agent's own
+Limitation R15 (`docs/LIMITATIONS.md`): *"Estimates are self-declared, and no
+trusted metering adapter exists — the validator reads the acting agent's own
 `estimatedGramsCO2e`; an agent that under-declares is allowed, and monotonicity
-(F11) is no defence against a strategically small number. The four ports name no
-metering port for the actual grams `commit()` needs — the simulations take them
-from the trusted trace."* Two gaps follow directly: there is no adapter that
+(F11) is no defence against a strategically small number. The original four ports
+named no metering port for the actual grams `commit()` needs — the simulations
+take them from the trusted trace."* Two gaps follow directly: there is no adapter that
 reads a real meter (this package's "actual" is a committed trace, trusted by
 construction of the simulation, not measured live); and no cryptographic
 attestation of a meter reading exists — the hooks for attestation live in the

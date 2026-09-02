@@ -1,9 +1,12 @@
 # The Executive Case — honest numbers, and why this is worth building
 
-> One page of claims, every number measured in [`results/`](../results/) or fetched and
-> cited on the date shown. Written 2026-09-01, after the audit, the bounds calculus and
-> the first closed-loop simulations. The submitted article is unchanged by this file.
-> The long form: [ROADMAP](ROADMAP.md); the execution manual: [RUNBOOK](RUNBOOK.md).
+> **At a glance.** The case for a loop that lets organisations govern their own
+> carbon on what others publish — measured savings, a proven safety architecture,
+> a first-of-its-kind multi-party measurement, and a concrete recommendation for the
+> draft standard. One page of claims, every number measured in
+> [`results/`](../results/) or fetched and cited on the date shown; current as of the
+> package's completion on 2026-09-02. The submitted article is unchanged by this file.
+> The long form: [ROADMAP](ROADMAP.md); the plain-words page: [OVERVIEW](OVERVIEW.md); the addendum: [AFTER-SUBMISSION](AFTER-SUBMISSION.md).
 
 ## What it is, in one diagram
 
@@ -127,5 +130,5 @@ npm run demo      # a real published document → the real gate → a verdict, i
 ```
 
 The fifteen scenarios these compose into: ROADMAP §3e. The plan and prompts to build
-the rest: RUNBOOK. The paper stays exactly as submitted; this file is what grew up
+the rest: the archived runbook (`archive/RUNBOOK-2026-09.md`), now fully executed. The paper stays exactly as submitted; this file is what grew up
 around it, with every departure logged.

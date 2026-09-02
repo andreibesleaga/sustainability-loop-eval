@@ -7,11 +7,13 @@
 
 The article describes the governor as a hexagonal core: budget accounting and
 verdict selection in the middle, and every concrete system — an HTTP client, a
-charging protocol, an approval board — as an adapter behind one of four ports
-(signal, forecast, human, actuation). Three of those four ports have an adapter in
-this repository. The **forecast port is designed, not built**: the simulations read
-the peer signal straight from the cached trace rather than through a forecast
-adapter, so there is no file to point at for it.
+charging protocol, an approval board — as an adapter behind one of the ports
+(four in the article — signal, forecast, human, actuation — six in the package,
+with metering and publication added). Signal, human and actuation have adapters
+on every executed path; the forecast port has a contract and a conformance-tested
+adapter (`docs/ports/FORECAST.md`, `simulation/forecast.js`) that no experiment
+decides through yet — the simulations still read the peer signal straight from
+the cached trace.
 
 "Hexagonal" is easy to write in prose and easy to lose in code. One accidental
 import of a JSON client, and the core is no longer portable.
