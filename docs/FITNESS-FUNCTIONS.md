@@ -116,6 +116,10 @@ says 13% where the JSON says 12.8% has a defect, and it is not in the JSON.
 
 ### F13 — self-declared estimates: metering bounds the lie to one action
 
+The property F13 proves is stated as a contract where the port is defined:
+`docs/ports/METERING.md` (WP-5), with its own offline conformance suite
+(`simulation/metering.test.js`) against the same `commit()` call path.
+
 Every rung in this system is reached because of `payload.estimatedGramsCO2e` — a
 number the *acting agent* supplies about its own future behaviour. That is
 attacker-controlled input, and monotonicity (F11) is no defence against a
@@ -174,7 +178,7 @@ npm run arch:graph       # madge: the full import graph — this is what produce
 unit tests. The `node:test` files elsewhere (`simulation/lib.test.js`,
 `simulation/policies.test.js`, `dataplane/measure.test.js`) cover the adapters'
 own arithmetic instead — statistics, trace loading, policy semantics, document
-checking. There are **46** of those, and `npm test` runs them first.
+checking. There are **60** of those, and `npm test` runs them first.
 
 Each property lives once, in `fitness/props.js`, as an exported function
 returning `{ id, property, cases, passed, notes }`; the `fitness/fN.test.js`
@@ -194,7 +198,7 @@ of the tests rather than of the architecture.
 ## Current results
 
 `results/fitness.md` is rendered from the run, so it is the authority. As of
-v1.1.0: **13/13 green over 14,966 cases.** Version 1.0.0 — the snapshot the
+v1.1.0: **13/13 green over 14,981 cases.** Version 1.0.0 — the snapshot the
 article cites — was 9/9 over 10,994 cases. The difference is properties added,
 not properties fixed.
 

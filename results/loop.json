@@ -171,6 +171,168 @@
           "top5PctSlotShare": 32.9,
           "oscillationL1": 1.719
         }
+      },
+      "wp12": {
+        "stagger_N5_a0_s1": {
+          "meanIntensityGPerKWh": 76.58,
+          "peakConcurrencyRatio": 1.17,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.333
+        },
+        "paced_N5_a0_s1": {
+          "meanIntensityGPerKWh": 76.29,
+          "peakConcurrencyRatio": 1.22,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.364,
+          "droppedUnitsPct": 6.55
+        },
+        "paced_defer_N5_a0_s1": {
+          "meanIntensityGPerKWh": 73.03,
+          "peakConcurrencyRatio": 1.11,
+          "top5PctSlotShare": 41.46,
+          "oscillationL1": 1.415,
+          "droppedUnitsPct": 13.39
+        },
+        "stagger_N5_a0_s7": {
+          "meanIntensityGPerKWh": 76.58,
+          "peakConcurrencyRatio": 1.17,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.333
+        },
+        "paced_N5_a0_s7": {
+          "meanIntensityGPerKWh": 76.29,
+          "peakConcurrencyRatio": 1.22,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.364,
+          "droppedUnitsPct": 6.55
+        },
+        "paced_defer_N5_a0_s7": {
+          "meanIntensityGPerKWh": 73.03,
+          "peakConcurrencyRatio": 1.11,
+          "top5PctSlotShare": 41.46,
+          "oscillationL1": 1.415,
+          "droppedUnitsPct": 13.39
+        },
+        "stagger_N5_a2_s1": {
+          "meanIntensityGPerKWh": 92.7,
+          "peakConcurrencyRatio": 1.57,
+          "top5PctSlotShare": 26.01,
+          "oscillationL1": 1.995
+        },
+        "paced_N5_a2_s1": {
+          "meanIntensityGPerKWh": 91.11,
+          "peakConcurrencyRatio": 1.55,
+          "top5PctSlotShare": 29.56,
+          "oscillationL1": 2.003,
+          "droppedUnitsPct": 11.31
+        },
+        "paced_defer_N5_a2_s1": {
+          "meanIntensityGPerKWh": 90.89,
+          "peakConcurrencyRatio": 1.46,
+          "top5PctSlotShare": 29.44,
+          "oscillationL1": 2.052,
+          "droppedUnitsPct": 16.07
+        },
+        "stagger_N5_a2_s7": {
+          "meanIntensityGPerKWh": 94.16,
+          "peakConcurrencyRatio": 2.71,
+          "top5PctSlotShare": 20.71,
+          "oscillationL1": 1.14
+        },
+        "paced_N5_a2_s7": {
+          "meanIntensityGPerKWh": 91.39,
+          "peakConcurrencyRatio": 2.47,
+          "top5PctSlotShare": 21.86,
+          "oscillationL1": 1.183,
+          "droppedUnitsPct": 10.6
+        },
+        "paced_defer_N5_a2_s7": {
+          "meanIntensityGPerKWh": 89.95,
+          "peakConcurrencyRatio": 2.53,
+          "top5PctSlotShare": 24.18,
+          "oscillationL1": 1.191,
+          "droppedUnitsPct": 12.74
+        },
+        "stagger_N25_a0_s1": {
+          "meanIntensityGPerKWh": 76.58,
+          "peakConcurrencyRatio": 1.18,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.335
+        },
+        "paced_N25_a0_s1": {
+          "meanIntensityGPerKWh": 76.29,
+          "peakConcurrencyRatio": 1.22,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.364,
+          "droppedUnitsPct": 6.55
+        },
+        "paced_defer_N25_a0_s1": {
+          "meanIntensityGPerKWh": 73.03,
+          "peakConcurrencyRatio": 1.11,
+          "top5PctSlotShare": 41.46,
+          "oscillationL1": 1.415,
+          "droppedUnitsPct": 13.39
+        },
+        "stagger_N25_a0_s7": {
+          "meanIntensityGPerKWh": 76.58,
+          "peakConcurrencyRatio": 1.18,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 1.335
+        },
+        "paced_N25_a0_s7": {
+          "meanIntensityGPerKWh": 76.29,
+          "peakConcurrencyRatio": 1.22,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.364,
+          "droppedUnitsPct": 6.55
+        },
+        "paced_defer_N25_a0_s7": {
+          "meanIntensityGPerKWh": 73.03,
+          "peakConcurrencyRatio": 1.11,
+          "top5PctSlotShare": 41.46,
+          "oscillationL1": 1.415,
+          "droppedUnitsPct": 13.39
+        },
+        "stagger_N25_a2_s1": {
+          "meanIntensityGPerKWh": 87.3,
+          "peakConcurrencyRatio": 1.45,
+          "top5PctSlotShare": 32.21,
+          "oscillationL1": 2
+        },
+        "paced_N25_a2_s1": {
+          "meanIntensityGPerKWh": 83.04,
+          "peakConcurrencyRatio": 1.45,
+          "top5PctSlotShare": 37.85,
+          "oscillationL1": 1.984,
+          "droppedUnitsPct": 9.23
+        },
+        "paced_defer_N25_a2_s1": {
+          "meanIntensityGPerKWh": 80.9,
+          "peakConcurrencyRatio": 1.36,
+          "top5PctSlotShare": 38.06,
+          "oscillationL1": 1.941,
+          "droppedUnitsPct": 13.1
+        },
+        "stagger_N25_a2_s7": {
+          "meanIntensityGPerKWh": 91.13,
+          "peakConcurrencyRatio": 2.23,
+          "top5PctSlotShare": 32.38,
+          "oscillationL1": 1.705
+        },
+        "paced_N25_a2_s7": {
+          "meanIntensityGPerKWh": 87.23,
+          "peakConcurrencyRatio": 2.06,
+          "top5PctSlotShare": 36.84,
+          "oscillationL1": 1.746,
+          "droppedUnitsPct": 8.57
+        },
+        "paced_defer_N25_a2_s7": {
+          "meanIntensityGPerKWh": 86.57,
+          "peakConcurrencyRatio": 1.95,
+          "top5PctSlotShare": 37.38,
+          "oscillationL1": 1.747,
+          "droppedUnitsPct": 11.4
+        }
       }
     },
     "W2": {
@@ -319,6 +481,168 @@
           "peakConcurrencyRatio": 1.83,
           "top5PctSlotShare": 32.8,
           "oscillationL1": 1.621
+        }
+      },
+      "wp12": {
+        "stagger_N5_a0_s1": {
+          "meanIntensityGPerKWh": 71.5,
+          "peakConcurrencyRatio": 1.1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.841
+        },
+        "paced_N5_a0_s1": {
+          "meanIntensityGPerKWh": 71.45,
+          "peakConcurrencyRatio": 1.31,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.89,
+          "droppedUnitsPct": 13.99
+        },
+        "paced_defer_N5_a0_s1": {
+          "meanIntensityGPerKWh": 71.69,
+          "peakConcurrencyRatio": 1.16,
+          "top5PctSlotShare": 40.17,
+          "oscillationL1": 0.982,
+          "droppedUnitsPct": 14.29
+        },
+        "stagger_N5_a0_s7": {
+          "meanIntensityGPerKWh": 71.5,
+          "peakConcurrencyRatio": 1.1,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.841
+        },
+        "paced_N5_a0_s7": {
+          "meanIntensityGPerKWh": 71.45,
+          "peakConcurrencyRatio": 1.31,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.89,
+          "droppedUnitsPct": 13.99
+        },
+        "paced_defer_N5_a0_s7": {
+          "meanIntensityGPerKWh": 71.69,
+          "peakConcurrencyRatio": 1.16,
+          "top5PctSlotShare": 40.17,
+          "oscillationL1": 0.982,
+          "droppedUnitsPct": 14.29
+        },
+        "stagger_N5_a2_s1": {
+          "meanIntensityGPerKWh": 78.75,
+          "peakConcurrencyRatio": 1.44,
+          "top5PctSlotShare": 26.9,
+          "oscillationL1": 1.992
+        },
+        "paced_N5_a2_s1": {
+          "meanIntensityGPerKWh": 78.62,
+          "peakConcurrencyRatio": 1.58,
+          "top5PctSlotShare": 33.12,
+          "oscillationL1": 2.015,
+          "droppedUnitsPct": 16.96
+        },
+        "paced_defer_N5_a2_s1": {
+          "meanIntensityGPerKWh": 80.22,
+          "peakConcurrencyRatio": 1.66,
+          "top5PctSlotShare": 32.94,
+          "oscillationL1": 2.021,
+          "droppedUnitsPct": 17.86
+        },
+        "stagger_N5_a2_s7": {
+          "meanIntensityGPerKWh": 89.54,
+          "peakConcurrencyRatio": 2.29,
+          "top5PctSlotShare": 17.26,
+          "oscillationL1": 0.936
+        },
+        "paced_N5_a2_s7": {
+          "meanIntensityGPerKWh": 85.08,
+          "peakConcurrencyRatio": 2.44,
+          "top5PctSlotShare": 21.54,
+          "oscillationL1": 1.053,
+          "droppedUnitsPct": 20.89
+        },
+        "paced_defer_N5_a2_s7": {
+          "meanIntensityGPerKWh": 85.13,
+          "peakConcurrencyRatio": 2.54,
+          "top5PctSlotShare": 20.97,
+          "oscillationL1": 1.006,
+          "droppedUnitsPct": 21.07
+        },
+        "stagger_N25_a0_s1": {
+          "meanIntensityGPerKWh": 71.5,
+          "peakConcurrencyRatio": 1.14,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.869
+        },
+        "paced_N25_a0_s1": {
+          "meanIntensityGPerKWh": 71.45,
+          "peakConcurrencyRatio": 1.31,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.89,
+          "droppedUnitsPct": 13.99
+        },
+        "paced_defer_N25_a0_s1": {
+          "meanIntensityGPerKWh": 71.69,
+          "peakConcurrencyRatio": 1.16,
+          "top5PctSlotShare": 40.17,
+          "oscillationL1": 0.982,
+          "droppedUnitsPct": 14.29
+        },
+        "stagger_N25_a0_s7": {
+          "meanIntensityGPerKWh": 71.5,
+          "peakConcurrencyRatio": 1.14,
+          "top5PctSlotShare": 33.33,
+          "oscillationL1": 0.869
+        },
+        "paced_N25_a0_s7": {
+          "meanIntensityGPerKWh": 71.45,
+          "peakConcurrencyRatio": 1.31,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.89,
+          "droppedUnitsPct": 13.99
+        },
+        "paced_defer_N25_a0_s7": {
+          "meanIntensityGPerKWh": 71.69,
+          "peakConcurrencyRatio": 1.16,
+          "top5PctSlotShare": 40.17,
+          "oscillationL1": 0.982,
+          "droppedUnitsPct": 14.29
+        },
+        "stagger_N25_a2_s1": {
+          "meanIntensityGPerKWh": 74.97,
+          "peakConcurrencyRatio": 1.25,
+          "top5PctSlotShare": 33.05,
+          "oscillationL1": 2
+        },
+        "paced_N25_a2_s1": {
+          "meanIntensityGPerKWh": 74.35,
+          "peakConcurrencyRatio": 1.43,
+          "top5PctSlotShare": 40.27,
+          "oscillationL1": 2.019,
+          "droppedUnitsPct": 15.18
+        },
+        "paced_defer_N25_a2_s1": {
+          "meanIntensityGPerKWh": 76.11,
+          "peakConcurrencyRatio": 1.34,
+          "top5PctSlotShare": 38.98,
+          "oscillationL1": 2.017,
+          "droppedUnitsPct": 15.18
+        },
+        "stagger_N25_a2_s7": {
+          "meanIntensityGPerKWh": 87.44,
+          "peakConcurrencyRatio": 1.81,
+          "top5PctSlotShare": 32.62,
+          "oscillationL1": 1.681
+        },
+        "paced_N25_a2_s7": {
+          "meanIntensityGPerKWh": 81.99,
+          "peakConcurrencyRatio": 2.36,
+          "top5PctSlotShare": 41.29,
+          "oscillationL1": 1.705,
+          "droppedUnitsPct": 19.06
+        },
+        "paced_defer_N25_a2_s7": {
+          "meanIntensityGPerKWh": 83.18,
+          "peakConcurrencyRatio": 2.16,
+          "top5PctSlotShare": 41.92,
+          "oscillationL1": 1.649,
+          "droppedUnitsPct": 19.65
         }
       }
     }

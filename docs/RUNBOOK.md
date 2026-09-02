@@ -126,7 +126,11 @@ sequence diagrams (E2 decision, E3 session incl. publish-back); task state machi
 budget dynamics sawtooth.
 ```
 
-### WP-16 — Price-signal twin
+### WP-16 — Price-signal twin — **DESCOPED 2026-09-02 (owner decision)**
+
+Not implemented. The how/why/when summary lives in ROADMAP §5's WP-16 row; the
+original task text is kept below verbatim so it can be picked up if ever wanted.
+
 ```text
 TASK: Check licence of a GB half-hourly day-ahead price source (Agile tariff API or
 N2EX/EPEX — verify terms BEFORE fetching; if blocking, write the limitation and

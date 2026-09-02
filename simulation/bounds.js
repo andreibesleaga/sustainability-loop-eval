@@ -82,7 +82,7 @@ function cheapestSlots(series, from, to, k) {
  * within its horizon. Deadlines clamp to the last slot exactly as
  * generateWorkload() clamps them.
  */
-function e2Potential(W) {
+export function e2Potential(W) {
   const baseMean = mean(W.actual); // run-on-arrival expectation, uniform arrivals
   const out = { baselineMeanGPerKWh: r(baseMean, 2) };
   for (const h of HORIZONS_H) {

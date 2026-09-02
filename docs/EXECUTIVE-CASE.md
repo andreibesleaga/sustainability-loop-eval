@@ -37,7 +37,7 @@ estimates; the clouds' carbon APIs are per-tenant and weeks delayed).
 
 ```mermaid
 flowchart TB
-    CORE{{Carbon-Verdict Governor<br/>104 lines, zero imports<br/>13 fitness functions, 14,966 cases}}
+    CORE{{Carbon-Verdict Governor<br/>104 lines, zero imports<br/>13 fitness functions, 14,981 cases}}
     S[signal port] --- CORE
     F[forecast port] --- CORE
     H[human port] --- CORE
@@ -53,7 +53,7 @@ flowchart TB
 
 | what | result | where |
 |---|---|---|
-| The gate's safety properties in shipped code | **13/13 fitness functions over 14,966 cases** — worst-verdict-wins, fail-closed, human-bound, tamper-evident, metering bounds a lying agent to one action of slack | `results/fitness.md` |
+| The gate's safety properties in shipped code | **13/13 fitness functions over 14,981 cases** — worst-verdict-wins, fail-closed, human-bound, tamper-evident, metering bounds a lying agent to one action of slack | `results/fitness.md` |
 | Pure temporal deferral (E2, 6 h, half deferrable) | **−1.54% / −2.97%** — and the ceiling calculus says ≤6.58%/8.44% causal, so the mechanism was never going to carry the story on GB's flat grid | `results/simulation.md`, `results/bounds.md` |
 | Shifting a load that can really move (E3, EVs overnight) | **32.85% / 16.53%** avoided — but decomposed: winter 21% is peak-avoidance, summer clean-seeking is **negative** (−4.9 pp) | `results/charging.md`, `results/bounds.md` |
 | What governance costs in carbon | **−0.34 / −0.49 pp** in E3 — the gate buys authority, audit and a bounded human cost (545.7/853 decisions per window; 442.9/637 under one tiering rule), not grams | `results/charging.md` |
@@ -75,8 +75,11 @@ flowchart TB
    CarbonScaler declares it out of scope in print; CarbonFlex scopes it inside one
    cluster. E5 measures it, and R11/R18 already put numbers and a legal citation
    (SI 2021/1467's mandated randomised delay) behind it.
-4. **"A paced budget is a staggering mechanism"** — governance as the anti-herd,
-   testable against mandated randomness — appears nowhere in the checked record.
+4. **The anti-herd comparison itself** — paced budget vs mandated-randomness intent
+   vs the naked plane, run head-to-head, appears nowhere in the checked record. Run
+   here (2026-09-02), it **falsified our own conjecture**: depletion sheds or
+   reshuffles, it does not spread — the herd is bounded by capacity semantics, which
+   is the corrected claim this work now carries (`results/loop.md`, finding 4).
 5. **F13's metering theorem** (the lie bounded to one action, or unbounded without a
    meter) — stated and proven here, found nowhere else.
 

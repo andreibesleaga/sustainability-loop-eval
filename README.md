@@ -49,12 +49,12 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 Demonstration only — no number in `results/` comes from the demos.
 `npm install` prints advisories from the one dependency's own tree; they are
 explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
-everything: 46 unit tests, the thirteen architecture checks through the real
+everything: 60 unit tests, the thirteen architecture checks through the real
 gate, and a check that every number in these pages still matches `results/`.
 
 ## Headline results
 
-- **The safety properties hold in shipped code.** 13/13 green over 14,966 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
+- **The safety properties hold in shipped code.** 13/13 green over 14,981 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
 - **The data plane is real and cheap to read.** 12 documents, 100% valid, median 44.6 ms and about 1.3 kB per fetch; 120 requests from 26 clients in the log window — reachability shown, adoption not yet.
 - **The governor cuts emissions — by also doing less work.** At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against −1.54% and −2.97% for plain threshold deferral. About 15% of tasks run reduced and a few are dropped; read the emissions next to the completed counts, never alone.
 - **Charging:** 32.51% of session emissions avoided in winter and 16.04% in summer at full approval (25.93% and 12.77% at 80% approval) — cars only shift *when* they charge, never how much, and every car still charges fully.
@@ -71,7 +71,9 @@ and in the charging run the saving is the scheduler's, not the gate's.
 
 **Real:** the gate, the audit log, the gateway documents, the grid traces.
 **Synthetic:** the workload, the EV fleet, the approver.
-**Designed, not built:** the forecast port, the board wiring. Full labels:
+**Designed, not built:** the board wiring — the forecast port has since been
+built (WP-3) and the metering port specified with its conformance suite (WP-5);
+both contracts live in [docs/ports/](docs/ports/). Full labels:
 [RESEARCH.md](RESEARCH.md#what-is-real-and-what-is-simulated--read-this-first).
 
 ## Run the evaluation
@@ -94,7 +96,7 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 |---|---|
 | [**RESEARCH.md**](RESEARCH.md) | The full write-up: findings, numbers, corrections, versions, everything below in context |
 | [Research questions](docs/RESEARCH-QUESTIONS.md) | The three questions, what would falsify each, the current answers |
-| [Results: fitness](results/fitness.md) · [data plane](results/dataplane.md) · [simulation](results/simulation.md) · [charging](results/charging.md) · [bounds](results/bounds.md) · [loop](results/loop.md) · [routing](results/routing.md) | The experiments' full tables and caveats, the ceilings they must sit under, and the first closed-loop and routed-charging measurements |
+| [Results: fitness](results/fitness.md) · [data plane](results/dataplane.md) · [simulation](results/simulation.md) · [charging](results/charging.md) · [bounds](results/bounds.md) · [loop](results/loop.md) · [routing](results/routing.md) · [plane](results/plane.md) | The experiments' full tables and caveats, the ceilings they must sit under, and the first closed-loop and routed-charging measurements |
 | [Limitations](docs/LIMITATIONS.md) | Every limitation, once, canonically |
 | [**Roadmap**](docs/ROADMAP.md) | What was proved, what was not, and what to build next — the post-audit addendum |
 | [**Executive case**](docs/EXECUTIVE-CASE.md) | One page: the honest numbers, why it is new, why it can pay, who it serves |

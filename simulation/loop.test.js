@@ -74,3 +74,30 @@ test("loop: the write-up's honesty markers survive regeneration", () => {
   assert.match(md, /pay(s|ing) .*grams|trades? carbon/i);
   assert.match(md, /23 days/, "the E1 staleness contrast must stay in the reading notes");
 });
+
+
+test("WP-12: the anti-herd arms behave as the verdict states — binding budget sheds, defer reshuffles, alpha=0 is N-independent", () => {
+  for (const id of ["W1", "W2"]) {
+    const x = doc.results[id].wp12;
+    assert.ok(x, `${id}: the WP-12 comparison must exist`);
+    // The calibrated budget BINDS: the skip-k paced arm drops real work at alpha=0.
+    assert.ok(x["paced_N25_a0_s1"].droppedUnitsPct > 1,
+      `${id}: a binding budget must shed units in the skip-k arm`);
+    // Shedding does not spread: the top-5% share is no lower than the blind herd's.
+    assert.ok(x["paced_N25_a0_s1"].top5PctSlotShare >= doc.results[id].cells["N25_a0_s1"].top5PctSlotShare - 0.1,
+      `${id}: skip-k pacing must not be credited with spreading it did not do`);
+    // Defer semantics keeps the work (few or no drops) and still does not spread.
+    assert.ok(x["paced_defer_N25_a0_s1"].droppedUnitsPct !== undefined);
+    assert.ok(x["paced_defer_N25_a0_s1"].top5PctSlotShare >= doc.results[id].cells["N25_a0_s1"].top5PctSlotShare - 0.1,
+      `${id}: defer pacing reshuffles within the cheap band, it does not spread`);
+    // Stagger is inert at slot resolution: within noise of the blind herd.
+    assert.ok(Math.abs(x["stagger_N25_a0_s1"].top5PctSlotShare - doc.results[id].cells["N25_a0_s1"].top5PctSlotShare) < 0.5,
+      `${id}: the stagger arm must be inert on real intensity data`);
+    // alpha=0 systems are independent and identical, so N cannot matter.
+    assert.deepEqual(x["paced_N5_a0_s1"], x["paced_N25_a0_s1"], `${id}: alpha=0 paced cells must be N-independent`);
+    assert.deepEqual(x["paced_defer_N5_a0_s1"], x["paced_defer_N25_a0_s1"], `${id}: alpha=0 defer cells must be N-independent`);
+  }
+  const md = readFileSync(new URL("../results/loop.md", import.meta.url), "utf8");
+  assert.match(md, /FALSIFIED/, "the falsification must be stated, not softened");
+  assert.match(md, /WP-12b/, "the redirect to capacity rungs must be named");
+});

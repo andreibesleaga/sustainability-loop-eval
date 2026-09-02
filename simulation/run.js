@@ -27,6 +27,7 @@ import { makeGate, gated } from "../governor/gate.js";
 import { execute } from "../governor/harness.js";
 import { mean, median, p95, pearson, r, ms } from "../shared/stats.js";
 import { loadWindow, generateWorkload, trailingMedians, WORKLOAD } from "./lib.js";
+import { e2Potential } from "./bounds.js";
 import { renderSimulationMd } from "./report.js";
 
 const SEEDS = [101, 202, 303, 404, 505, 606, 707, 808, 909, 1010];
@@ -39,7 +40,14 @@ const P1T_TRAILING_DAYS = 7;                    // P1t's causal threshold window
 function tally(days) {
   return { totalG: 0, completed: 0, onTime: 0, dropped: 0, degraded: 0, deferred: 0,
     delays: [], escalations: 0, blocks: 0, terminations: 0, humanDecisions: 0,
-    blocksDeferrable: 0, dayG: new Array(days).fill(0) };
+    blocksDeferrable: 0, ruleApplied: 0, dayG: new Array(days).fill(0),
+    // Exact per-task attribution of the saving vs P0 (WP-2). For every task,
+    //   P0 grams − P2 grams  =  drop + degrade + timing,   identically:
+    //   dropped:   e_full x A[arrival]                    (work that never ran)
+    //   degraded:  (e_full − e_used) x A[arrival]         (work made smaller)
+    //   timing:    e_used x (A[arrival] − A[run slot])    (work moved in time)
+    // The identity is enforced with a throw in runP2, not assumed.
+    dropSaveG: 0, degradeSaveG: 0, timingSaveG: 0 };
 }
 
 /** Record one execution: emissions from the NATIONAL ACTUAL series at the run slot. */
@@ -51,6 +59,8 @@ function exec(m, W, task, slot, energyKWh) {
   if (slot <= task.deadline) m.onTime++;
   if (energyKWh < task.energyKWh) m.degraded++;
   if (slot > task.arrival) { m.deferred++; m.delays.push((slot - task.arrival) * SLOT_MINUTES); }
+  m.degradeSaveG += (task.energyKWh - energyKWh) * W.actual[task.arrival];
+  m.timingSaveG += energyKWh * (W.actual[task.arrival] - W.actual[slot]);
   return g;
 }
 
@@ -97,6 +107,24 @@ export function runP1(tasks, W, threshold) {
   return m;
 }
 
+// ── P3: argmin scheduler (WP-1's objective — E3's policy applied to E2) ───────
+/**
+ * Deferrable work runs at the CLEANEST slot the peer signal shows inside
+ * [arrival, deadline] — the argmin objective E3 uses — instead of the first
+ * acceptable slot under a threshold. Same inputs as P1, strictly better objective;
+ * the gap between the two is what the optimiser is worth. Decided on the peer
+ * signal (the published forecasts an agent can actually read), scored on the
+ * national actual, like every other policy here.
+ */
+export function runP3(tasks, W) {
+  const m = tally(daysIn(W));
+  for (const t of tasks) {
+    const slot = t.deferrable ? cleanest(W, t.arrival, t.deadline) : t.arrival;
+    exec(m, W, t, slot, t.energyKWh);
+  }
+  return m;
+}
+
 // ── P2: carbon-verdict governor, decisions through the real gate ──────────────
 /**
  * Each task is gated exactly once, when it arrives: the estimate is what the agent can
@@ -122,7 +150,17 @@ export function runP1(tasks, W, threshold) {
  * `terminate` is handed a plan that throws if it is ever called — execute() refuses it
  * outright, so the throw is an assertion that the rung is truly not overridable.
  */
-export async function runP2(tasks, W, budgetG, degradedFraction) {
+/**
+ * WP-14 (tiered governance): with `tierRules` on, ONE standing rule is active —
+ * a `block` verdict on DEFERRABLE work is authorised by the rule, not a person:
+ * the physical outcome (defer to the cleanest visible slot) is unchanged, the
+ * decision is still gated and audited exactly as before, and the approval object
+ * names the rule as the authoriser. Humans keep tier T2: escalations, blocks on
+ * non-deferrable work, and `terminate` (which no one can authorise, rule or human).
+ * Carbon is therefore IDENTICAL to the untired run by construction — the tests
+ * assert exact equality — and the only thing that moves is who authorised what.
+ */
+export async function runP2(tasks, W, budgetG, degradedFraction, tierRules = false) {
   const m = tally(daysIn(W));
   const gov = createCarbonGovernor({ budgetG });
   // Deterministic gate clock derived from the trace's own slot grid, so an audit
@@ -145,14 +183,20 @@ export async function runP2(tasks, W, budgetG, degradedFraction) {
       const { action } = decision;
       // Internal invariant: gated() normalises any verdict outside the ladder to
       // "block" (governor/gate.js), so `action` is always one of the five rungs.
+      const ruleTakesIt = tierRules && action === "block" && t.deferrable;
       if (action === "escalate") { m.escalations++; m.humanDecisions++; }
-      else if (action === "block") { m.blocks++; m.humanDecisions++; if (t.deferrable) m.blocksDeferrable++; }
+      else if (action === "block") {
+        m.blocks++;
+        if (t.deferrable) m.blocksDeferrable++;
+        if (ruleTakesIt) m.ruleApplied++; else m.humanDecisions++;
+      }
       if (action === "terminate") m.terminations++;
 
-      // The human port. The simulated approver always approves; `terminate` is never
-      // put to a human at all, which is why it gets no approval object.
+      // The human port — or, under WP-14's tiering, the standing rule for the one
+      // case it covers. The simulated approver always approves; `terminate` is never
+      // put to anyone at all, which is why it gets no approval object.
       const approval = action === "escalate" || action === "block"
-        ? { approved: true, by: "simulated-approver" }
+        ? { approved: true, by: ruleTakesIt ? "standing-rule:T1-auto-defer-blocked-deferrable" : "simulated-approver" }
         : undefined;
 
       const now = (energyKWh) => gov.commit(exec(m, W, t, slot, energyKWh));
@@ -170,11 +214,19 @@ export async function runP2(tasks, W, budgetG, degradedFraction) {
         : () => now(t.energyKWh * degradedFraction);
 
       const { executed } = execute(decision, plan, approval);
-      if (!executed) m.dropped++;
+      if (!executed) { m.dropped++; m.dropSaveG += t.energyKWh * W.actual[t.arrival]; }
     }
   }
   // Accounting invariant: every task either completed or was dropped. Nothing vanishes.
   if (m.completed + m.dropped !== tasks.length) throw new Error(`lost tasks: ${tasks.length - m.completed - m.dropped}`);
+  // Attribution invariant (WP-2): the three components reassemble P0−P2 exactly.
+  // P0 for the same tasks is Σ e_full x A[arrival]; algebraically the identity is
+  // per-task, so any drift here is a bookkeeping bug, not rounding.
+  const p0G = tasks.reduce((acc, t) => acc + t.energyKWh * W.actual[t.arrival], 0);
+  const parts = m.dropSaveG + m.degradeSaveG + m.timingSaveG;
+  if (Math.abs(p0G - m.totalG - parts) > 1e-6 * Math.max(1, p0G)) {
+    throw new Error(`attribution broken: P0-P2=${p0G - m.totalG} vs parts=${parts}`);
+  }
   m.auditValid = audit.verify().valid;
   m.auditRecords = audit.records().length; // one gate decision per task, measured not assumed
   m.days = m.dayG.length;
@@ -206,6 +258,16 @@ function summarize(runs, p0Totals) {
     humanDecisionsIfDeferralAutomatic: ms(pick((m) => m.humanDecisions - m.blocksDeferrable), 1),
     terminations: ms(pick((m) => m.terminations), 1),
   };
+  if (runs[0].auditValid !== undefined) {
+    // WP-2: the exact attribution, reported both in grams and as shares of the
+    // total saving vs P0 (per-seed shares, then mean ± sd — not a ratio of means).
+    const savings = runs.map((m, i) => p0Totals[i] - m.totalG);
+    out.savingVsP0G = ms(savings, 0);
+    out.ruleApplied = ms(runs.map((m) => m.ruleApplied), 1);
+    out.dropShareOfSavingPct = ms(runs.map((m, i) => (100 * m.dropSaveG) / savings[i]), 1);
+    out.degradeShareOfSavingPct = ms(runs.map((m, i) => (100 * m.degradeSaveG) / savings[i]), 1);
+    out.timingShareOfSavingPct = ms(runs.map((m, i) => (100 * m.timingSaveG) / savings[i]), 1);
+  }
   if (runs[0].auditValid !== undefined) {
     out.days = runs[0].days;
     out.daysOverBudget = ms(pick((m) => m.daysOverBudget), 2);
@@ -251,6 +313,59 @@ async function main() {
       }
       win.policies[`P2_f${f.toFixed(1)}`] = summarize(runs, p0Totals);
     }
+
+    // ── WP-14: the tiered arm at f = 0.8 — same physics, different authoriser ──
+    {
+      const runs = [];
+      for (let i = 0; i < SEEDS.length; i++) {
+        const budgetG = 0.8 * median(p0[i].dayG);
+        runs.push(await runP2(workloads[i], W, budgetG, WORKLOAD.degradedEnergyFraction, true));
+      }
+      win.policies["P2tiered_f0.8"] = summarize(runs, p0Totals);
+    }
+
+    // ── E2b (WP-1): the horizon x deferrable-fraction sweep, argmin objective ──
+    // Each cell is the seeded P3 run for a workload regenerated with that horizon
+    // and fraction (same seeds; the PRNG stream is identical, so arrivals and
+    // energies match across cells — only deadlines and deferrable flags change).
+    // Two comparisons per cell, and they mean different things:
+    //   - expectationPctPeer is the analytic EXPECTATION of this very policy
+    //     (bounds.js's e2Potential, peer column). The seeded mean must agree with
+    //     it within sampling noise — this is a cross-validation of simulation
+    //     against calculus, exactly like E3's argmin_ungated vs argmin_peer — and
+    //     agreementPct records how tightly it does.
+    //   - ceilingPctOracle (the oracle column) IS a bound: no policy deciding on
+    //     the peer signal can beat deciding on the truth, in expectation. The
+    //     seeded mean may not exceed it beyond noise.
+    // P0 totals are cell-independent (P0 ignores deferrability and deadlines), so
+    // pctVsP0 stays comparable across the whole table.
+    const potential = e2Potential(W);
+    const sweep = {
+      objective: "argmin of the peer signal within [arrival, deadline] (P3 — E3's objective)",
+      comparisonSource: "e2Potential() exported by bounds.js — peer column = expectation of this policy; oracle column = the ceiling",
+      arms: {},
+    };
+    for (const h of [6, 12, 24, 48]) {
+      for (const frac of [0.5, 1.0]) {
+        const cellRuns = SEEDS.map((seed) =>
+          runP3(generateWorkload(seed, W.slots, { ...WORKLOAD, deferralHorizonHours: h, deferrableFraction: frac }), W));
+        const cell = summarize(cellRuns, p0Totals);
+        const fKey = `f${frac === 1 ? "1" : frac}`;
+        const expectation = potential[`h${h}`].peer.byFraction[fKey].pctSavedVsArrival;
+        const oracle = potential[`h${h}`].oracle.byFraction[fKey].pctSavedVsArrival;
+        sweep.arms[`h${h}_f${frac}`] = {
+          pctVsP0: cell.pctVsP0,
+          expectationPctPeer: expectation,
+          agreementPct: r(expectation ? (100 * -cell.pctVsP0.mean) / expectation : 0, 1),
+          ceilingPctOracle: oracle,
+          headroomToOraclePp: r(oracle - -cell.pctVsP0.mean, 2),
+          deferred: cell.deferred,
+          meanDelayMin: cell.meanDelayMin,
+          p95DelayMin: cell.p95DelayMin,
+        };
+      }
+    }
+    win.sweep = sweep;
     results[W.id] = win;
   }
   const doc = {

@@ -421,6 +421,26 @@
             "mean": 593.2,
             "sd": 57.5
           },
+          "savingVsP0G": {
+            "mean": 15603,
+            "sd": 449
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 32.1,
+            "sd": 2.7
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 52,
+            "sd": 2
+          },
+          "timingShareOfSavingPct": {
+            "mean": 15.9,
+            "sd": 1.1
+          },
           "days": 28,
           "daysOverBudget": {
             "mean": 20.3,
@@ -496,6 +516,26 @@
           "terminations": {
             "mean": 229,
             "sd": 46.2
+          },
+          "savingVsP0G": {
+            "mean": 12376,
+            "sd": 378
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 15,
+            "sd": 2.7
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 62.8,
+            "sd": 2.5
+          },
+          "timingShareOfSavingPct": {
+            "mean": 22.2,
+            "sd": 0.8
           },
           "days": 28,
           "daysOverBudget": {
@@ -573,6 +613,26 @@
             "mean": 78.5,
             "sd": 30.1
           },
+          "savingVsP0G": {
+            "mean": 10177,
+            "sd": 316
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 6.5,
+            "sd": 2.4
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 67.7,
+            "sd": 2.2
+          },
+          "timingShareOfSavingPct": {
+            "mean": 25.8,
+            "sd": 1
+          },
           "days": 28,
           "daysOverBudget": {
             "mean": 14,
@@ -648,6 +708,26 @@
           "terminations": {
             "mean": 13.5,
             "sd": 12.6
+          },
+          "savingVsP0G": {
+            "mean": 8281,
+            "sd": 299
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 1.3,
+            "sd": 1.2
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 70.2,
+            "sd": 1.9
+          },
+          "timingShareOfSavingPct": {
+            "mean": 28.5,
+            "sd": 1.1
           },
           "days": 28,
           "daysOverBudget": {
@@ -725,6 +805,26 @@
             "mean": 0,
             "sd": 0
           },
+          "savingVsP0G": {
+            "mean": 6721,
+            "sd": 276
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 0,
+            "sd": 0
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 70,
+            "sd": 1.1
+          },
+          "timingShareOfSavingPct": {
+            "mean": 30,
+            "sd": 1.1
+          },
           "days": 28,
           "daysOverBudget": {
             "mean": 5.2,
@@ -738,6 +838,284 @@
           "auditRecordsPerSeed": {
             "mean": 8075,
             "sd": 57
+          }
+        },
+        "P2tiered_f0.8": {
+          "totalGCO2e": {
+            "mean": 51691,
+            "sd": 517
+          },
+          "pctVsP0": {
+            "mean": -16.45,
+            "sd": 0.48
+          },
+          "tasksCompleted": {
+            "mean": 7996.6,
+            "sd": 61.7
+          },
+          "completedOnTime": {
+            "mean": 7996.6,
+            "sd": 61.7
+          },
+          "dropped": {
+            "mean": 78.5,
+            "sd": 30.1
+          },
+          "degraded": {
+            "mean": 1238.2,
+            "sd": 48.5
+          },
+          "deferred": {
+            "mean": 1163.6,
+            "sd": 58
+          },
+          "meanDelayMin": {
+            "mean": 286.1,
+            "sd": 5.8
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 337.5,
+            "sd": 44.5
+          },
+          "humanDecisions": {
+            "mean": 442.9,
+            "sd": 56.1
+          },
+          "blocks": {
+            "mean": 208.2,
+            "sd": 31.4
+          },
+          "blocksDeferrable": {
+            "mean": 102.8,
+            "sd": 17.2
+          },
+          "humanDecisionsIfDeferralAutomatic": {
+            "mean": 340.1,
+            "sd": 48.1
+          },
+          "terminations": {
+            "mean": 78.5,
+            "sd": 30.1
+          },
+          "savingVsP0G": {
+            "mean": 10177,
+            "sd": 316
+          },
+          "ruleApplied": {
+            "mean": 102.8,
+            "sd": 17.2
+          },
+          "dropShareOfSavingPct": {
+            "mean": 6.5,
+            "sd": 2.4
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 67.7,
+            "sd": 2.2
+          },
+          "timingShareOfSavingPct": {
+            "mean": 25.8,
+            "sd": 1
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14,
+            "sd": 0.67
+          },
+          "dailyBudgetG": {
+            "mean": 1875,
+            "sd": 37
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        }
+      },
+      "sweep": {
+        "objective": "argmin of the peer signal within [arrival, deadline] (P3 — E3's objective)",
+        "comparisonSource": "e2Potential() exported by bounds.js — peer column = expectation of this policy; oracle column = the ceiling",
+        "arms": {
+          "h6_f0.5": {
+            "pctVsP0": {
+              "mean": -6.62,
+              "sd": 0.16
+            },
+            "expectationPctPeer": 6.58,
+            "agreementPct": 100.6,
+            "ceilingPctOracle": 7.29,
+            "headroomToOraclePp": 0.67,
+            "deferred": {
+              "mean": 3110.4,
+              "sd": 74.1
+            },
+            "meanDelayMin": {
+              "mean": 234.2,
+              "sd": 1.8
+            },
+            "p95DelayMin": {
+              "mean": 360,
+              "sd": 0
+            }
+          },
+          "h6_f1": {
+            "pctVsP0": {
+              "mean": -13.2,
+              "sd": 0.21
+            },
+            "expectationPctPeer": 13.16,
+            "agreementPct": 100.3,
+            "ceilingPctOracle": 14.57,
+            "headroomToOraclePp": 1.37,
+            "deferred": {
+              "mean": 6206.3,
+              "sd": 75.1
+            },
+            "meanDelayMin": {
+              "mean": 233.7,
+              "sd": 1.3
+            },
+            "p95DelayMin": {
+              "mean": 360,
+              "sd": 0
+            }
+          },
+          "h12_f0.5": {
+            "pctVsP0": {
+              "mean": -11.51,
+              "sd": 0.23
+            },
+            "expectationPctPeer": 11.38,
+            "agreementPct": 101.1,
+            "ceilingPctOracle": 12.26,
+            "headroomToOraclePp": 0.75,
+            "deferred": {
+              "mean": 3376.6,
+              "sd": 67.8
+            },
+            "meanDelayMin": {
+              "mean": 434.5,
+              "sd": 6
+            },
+            "p95DelayMin": {
+              "mean": 720,
+              "sd": 0
+            }
+          },
+          "h12_f1": {
+            "pctVsP0": {
+              "mean": -22.89,
+              "sd": 0.2
+            },
+            "expectationPctPeer": 22.76,
+            "agreementPct": 100.6,
+            "ceilingPctOracle": 24.52,
+            "headroomToOraclePp": 1.63,
+            "deferred": {
+              "mean": 6729.4,
+              "sd": 59.8
+            },
+            "meanDelayMin": {
+              "mean": 434.2,
+              "sd": 4
+            },
+            "p95DelayMin": {
+              "mean": 720,
+              "sd": 0
+            }
+          },
+          "h24_f0.5": {
+            "pctVsP0": {
+              "mean": -17.29,
+              "sd": 0.33
+            },
+            "expectationPctPeer": 17.14,
+            "agreementPct": 100.9,
+            "ceilingPctOracle": 18.09,
+            "headroomToOraclePp": 0.8,
+            "deferred": {
+              "mean": 3701.7,
+              "sd": 68.2
+            },
+            "meanDelayMin": {
+              "mean": 774.2,
+              "sd": 8.6
+            },
+            "p95DelayMin": {
+              "mean": 1440,
+              "sd": 0
+            }
+          },
+          "h24_f1": {
+            "pctVsP0": {
+              "mean": -34.39,
+              "sd": 0.22
+            },
+            "expectationPctPeer": 34.28,
+            "agreementPct": 100.3,
+            "ceilingPctOracle": 36.17,
+            "headroomToOraclePp": 1.78,
+            "deferred": {
+              "mean": 7365.7,
+              "sd": 51.3
+            },
+            "meanDelayMin": {
+              "mean": 775.1,
+              "sd": 3.3
+            },
+            "p95DelayMin": {
+              "mean": 1440,
+              "sd": 0
+            }
+          },
+          "h48_f0.5": {
+            "pctVsP0": {
+              "mean": -22.95,
+              "sd": 0.42
+            },
+            "expectationPctPeer": 22.86,
+            "agreementPct": 100.4,
+            "ceilingPctOracle": 24.03,
+            "headroomToOraclePp": 1.08,
+            "deferred": {
+              "mean": 3866.8,
+              "sd": 65.4
+            },
+            "meanDelayMin": {
+              "mean": 1493.5,
+              "sd": 11.6
+            },
+            "p95DelayMin": {
+              "mean": 2849.3,
+              "sd": 2.4
+            }
+          },
+          "h48_f1": {
+            "pctVsP0": {
+              "mean": -45.71,
+              "sd": 0.27
+            },
+            "expectationPctPeer": 45.73,
+            "agreementPct": 100,
+            "ceilingPctOracle": 48.06,
+            "headroomToOraclePp": 2.35,
+            "deferred": {
+              "mean": 7702.1,
+              "sd": 60.1
+            },
+            "meanDelayMin": {
+              "mean": 1497.6,
+              "sd": 5.7
+            },
+            "p95DelayMin": {
+              "mean": 2850,
+              "sd": 0
+            }
           }
         }
       }
@@ -997,6 +1375,26 @@
             "mean": 1080.4,
             "sd": 59.6
           },
+          "savingVsP0G": {
+            "mean": 16699,
+            "sd": 555
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 60.5,
+            "sd": 1.5
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 32.8,
+            "sd": 1.4
+          },
+          "timingShareOfSavingPct": {
+            "mean": 6.7,
+            "sd": 0.5
+          },
           "days": 28,
           "daysOverBudget": {
             "mean": 19.2,
@@ -1072,6 +1470,26 @@
           "terminations": {
             "mean": 672.7,
             "sd": 79.3
+          },
+          "savingVsP0G": {
+            "mean": 13178,
+            "sd": 634
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 50.7,
+            "sd": 3
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 41.7,
+            "sd": 2.5
+          },
+          "timingShareOfSavingPct": {
+            "mean": 7.6,
+            "sd": 0.7
           },
           "days": 28,
           "daysOverBudget": {
@@ -1149,6 +1567,26 @@
             "mean": 376.3,
             "sd": 76.1
           },
+          "savingVsP0G": {
+            "mean": 10146,
+            "sd": 672
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 39.7,
+            "sd": 4.6
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 52.2,
+            "sd": 4.4
+          },
+          "timingShareOfSavingPct": {
+            "mean": 8.2,
+            "sd": 0.6
+          },
           "days": 28,
           "daysOverBudget": {
             "mean": 14.4,
@@ -1224,6 +1662,26 @@
           "terminations": {
             "mean": 210.2,
             "sd": 47.7
+          },
+          "savingVsP0G": {
+            "mean": 7708,
+            "sd": 508
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 30.3,
+            "sd": 4.9
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 60.9,
+            "sd": 4.9
+          },
+          "timingShareOfSavingPct": {
+            "mean": 8.7,
+            "sd": 0.6
           },
           "days": 28,
           "daysOverBudget": {
@@ -1301,6 +1759,26 @@
             "mean": 103.2,
             "sd": 40.1
           },
+          "savingVsP0G": {
+            "mean": 5865,
+            "sd": 425
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 19.6,
+            "sd": 6.5
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 70.5,
+            "sd": 6.4
+          },
+          "timingShareOfSavingPct": {
+            "mean": 9.9,
+            "sd": 0.5
+          },
           "days": 28,
           "daysOverBudget": {
             "mean": 9,
@@ -1314,6 +1792,284 @@
           "auditRecordsPerSeed": {
             "mean": 8075,
             "sd": 57
+          }
+        },
+        "P2tiered_f0.8": {
+          "totalGCO2e": {
+            "mean": 39899,
+            "sd": 651
+          },
+          "pctVsP0": {
+            "mean": -20.27,
+            "sd": 1.3
+          },
+          "tasksCompleted": {
+            "mean": 7698.8,
+            "sd": 99.7
+          },
+          "completedOnTime": {
+            "mean": 7698.8,
+            "sd": 99.7
+          },
+          "dropped": {
+            "mean": 376.3,
+            "sd": 76.1
+          },
+          "degraded": {
+            "mean": 1220.9,
+            "sd": 30.8
+          },
+          "deferred": {
+            "mean": 816.9,
+            "sd": 39
+          },
+          "meanDelayMin": {
+            "mean": 232.5,
+            "sd": 5.7
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 414.2,
+            "sd": 48.2
+          },
+          "humanDecisions": {
+            "mean": 637,
+            "sd": 47.2
+          },
+          "blocks": {
+            "mean": 438.8,
+            "sd": 41.5
+          },
+          "blocksDeferrable": {
+            "mean": 216,
+            "sd": 19.2
+          },
+          "humanDecisionsIfDeferralAutomatic": {
+            "mean": 421,
+            "sd": 49.5
+          },
+          "terminations": {
+            "mean": 376.3,
+            "sd": 76.1
+          },
+          "savingVsP0G": {
+            "mean": 10146,
+            "sd": 672
+          },
+          "ruleApplied": {
+            "mean": 216,
+            "sd": 19.2
+          },
+          "dropShareOfSavingPct": {
+            "mean": 39.7,
+            "sd": 4.6
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 52.2,
+            "sd": 4.4
+          },
+          "timingShareOfSavingPct": {
+            "mean": 8.2,
+            "sd": 0.6
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14.4,
+            "sd": 0.84
+          },
+          "dailyBudgetG": {
+            "mean": 1405,
+            "sd": 32
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 8075,
+            "sd": 57
+          }
+        }
+      },
+      "sweep": {
+        "objective": "argmin of the peer signal within [arrival, deadline] (P3 — E3's objective)",
+        "comparisonSource": "e2Potential() exported by bounds.js — peer column = expectation of this policy; oracle column = the ceiling",
+        "arms": {
+          "h6_f0.5": {
+            "pctVsP0": {
+              "mean": -8.54,
+              "sd": 0.22
+            },
+            "expectationPctPeer": 8.44,
+            "agreementPct": 101.2,
+            "ceilingPctOracle": 9.05,
+            "headroomToOraclePp": 0.51,
+            "deferred": {
+              "mean": 3064.4,
+              "sd": 41.2
+            },
+            "meanDelayMin": {
+              "mean": 255.6,
+              "sd": 2.9
+            },
+            "p95DelayMin": {
+              "mean": 360,
+              "sd": 0
+            }
+          },
+          "h6_f1": {
+            "pctVsP0": {
+              "mean": -16.93,
+              "sd": 0.23
+            },
+            "expectationPctPeer": 16.89,
+            "agreementPct": 100.2,
+            "ceilingPctOracle": 18.11,
+            "headroomToOraclePp": 1.18,
+            "deferred": {
+              "mean": 6099.1,
+              "sd": 21.7
+            },
+            "meanDelayMin": {
+              "mean": 255.3,
+              "sd": 1.9
+            },
+            "p95DelayMin": {
+              "mean": 360,
+              "sd": 0
+            }
+          },
+          "h12_f0.5": {
+            "pctVsP0": {
+              "mean": -14.95,
+              "sd": 0.41
+            },
+            "expectationPctPeer": 14.89,
+            "agreementPct": 100.4,
+            "ceilingPctOracle": 15.51,
+            "headroomToOraclePp": 0.56,
+            "deferred": {
+              "mean": 3350.1,
+              "sd": 45.4
+            },
+            "meanDelayMin": {
+              "mean": 465.7,
+              "sd": 6.2
+            },
+            "p95DelayMin": {
+              "mean": 720,
+              "sd": 0
+            }
+          },
+          "h12_f1": {
+            "pctVsP0": {
+              "mean": -29.68,
+              "sd": 0.29
+            },
+            "expectationPctPeer": 29.78,
+            "agreementPct": 99.7,
+            "ceilingPctOracle": 31.02,
+            "headroomToOraclePp": 1.34,
+            "deferred": {
+              "mean": 6676.9,
+              "sd": 36.9
+            },
+            "meanDelayMin": {
+              "mean": 465.7,
+              "sd": 3.6
+            },
+            "p95DelayMin": {
+              "mean": 720,
+              "sd": 0
+            }
+          },
+          "h24_f0.5": {
+            "pctVsP0": {
+              "mean": -20.26,
+              "sd": 0.48
+            },
+            "expectationPctPeer": 20.18,
+            "agreementPct": 100.4,
+            "ceilingPctOracle": 20.86,
+            "headroomToOraclePp": 0.6,
+            "deferred": {
+              "mean": 3843.2,
+              "sd": 50
+            },
+            "meanDelayMin": {
+              "mean": 774.3,
+              "sd": 7.9
+            },
+            "p95DelayMin": {
+              "mean": 1440,
+              "sd": 0
+            }
+          },
+          "h24_f1": {
+            "pctVsP0": {
+              "mean": -40.28,
+              "sd": 0.3
+            },
+            "expectationPctPeer": 40.36,
+            "agreementPct": 99.8,
+            "ceilingPctOracle": 41.71,
+            "headroomToOraclePp": 1.43,
+            "deferred": {
+              "mean": 7658.9,
+              "sd": 55.5
+            },
+            "meanDelayMin": {
+              "mean": 774.4,
+              "sd": 5
+            },
+            "p95DelayMin": {
+              "mean": 1440,
+              "sd": 0
+            }
+          },
+          "h48_f0.5": {
+            "pctVsP0": {
+              "mean": -25.03,
+              "sd": 0.58
+            },
+            "expectationPctPeer": 24.94,
+            "agreementPct": 100.4,
+            "ceilingPctOracle": 25.61,
+            "headroomToOraclePp": 0.58,
+            "deferred": {
+              "mean": 3899.4,
+              "sd": 50.4
+            },
+            "meanDelayMin": {
+              "mean": 1473.3,
+              "sd": 15.4
+            },
+            "p95DelayMin": {
+              "mean": 2847,
+              "sd": 9.5
+            }
+          },
+          "h48_f1": {
+            "pctVsP0": {
+              "mean": -49.82,
+              "sd": 0.33
+            },
+            "expectationPctPeer": 49.88,
+            "agreementPct": 99.9,
+            "ceilingPctOracle": 51.22,
+            "headroomToOraclePp": 1.4,
+            "deferred": {
+              "mean": 7773.2,
+              "sd": 58
+            },
+            "meanDelayMin": {
+              "mean": 1477.7,
+              "sd": 13.2
+            },
+            "p95DelayMin": {
+              "mean": 2847,
+              "sd": 9.5
+            }
           }
         }
       }

@@ -266,7 +266,21 @@ const REGISTRY = [
   ["docs/EXECUTIVE-CASE.md", "E3 avoided winter (honest numbers row)", /\*\*(\d+\.\d+)% \/ \d+\.\d+%\*\* avoided — but decomposed/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
   ["docs/EXECUTIVE-CASE.md", "human decisions winter (gate cost row)", /\((\d+\.\d+)\/\d+ decisions per window/i, S("results|W1|policies|P2_f0.8|humanDecisions|mean")],
 
-  // ── docs/adr/ADR-011  // ── docs/adr/ADR-011 (the same R13 comparison, restated where the decision lives) ─
+  // ── WP-2 decomposition shares (exact attribution at f=0.8) ───────────────────
+  ["docs/ROADMAP.md", "WP-2 drop share, winter", /\| dropping work entirely \| \*\*(\d+\.\d+)%\*\* \| \*\*\d+\.\d+%\*\* \|/i, S("results|W1|policies|P2_f0.8|dropShareOfSavingPct|mean")],
+  ["docs/ROADMAP.md", "WP-2 drop share, summer", /\| dropping work entirely \| \*\*\d+\.\d+%\*\* \| \*\*(\d+\.\d+)%\*\* \|/i, S("results|W2|policies|P2_f0.8|dropShareOfSavingPct|mean")],
+  ["docs/ROADMAP.md", "WP-2 degrade share, winter", /\| running work degraded \| \*\*(\d+\.\d+)%\*\* \| \*\*\d+\.\d+%\*\* \|/i, S("results|W1|policies|P2_f0.8|degradeShareOfSavingPct|mean")],
+  ["docs/ROADMAP.md", "WP-2 degrade share, summer", /\| running work degraded \| \*\*\d+\.\d+%\*\* \| \*\*(\d+\.\d+)%\*\* \|/i, S("results|W2|policies|P2_f0.8|degradeShareOfSavingPct|mean")],
+  ["docs/ROADMAP.md", "WP-2 timing share, winter", /\| timing \(deferral of what ran\) \| \*\*(\d+\.\d+)%\*\* \| \*\*\d+\.\d+%\*\* \|/i, S("results|W1|policies|P2_f0.8|timingShareOfSavingPct|mean")],
+  ["docs/ROADMAP.md", "WP-2 timing share, summer", /\| timing \(deferral of what ran\) \| \*\*\d+\.\d+%\*\* \| \*\*(\d+\.\d+)%\*\* \|/i, S("results|W2|policies|P2_f0.8|timingShareOfSavingPct|mean")],
+
+  // ── WP-1 / E2b sweep headline numbers  // ── WP-1 / E2b sweep headline numbers ────────────────────────────────────────
+  ["docs/ROADMAP.md", "E2b argmin at P1's settings, winter", /reaches \*\*−(\d+\.\d+)% \/ −\d+\.\d+%\*\* against P1's/i, S("results|W1|sweep|arms|h6_f0.5|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2b argmin at P1's settings, summer", /reaches \*\*−\d+\.\d+% \/ −(\d+\.\d+)%\*\* against P1's/i, S("results|W2|sweep|arms|h6_f0.5|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2b sweep top cell, winter", /tops out at \*\*−(\d+\.\d+)% \/ −\d+\.\d+%\*\* \(48 h/i, S("results|W1|sweep|arms|h48_f1|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "E2b sweep top cell, summer", /tops out at \*\*−\d+\.\d+% \/ −(\d+\.\d+)%\*\* \(48 h/i, S("results|W2|sweep|arms|h48_f1|pctVsP0|mean"), "neg"],
+
+  // ── docs/adr/ADR-011  // ── docs/adr/ADR-011  // ── docs/adr/ADR-011 (the same R13 comparison, restated where the decision lives) ─
   ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 ungated argmin saving, winter", /argmin-only shift avoids (\d+\.\d+)%\n\(winter\)/i, C("results|W1|argmin_ungated|pctAvoidedVsNaive|mean")],
   ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 ungated argmin saving, summer", /\(winter\) and (\d+\.\d+)% \(summer\) against the governed/i, C("results|W2|argmin_ungated|pctAvoidedVsNaive|mean")],
   ["docs/adr/ADR-011-charging-start-time-shift-only.md", "R13 governed saving, winter", /against the governed (\d+\.\d+)% and \d+\.\d+%/i, C("results|W1|governed_approval1.00|pctAvoidedVsNaive|mean")],

@@ -62,11 +62,70 @@ Model constants: 24 units x 0.05 kWh per system per day, slot capacity 4, measur
 | 25 | 2 | 1 | 74.99 | 1.18 | 32.74% | 2 |
 | 25 | 2 | 7 | 86.59 | 1.83 | 32.8% | 1.621 |
 
-## What the table actually shows (the three findings)
+## WP-12 — can anything dissolve the herd? (W1)
+
+| arm | N | alpha | staleness | g/kWh paid | top-5% share | peak ratio | oscillation | dropped |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| stagger | 5 | 0 | 1 | 76.58 | 33.33% | 1.17 | 1.333 | — |
+| paced | 5 | 0 | 1 | 76.29 | 36.56% | 1.22 | 1.364 | 6.55% |
+| paced_defer | 5 | 0 | 1 | 73.03 | 41.46% | 1.11 | 1.415 | 13.39% |
+| stagger | 5 | 0 | 7 | 76.58 | 33.33% | 1.17 | 1.333 | — |
+| paced | 5 | 0 | 7 | 76.29 | 36.56% | 1.22 | 1.364 | 6.55% |
+| paced_defer | 5 | 0 | 7 | 73.03 | 41.46% | 1.11 | 1.415 | 13.39% |
+| stagger | 5 | 2 | 1 | 92.7 | 26.01% | 1.57 | 1.995 | — |
+| paced | 5 | 2 | 1 | 91.11 | 29.56% | 1.55 | 2.003 | 11.31% |
+| paced_defer | 5 | 2 | 1 | 90.89 | 29.44% | 1.46 | 2.052 | 16.07% |
+| stagger | 5 | 2 | 7 | 94.16 | 20.71% | 2.71 | 1.14 | — |
+| paced | 5 | 2 | 7 | 91.39 | 21.86% | 2.47 | 1.183 | 10.6% |
+| paced_defer | 5 | 2 | 7 | 89.95 | 24.18% | 2.53 | 1.191 | 12.74% |
+| stagger | 25 | 0 | 1 | 76.58 | 33.33% | 1.18 | 1.335 | — |
+| paced | 25 | 0 | 1 | 76.29 | 36.56% | 1.22 | 1.364 | 6.55% |
+| paced_defer | 25 | 0 | 1 | 73.03 | 41.46% | 1.11 | 1.415 | 13.39% |
+| stagger | 25 | 0 | 7 | 76.58 | 33.33% | 1.18 | 1.335 | — |
+| paced | 25 | 0 | 7 | 76.29 | 36.56% | 1.22 | 1.364 | 6.55% |
+| paced_defer | 25 | 0 | 7 | 73.03 | 41.46% | 1.11 | 1.415 | 13.39% |
+| stagger | 25 | 2 | 1 | 87.3 | 32.21% | 1.45 | 2 | — |
+| paced | 25 | 2 | 1 | 83.04 | 37.85% | 1.45 | 1.984 | 9.23% |
+| paced_defer | 25 | 2 | 1 | 80.9 | 38.06% | 1.36 | 1.941 | 13.1% |
+| stagger | 25 | 2 | 7 | 91.13 | 32.38% | 2.23 | 1.705 | — |
+| paced | 25 | 2 | 7 | 87.23 | 36.84% | 2.06 | 1.746 | 8.57% |
+| paced_defer | 25 | 2 | 7 | 86.57 | 37.38% | 1.95 | 1.747 | 11.4% |
+
+## WP-12 — can anything dissolve the herd? (W2)
+
+| arm | N | alpha | staleness | g/kWh paid | top-5% share | peak ratio | oscillation | dropped |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| stagger | 5 | 0 | 1 | 71.5 | 33.33% | 1.1 | 0.841 | — |
+| paced | 5 | 0 | 1 | 71.45 | 40% | 1.31 | 0.89 | 13.99% |
+| paced_defer | 5 | 0 | 1 | 71.69 | 40.17% | 1.16 | 0.982 | 14.29% |
+| stagger | 5 | 0 | 7 | 71.5 | 33.33% | 1.1 | 0.841 | — |
+| paced | 5 | 0 | 7 | 71.45 | 40% | 1.31 | 0.89 | 13.99% |
+| paced_defer | 5 | 0 | 7 | 71.69 | 40.17% | 1.16 | 0.982 | 14.29% |
+| stagger | 5 | 2 | 1 | 78.75 | 26.9% | 1.44 | 1.992 | — |
+| paced | 5 | 2 | 1 | 78.62 | 33.12% | 1.58 | 2.015 | 16.96% |
+| paced_defer | 5 | 2 | 1 | 80.22 | 32.94% | 1.66 | 2.021 | 17.86% |
+| stagger | 5 | 2 | 7 | 89.54 | 17.26% | 2.29 | 0.936 | — |
+| paced | 5 | 2 | 7 | 85.08 | 21.54% | 2.44 | 1.053 | 20.89% |
+| paced_defer | 5 | 2 | 7 | 85.13 | 20.97% | 2.54 | 1.006 | 21.07% |
+| stagger | 25 | 0 | 1 | 71.5 | 33.33% | 1.14 | 0.869 | — |
+| paced | 25 | 0 | 1 | 71.45 | 40% | 1.31 | 0.89 | 13.99% |
+| paced_defer | 25 | 0 | 1 | 71.69 | 40.17% | 1.16 | 0.982 | 14.29% |
+| stagger | 25 | 0 | 7 | 71.5 | 33.33% | 1.14 | 0.869 | — |
+| paced | 25 | 0 | 7 | 71.45 | 40% | 1.31 | 0.89 | 13.99% |
+| paced_defer | 25 | 0 | 7 | 71.69 | 40.17% | 1.16 | 0.982 | 14.29% |
+| stagger | 25 | 2 | 1 | 74.97 | 33.05% | 1.25 | 2 | — |
+| paced | 25 | 2 | 1 | 74.35 | 40.27% | 1.43 | 2.019 | 15.18% |
+| paced_defer | 25 | 2 | 1 | 76.11 | 38.98% | 1.34 | 2.017 | 15.18% |
+| stagger | 25 | 2 | 7 | 87.44 | 32.62% | 1.81 | 1.681 | — |
+| paced | 25 | 2 | 7 | 81.99 | 41.29% | 2.36 | 1.705 | 19.06% |
+| paced_defer | 25 | 2 | 7 | 83.18 | 41.92% | 2.16 | 1.649 | 19.65% |
+
+## What the table actually shows (the four findings)
 
 1. **The plane spreads the crowd only by paying grams.** Every alpha > 0 cell pays MORE mean intensity than its blind-herd counterpart (the herd pure-argmins the real signal; asserted as an invariant in loop.test.js). Where the top-5% share falls — most visibly at N=2, alpha=2, weekly cadence: 33.33% -> 14.88% (winter) and -> 11.9% (summer) — the price is dirtier slots (76.55 -> 99.52 and 71.46 -> 86.8 g/kWh). **A published signal alone cannot both spread the herd and stay clean.** That is the measured case for the second half of WP-17: allocation (the gate's paced budget) rather than information alone — and it is exactly Bailey et al.'s TOU-vs-managed-charging finding, reproduced in a publication-medium model.
 2. **Fresh mutual observation oscillates.** At N >= 5 with daily publication and strong heed, day-to-day oscillation sits at or near its maximum of 2 — complete daily swaps, the cobweb: everyone reads the same picture, everyone jumps together, the picture inverts. Staleness *lowers* oscillation here (phase-offset publication desynchronises the crowd) at the cost of steering on old data. Neither end is stable-and-clean; that trade is the result.
 3. **The effect shrinks as N grows.** With many identical systems the per-peer signal averages out (top-5% share climbs back toward the herd's 33.33% cap-bound value at N=25). Spreading a LARGE crowd through voluntary document-reading alone does not happen in this model; it needs heterogeneity, allocation, or both.
+4. **WP-12's verdict, and it falsifies our own conjecture.** Three anti-herd mechanisms were run head-to-head (table above): a PACED BUDGET with skip-k rungs sheds work instead of spreading it (units drop, the top-5% share RISES because survivors still pile into the same slots); the same budget with the gate's true DEFER semantics reshuffles inside the same cheap band (top share rises to ~41%, no drops); and the STAGGER arm — SI 2021/1467's intent at slot resolution — is inert, because near-ties within 1 g/kWh are rare on real intensity data (consistent with the regulation targeting sub-slot synchrony, not slot-level herding). The claim "a paced budget is a staggering mechanism" is therefore FALSIFIED in this model class. What actually bounds the herd in every row is the per-system slot CAP — capacity semantics. The redirect is concrete: the gate's anti-herd lever is rate/capacity rungs (degrade = halve your per-slot cap), which is CarbonFlex's capacity limit made a governance verdict — designed, not yet built (WP-12b).
 
 ## Reading notes
 

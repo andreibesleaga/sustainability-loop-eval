@@ -22,15 +22,105 @@ prosecution before anything was changed. No experiment was re-run against new da
   are unchanged value for value. It is the R13 comparison made runnable rather than
   asserted: **32.85% / 16.53% avoided by the scheduler alone** against **32.51% /
   16.04%** governed (winter / summer).
-- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,966.** Two reasons, both additive:
+- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,981.** Two reasons, both additive:
   F12 grew from 33 to 92 registered claims because more hand-typed numbers were bound to
   `results/` (see below), and **F13** was added with 1,500 cases. Nothing failed; the
   suite got larger.
 - **Adapter unit tests: 32 → 33** (one structural test added; the "26" the docs said was
   already stale at v1.1.0 — the actual count then was 32).
 
+### Descoped
+
+- **WP-16 (price-signal twin) will not be implemented** (owner decision, 2026-09-02).
+  A summary of how to build it, why it was cut, and when it would ever be needed is
+  kept in ROADMAP §5's WP-16 row (and the original task text stays in RUNBOOK).
+  Consequences, stated where they bite: §2g's £ arithmetic stays labelled
+  *illustrative*, the C3/C12 candidate experiments stay candidates, and the
+  second-grid signal-adapter proof remains open — the portability claim is
+  architectural, not empirical. No carbon result anywhere depends on WP-16.
+
 ### Added
 
+- **WP-5 delivered — the metering port contract** (`docs/ports/METERING.md` +
+  `simulation/metering.test.js`, 4 offline cases): the self-declared-estimate /
+  metered-actual reconciliation that F13 proves is now *stated where the port is
+  defined* — a strategic under-declaration is bounded to one action because
+  `commit()` is charged the actual grams before the next gate call. Tested against
+  the real governor and the real `runP2` call path, not a mock. Closes the contract
+  half of R15; trusted measurement and attestation stay open and are said so.
+- **WP-17 delivered — the closed loop with REAL documents** (`npm run plane` →
+  `results/plane.*`, `simulation/plane.js` + `plane.test.js`): systems publish and
+  consume documents in the gateway's own shape, with the mandatory member set
+  derived from the committed gateway documents at run time so a format drift fails
+  the arm rather than passing quietly. Two findings. **Staleness costs carbon:** at
+  E1's measured real-world median cadence (23 days) the loop pays 83.3 vs 78.51
+  g/kWh at runtime cadence, +6.1%. **The signal member matters more than the
+  cadence:** a peer's published `carbon-intensity` is its own ACHIEVED intensity, so
+  a well-optimised peer always looks clean regardless of grid state — degenerate as
+  a congestion signal — whereas `energy-consumption` (load) is the number that says
+  the shared resource is busy; measured coverage on the committed documents is 3/12
+  for intensity against 12/12 for the load-side members. That yields a concrete
+  recommendation for the Internet-Draft: **publishing load is cheaper, more widely
+  available, and more useful for regulation than publishing intensity.** Closes the
+  format half of limitation R12; R5 (no independent publishers) stays open and is
+  named as an adoption problem.
+- **WP-12 delivered — the anti-herd comparison, with a negative verdict stated as
+  such.** `npm run loop` now runs three mechanisms head-to-head against the blind
+  herd at the representative corners: a BINDING paced budget (calibrated to the
+  herd's own achievable day — the first calibration, f x the uncontrolled mean,
+  never fired a rung, which is itself recorded) with skip-k rung semantics — it
+  **sheds** 6.6–14% of the work and the top-5% share *rises*; the same budget with
+  the gate's true DEFER semantics — no drops, but the crowd **reshuffles** inside
+  the same cheap band (top share ~41%); and a STAGGER arm carrying SI 2021/1467's
+  intent at slot resolution — **inert**, because near-ties within 1 g/kWh are rare
+  on real intensity data (noted beside R18). The repository's own §2h.2 conjecture
+  ("a paced budget is a staggering mechanism") is **falsified in this model class**
+  and corrected in ROADMAP/EXECUTIVE-CASE rather than reworded; what bounds the
+  herd in every row is the per-system slot cap, so the corrected claim is that the
+  gate's anti-herd lever is **capacity semantics** (WP-12b: capacity rungs,
+  designed, not built). Six new invariant tests pin the verdict.
+- **WP-3 delivered — the forecast port** (`docs/ports/FORECAST.md` — the first of
+  the six port contracts and the template for the rest; `simulation/fetch-forecast.js`
+  — manual network capture of NESO's fw48h, national + the three peer regions, with
+  the prospective grading protocol built in: `--grade` writes MAPE/MAE/bias by lead
+  time once a capture settles, and regional series are declared ungradable rather
+  than backfilled (R2); a first live capture committed under `data/forecast/`, which
+  immediately yielded an honest observation — the available fw48h horizon varies by
+  time of day (62 of 96 nominal periods at this capture hour); reference adapter
+  `simulation/forecast.js` + conformance suite `forecast.test.js`). Nothing in
+  `npm test` touches the network.
+- **WP-14 delivered — tiered governance as a mechanism** (`P2tiered_f0.8` arm in
+  `npm run simulate`, rendered with its own acceptance sentence in
+  `results/simulation.md`): one standing rule ("standing-rule:T1-auto-defer-
+  blocked-deferrable", named in the approval object) authorises what a person used
+  to rubber-stamp; humans keep tier T2 (escalations + blocks on non-deferrable
+  work); `terminate` remains authorisable by no one. Property-tested: emissions,
+  completions, drops, degradations and deferrals are IDENTICAL to the untired run,
+  the human count equals the previously reported sensitivity EXACTLY
+  (545.7 → 442.9 winter, 853 → 637 summer), and the rule's coverage is precisely
+  the blocked-deferrable set.
+- **WP-2 delivered — the exact saving decomposition**, without ablation arms: P2 now
+  attributes every task's contribution into drop (never ran, priced at arrival),
+  degrade (made smaller, priced at arrival) and timing (what ran, moved), with the
+  identity drop+degrade+timing ≡ P0−P2 enforced by a throw in `runP2` and asserted
+  again from the committed results. Measured at f = 0.8: winter **6.5 / 67.7 /
+  25.8%**, summer **39.7 / 52.2 / 8.2%** — the ROADMAP's arithmetic predicted the
+  right story and understated it (timing is 8.2% of the summer saving; drops
+  cluster in the dirty hours the budget runs out in). Rendered as its own block in
+  `results/simulation.md`.
+- **WP-1 delivered — E2b, the horizon and objective sweep** (`runP3` + `sweep` in
+  `simulation/run.js`, rendered in `results/simulation.md`, 3 new invariant tests):
+  P3 runs deferrable work at the argmin of the peer signal inside its horizon —
+  E3's objective applied to E2 — across horizon {6,12,24,48} h × deferrable fraction
+  {0.5,1.0}, same seeds. At P1's own settings the objective alone lifts the saving
+  from −1.54%/−2.97% to **−6.62%/−8.54%**; the table tops out at
+  **−45.71%/−49.82%** (48 h, all-deferrable). Every cell agrees with bounds.js's
+  analytic expectation within ~1% (cross-validation of simulation against calculus;
+  `e2Potential` is now exported and shared, not duplicated) and sits under the
+  oracle ceiling with only 0.5–2.4 pp of headroom — a perfect signal buys little.
+  The ROADMAP's pre-registered prediction ("low single digits at the comparable
+  cell") held; the reconciliation note explains why the wide-open cells run higher
+  (whole-day baseline, longer horizons, the 2026 grid's deeper troughs).
 - **E5, E6 and E6b — the invention's first real simulations** (`npm run loop`,
   `npm run routing`; `simulation/loop.js` + `loop.test.js`, `simulation/routing.js` +
   `routing.test.js`; `results/loop.*`, `results/routing.*`). All deterministic, no

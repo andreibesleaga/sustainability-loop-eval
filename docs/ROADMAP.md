@@ -11,7 +11,7 @@
 
 1. We built a safety gate for AI agents: before an agent acts, the gate says *yes / do
    it smaller / ask a person / no / stop*, and writes the reason where nobody can
-   quietly edit it. That gate is real, shipped, and passed every one of 14,966 attack
+   quietly edit it. That gate is real, shipped, and passed every one of 14,981 attack
    cases. It is the part that lasts.
 2. We then asked the gate to keep an AI workload inside a daily carbon budget, on real
    British grid data. It worked — but most of the "carbon saved" came from doing less
@@ -34,9 +34,11 @@
    already legislated against it for EV chargers, and our EV model itself lacks the
    legally required random delay (now limitation R18). The first measurement now
    exists: `npm run loop` shows the published plane spreads the herd only by paying
-   grams, and fresh mutual observation oscillates — information alone is not enough,
-   which is precisely the gate's job. Finishing that measurement (WP-12+WP-17) is our
-   best shot at a genuinely new result.
+   grams, and fresh mutual observation oscillates — information alone is not enough.
+   WP-12 then tested whether the gate's paced budget dissolves the herd: it does not
+   (it sheds or reshuffles — our own conjecture, falsified and said so), and the real
+   anti-herd lever turns out to be capacity semantics. Honest negative results at an
+   unmeasured frontier are still firsts; WP-17's document-native loop remains open.
 8. The actual invention is bigger than scheduling: every system *publishes* its own
    sustainability data at a standard web address and *reads* everyone else's, so
    systems regulate each other — like `robots.txt`, but with numbers, for carbon. That
@@ -95,7 +97,7 @@ the governor.
   that the agent cannot route around, plus a record a human can audit later. That place
   is architectural, not a feature. This package's real result is that such a place
   *exists in shipped code* and holds its properties under adversarial testing:
-  13 fitness functions over 14,966 cases against the real `kaiban-distributed`
+  13 fitness functions over 14,981 cases against the real `kaiban-distributed`
   `ActionGate`, not a mock. That result does not depend on carbon being the constraint.
 - **The carbon half: needed, but currently over-claimed by the framing, not by the
   numbers.** See section 2 — the numbers in `results/` are honest; it is easy to *read*
@@ -134,6 +136,20 @@ split at roughly:
 | dropping work entirely | ~6% | ~23% |
 | running work degraded | ~56% | ~45% |
 | timing (deferral) + intensity weighting | ~38% | ~32% |
+
+*Measured 2026-09-02 (WP-2, `npm run simulate` — exact per-task attribution, the
+identity drop+degrade+timing ≡ P0−P2 enforced by a throw in the code):*
+
+| source of the saving (measured, f = 0.8) | winter | summer |
+|---|---:|---:|
+| dropping work entirely | **6.5%** | **39.7%** |
+| running work degraded | **67.7%** | **52.2%** |
+| timing (deferral of what ran) | **25.8%** | **8.2%** |
+
+*The arithmetic above predicted the right story and understated it: timing is worth a
+quarter of the saving in winter and almost nothing (8.2%) in summer — where drops
+cluster in exactly the dirty hours the budget runs out in, so "doing less work" is
+91.9% of the summer saving.*
 
 **Reading:** the majority of P2's headline number is the service getting smaller. The
 package already says this — limitation R4, and the results file says "P2 is not a
@@ -227,8 +243,12 @@ Three consequences, and they change the plan:
 **So the answer to "is it worth it" is: deferral is worth more than E2 measured and
 less than E3's headline suggests, and settling it needs one experiment, not a new
 model — run E2 again with a longer horizon, an argmin objective, and the peak-avoidance
-and clean-seeking components reported apart.** That experiment does not exist yet. It
-is WP-1 and WP-2b below, and it is the highest-value work left in this repository.
+and clean-seeking components reported apart.** *That experiment now exists (2026-09-02):
+WP-2b was delivered by `npm run bounds`, and WP-1 by the E2b sweep in
+`npm run simulate` — at the same horizon and fraction the article used, the argmin
+objective alone lifts the saving from −1.54%/−2.97% to **−6.62%/−8.54%**, and giving
+deferral real room (48 h, everything deferrable) reaches **−45.71%/−49.82%**, always
+within a point of the analytic expectation.*
 
 ### 2d. What the gate contributes — measured, and it is not grams
 
@@ -249,7 +269,7 @@ governance *legitimising and recording* a reduction that a scheduler produced.
 
 | claim | status |
 |---|---|
-| A governance gate can hold ladder semantics, fail-closed, human binding and a tamper-evident record in shipped agentic runtime code | **Proved.** 13 fitness functions, 14,966 cases, real `ActionGate`. |
+| A governance gate can hold ladder semantics, fail-closed, human binding and a tamper-evident record in shipped agentic runtime code | **Proved.** 13 fitness functions, 14,981 cases, real `ActionGate`. |
 | Carbon can be one such constraint, end to end, from a published signal to an audited verdict | **Demonstrated**, on real grid traces and a live data plane. |
 | Carbon-aware *deferral* is worth a large saving | **Under-measured, not disproved.** E3 says 32.85% with room to move; E2 says 1.54% with a 6-hour horizon. |
 | The governor's headline 16–20% is a carbon saving from smarter timing | **No.** Mostly degrade and drop. Say so plainly. |
@@ -351,6 +371,11 @@ Checked against the verified literature pass (§3b), not against enthusiasm:
    spent budget and are pushed off the common argmin — while writing down why. WP-12
    tests whether governance beats mandated randomness at dissolving the herd. No
    published work makes that comparison.
+   **TESTED 2026-09-02, and falsified in-model** (`results/loop.md`, finding 4):
+   depletion sheds or reshuffles, it does not spread, and the stagger arm is inert at
+   slot resolution. The claim this repository now owns is the corrected one — **the
+   gate's anti-herd lever is capacity semantics, not budget depletion** (WP-12b) —
+   and running the comparison at all remains, to the checked record, unprecedented.
 3. **F13's metering theorem** — "with a trusted meter an under-declaring agent lags
    every rung by at most one action; without one a zero-declarer is never caught" — a
    property statement about self-declared estimates we found nowhere in the literature.
@@ -440,8 +465,9 @@ One paragraph of honesty about the countries row: China (32%), the US (13%) and 
 (8%) are where the grams are, and this package has verified a *public, keyless,
 half-hourly* signal for exactly one grid — Great Britain. The loop's portability claim
 is architectural (swap the signal adapter), not empirical, until a second grid's
-adapter exists; that is WP-16's first deliverable, and no number in this file pretends
-otherwise.
+adapter exists; that was WP-16's first deliverable, and WP-16 is descoped (2026-09-02,
+see §5) — so the portability claim remains architectural, stated as such, and no number
+in this file pretends otherwise.
 
 ---
 
@@ -667,7 +693,7 @@ tested here is a slide, not a plan.
 |---|---|---|---|---|---|
 | C1 | **Time-only deferral** (built: E2) | national trace (→ NESO fw48h via WP-3) | carbon | `npm run simulate`; WP-1 sweeps horizon × fraction × objective | §2f: 6.58→22.76% causal ceilings |
 | C2 | **Start-time shifting of physical load** (built: E3) | peer forecast, scored on actual | carbon, never service | `npm run charging`; bounds arms | 32.85%; perfect signal worth ~1 pp |
-| C3 | **Carbon + price dual signal** (WP-16) | carbon trace + committed GB half-hourly price trace | £ AND carbon; exposes the hours where they fight | new arm beside every existing one, same seeds; report agreement/conflict slots | §2g: 333.3 kWh/night off-peak is the quantity; Agile documents the spread |
+| C3 | **Carbon + price dual signal** (WP-16 — descoped 2026-09-02, see §5) | carbon trace + committed GB half-hourly price trace | £ AND carbon; exposes the hours where they fight | new arm beside every existing one, same seeds; report agreement/conflict slots | §2g: 333.3 kWh/night off-peak is the quantity; Agile documents the spread |
 | C4 | **Tiered governance over any of these** (WP-14) | any + rung rules | human attention (the scarcest resource) | re-run E2/E3 with the auto-defer rule; report decisions/day per tier | 545.7→442.9 and 853→637 already measured |
 | C5 | **Spatial advisory from the data plane** (WP-4) | per-peer regional forecasts | carbon (advice), £ (cross-region price) | bounds spatial section (done); one-page advisory spec | 54.72% below peer mean, forecast-scored |
 | C6 | **EV routing between intervals — WHERE to charge, hour by hour** (owner's case) | per-region forecasts + plug-in windows | carbon + grid relief; directs demand to where energy needs a home | E3 extended: each session picks (region, window) argmin instead of window-only argmin, over the three committed regional series — a pure calculus arm first (bounds-style), a seeded arm second | spatial × temporal product of C2 and C5; precedent verification in flight (lit-E) |
@@ -798,7 +824,7 @@ nothing comparable — and it is claimed for the *composition*, not the ingredie
 11. **Curtailment-soak / expedite** — the inverse budget: when a region publishes
     surplus (the plunge-price proxy), deferred work and charging are *invited* now,
     there; still five rungs, `expedite` is just a validator's allow-with-priority.
-    *Simulatable after WP-16's price trace (C12).*
+    *Simulatable after WP-16's price trace (C12) — WP-16 is descoped, so C12 stays a candidate, not a plan.*
 12. **The human-attention router** — tiered governance across systems: rules absorb
     the routine rungs, and the scarce resource — a person's attention — is routed to
     the escalations that genuinely need one, with the per-tier decisions/day curve
@@ -860,6 +886,16 @@ possibly recover. A whole year of GB shifting at a ±8-hour window bought 7.4% �
 100% deferrable, non-interruptible work. E2 defers half its workload over 6 hours.
 **Expect WP-1 to land in the low single digits for GB, not in the tens.** If it does
 not, something is wrong with the experiment.
+
+*Post-measurement note (2026-09-02): at the cell comparable to Wiesner's setup — the
+existing 6 h horizon, half deferrable — WP-1 measured −6.62% (winter) / −8.54%
+(summer): high single digits, consistent with the prediction. The larger numbers in
+the sweep (up to −49.82%) come from more room, not better luck: a run-on-arrival
+baseline spread across the whole day (Wiesner's baseline was 1 am, already the
+cleanest hour), horizons beyond their largest ±8 h window, 100% deferrable arms, and
+the 2026 GB grid, whose mean intensity (152.9/124.2 gCO2e/kWh) is far below their
+2020 figure of 211.9 with correspondingly deeper renewable troughs. Same physics,
+bigger door.*
 
 Two further findings from the same paper that bear directly on WP-1's design:
 interruptibility is worth a lot (*"Experiments that make use of the interruptibility of
@@ -1136,9 +1172,9 @@ Here is the gap analysis, honestly scoped: **this package is unusually well test
 its size, and the gaps are specific, not general.**
 
 ### What already exists and does not need redoing
-46 adapter unit tests; 13 architecture fitness functions over 14,966 cases against
+60 adapter unit tests; 13 architecture fitness functions over 14,981 cases against
 shipped code; F7 enforcing the hexagonal import graph *structurally* (an adapter that
-imports another adapter fails the build); F12 binding 127 hand-typed numbers across 12
+imports another adapter fails the build); F12 binding 137 hand-typed numbers across 12
 documents to `results/`; an arc42 architecture document; 17+ ADRs; determinism proved
 by re-running to byte-identical output; CI on two Node versions.
 
@@ -1208,23 +1244,23 @@ land in `results/`, prose lands in this file, the README *Corrections* section, 
 
 | # | Work package | What it produces | Why it is first / risk |
 |---|---|---|---|
-| **WP-1** | **E2b — horizon and objective sweep** | New E2 arms: argmin instead of median threshold; horizon ∈ {6, 12, 24, 48} h; deferrable fraction ∈ {0.5, 1.0}. A saving-vs-horizon curve. | **Highest value.** Directly answers "is deferral worth it". Low risk: no new data, same traces, same gate. Risk is that it confirms deferral is weak *for this workload*, which is itself a publishable, honest result. |
-| **WP-2** | **E2c — saving decomposition arm** | Replaces section 2b's arithmetic with a measured split: run P2 with drop disabled, then with degrade disabled, and attribute the saving exactly. | Turns the paper's most contestable number into a decomposed one. Cheap; pure re-run. |
+| **WP-1** | **E2b — horizon and objective sweep** | **DELIVERED 2026-09-02** in `npm run simulate` (P3 + `sweep` in `results/simulation.*`): at P1's own settings (6 h, 50%) the argmin objective reaches **−6.62% / −8.54%** against P1's −1.54%/−2.97% — the objective, not the idea, was the bottleneck; the table tops out at **−45.71% / −49.82%** (48 h, all-deferrable); every cell agrees with its analytic expectation within ~1% and sits under the oracle ceiling with only 0.5–2.4 pp of headroom — a perfect signal buys little. | Done, and cross-validated against the calculus. |
+| **WP-2** | **E2c — saving decomposition** | **DELIVERED 2026-09-02**, and without ablation arms: P2 itself now carries an exact per-task attribution (drop / degrade / timing ≡ P0−P2, identity enforced in code). Measured at f = 0.8: winter **6.5 / 67.7 / 25.8%**, summer **39.7 / 52.2 / 8.2%** — timing is a quarter of the saving in winter and 8% in summer. | Done. The paper's most contestable number is now decomposed, not argued. |
 | **WP-2b** | **Peak-avoidance vs clean-seeking split** | **DELIVERED 2026-09-01** by `npm run bounds`: every E3 arm now carries the decomposition in `results/bounds.json` (winter 7.03 pp peak-avoidance + 25.82 pp clean-seeking; summer 21.42 pp + **−4.9 pp**). | Done. The strongest over-claim in my own analysis is now corrected by a run, not by hand. |
-| **WP-3** | **Forecast port + adapter** | A real `forecast` port consuming NESO's forward forecast, with a committed fixture so tests stay offline and deterministic; used by WP-1's optimiser. | Makes WP-1 *causal* rather than oracular (P1's threshold currently uses lookahead — see ADR-010). Risk: forecast endpoint shape and horizon must be verified, not assumed. |
+| **WP-3** | **Forecast port + adapter** | **DELIVERED 2026-09-02**: contract page `docs/ports/FORECAST.md` (the template for the other five ports); capture tool `simulation/fetch-forecast.js` (manual, network — like fetch-traces) with the **prospective grading protocol** built in (`--grade` writes MAPE/MAE/bias *by lead time* once a capture's window settles; regional honestly ungradable, R2); a first live capture committed under `data/forecast/` — which immediately taught something: the *available* fw48h horizon varies by time of day (this capture holds 62 of the nominal 96 periods); offline reference adapter `simulation/forecast.js` + conformance suite. | Done. The first graded error curve arrives 48 h after the first capture — by protocol, not by backfill. |
 | **WP-4** | **E4 — spatial, advisory** | Per the owner's answer: advisory and minimal. The ceiling is already computed (`results/bounds.json` spatial section); what remains is a one-page advisory spec — the loop *recommends* a region, records the recommendation in the audit chain, and nothing pretends to move work. | Shrunk from 2 sessions to 0.5. The regional series is forecast-only (R2), so "forecast-scored advice" is the whole claim, stated as such. |
-| **WP-5** | **Metering port + contract** | The fifth port, specified and adapter-tested; F13 wired to the contract so the guarantee is stated where the port is defined. | F13 already proves the gap matters. Small, and closes limitation R15. |
+| **WP-5** | **Metering port + contract** | **DELIVERED 2026-09-02**: contract page `docs/ports/METERING.md` (Purpose / Interface / never-do / Conformance / the F13 guarantee stated where the port is defined / what stays open) + 4-test offline conformance suite `simulation/metering.test.js` run against the REAL `commit()` path and `runP2` — including the one-action bound on an under-declaring agent and the throw-on-junk reading (ADR-005). Honest note kept: the reference implementation is the inlined `exec()`+`commit()` pair; no standalone adapter file, no attestation yet. | Done — closes R15's contract half; trusted measurement/attestation stay open in R15. |
 | **WP-6** | **BDD feature files, one per port** | Gherkin specs executed against the real adapters; the E3 safety invariant becomes a readable acceptance criterion. | Addresses gap 1 and 2. Must not become a parallel implementation — features drive the same code the fitness functions do. |
 | **WP-7** | **Dynamic diagrams** | C4 component view; two sequence diagrams; one task state machine; budget dynamics — committed Mermaid. | Addresses gap 4. Low risk, high explanatory value. |
 | **WP-8** | **E1↔E2 seam test** | One end-to-end run: real published document → signal → gate → audit record. | Closes limitation R12, the biggest structural gap. |
 | **WP-9** | **Adapter negative/chaos tests** | Malformed JSON, timeout, absurd values, hostile registry entries (the existing hardening gets its test). | Addresses gap 6. |
 | **WP-10** | **Marginal-signal re-scoring** | Re-score E2/E3 against a marginal series if one is obtainable for GB; report both. | Addresses R17. **Now believed not buildable** — Electricity Maps discontinued marginal signals in Jan 2025, NESO is average-only, and WattTime never documents GB explicitly. Downgraded to a written limitation unless a series can be shown to exist. |
-| **WP-12** | **Herding arm — many independent gated schedulers on one signal** | N independent governors sharing the peer signal; measure benefit erosion and the induced peak as N grows, with and without the gate's pacing. Turns limitation R11 into a result. | **The field names the "thundering herd" (CarbonScaler, CarbonFlex) and nobody measures it across independent actors.** This package has the signal, the gate and a partial measurement already. Highest novelty of anything here. |
+| **WP-12** | **Herding arm — can anything dissolve the herd?** | **DELIVERED 2026-09-02** inside `npm run loop`: three anti-herd mechanisms head-to-head against the blind herd — a binding paced budget with skip-k rungs (**sheds** 6.6–14% of work; top-share rises), the same budget with the gate's true defer semantics (**reshuffles** inside the cheap band, top-share ~41%, no drops), and the SI-1467-intent stagger arm (**inert**: near-ties within 1 g/kWh are rare on real data). **Our own §2h.2 conjecture — "a paced budget is a staggering mechanism" — is falsified in this model class**, and the thing bounding the herd in every row is the per-system slot cap. | Done, with a negative verdict stated as such — and a concrete redirect: **WP-12b**, capacity rungs (degrade = halve your per-slot cap; CarbonFlex's limit made a governance verdict). Designed, not built. |
 | **WP-13** | **A NESO data source for the GSF Carbon Aware SDK** | Upstream contribution: the standard tool supports only WattTime and ElectricityMaps, both keyed. Britain's free signal is unreachable through it. | Small, outward-facing, and independently useful. Optional. |
-| **WP-14** | **Tiered governance — rules first, humans for what matters** | A standing, audited auto-defer rule for `block` on deferrable work; humans keep terminate (absolute), physical actuation, and non-deferrable-above-degrade. Reported as a human-decisions-per-day curve per tier. | The owner's ask, and the data already prices rule one: 545.7 → 442.9 (winter) and 853 → 637 (summer) decisions per 28 days. The constraint that keeps it honest: a rule is a validator with an audit trail, never a bypass. |
+| **WP-14** | **Tiered governance — rules first, humans for what matters** | **DELIVERED 2026-09-02** as the `P2tiered_f0.8` arm: one standing rule authorises deferral of blocked-deferrable work (the approval object names the rule), humans keep escalations + non-deferrable blocks, `terminate` stays absolute. Tests assert emissions/completions/drops **identical** to P2 and human decisions **exactly equal** to the promised sensitivity: 545.7 → 442.9 (winter) and 853 → 637 (summer). | Done — the sensitivity became a mechanism, and the constraint held: the rule moved authorisation, nothing else. |
 | **WP-15** | **Real workload trace** | One live run of a `kaiban-distributed-examples` workflow (OpenRouter), recording durations, token counts and deadlines; the anonymised trace committed as a fixture and replayed as a new E2 arm beside the synthetic one. | Converts E2's biggest "stipulated" caveat into a measurement. Live once, locally; deterministic forever after. |
-| **WP-16** | **Price-signal twin (economics arm)** | Fetch and commit a half-hourly GB day-ahead price trace the way `fetch-traces.js` commits carbon; score every existing arm on £ as well as gCO2e; report where the two signals agree and where they fight. First deliverable doubles as the second-grid signal-adapter proof (§2i honesty note). | Makes §2g's illustrative arithmetic a measured result. The one plausible risk is licensing on the price series — checked before fetching, stated if blocking. |
-| **WP-17** | **E5 — the closed loop (the invention's experiment)** | N governed systems, each publishing its own well-known document after each commit and consuming the others' documents as its peer signal — no exogenous trace. Measures loop stability (damping vs amplification of the herd) vs publication cadence and staleness; subsumes WP-8's seam and extends WP-12; adds the publish-back edge to the demo; specifies the publication port. | **The article's own open problem** ("Multi-party closed loop — no third-party publisher yet") made runnable with parts already in this repository (governor + publisher/consumer packages + gateway). Closes R12 for real; turns R2/R5 from caveats into controlled variables. |
+| **WP-16** | **Price-signal twin (economics arm)** | **DESCOPED 2026-09-02 (owner decision) — not implemented.** *What it would be:* fetch and commit a half-hourly GB day-ahead price trace the way `fetch-traces.js` commits carbon; score every existing arm on £ as well as gCO2e; report where the two signals agree and where they fight. *How to build it if ever needed:* (1) verify the licence of a price source **before** fetching (Octopus Agile tariff API, or N2EX/EPEX day-ahead — the licence check is the known risk); (2) commit the trace beside `data/simulation/`; (3) add a £ column to every existing arm, same seeds; (4) the same trace unlocks the curtailment/plunge `expedite` arm (C12) and the second-signal-adapter proof (§2i). *When it is needed:* only when an economics/£ claim, the C3/C12 candidate experiments, or a second-grid adapter demonstration is actually wanted — none of the paper's claims or this package's carbon results depend on it. | Descoped: §2g's arithmetic stays labelled illustrative, the portability claim stays architectural, and 1.5 sessions move to the audit and remaining packages. |
+| **WP-17** | **The closed loop with REAL documents** | **DELIVERED 2026-09-02** as `npm run plane`: N systems publish and consume documents in the gateway's own shape (the mandatory member set is derived from the committed documents at run time, so a format drift fails the arm). Two results: **staleness costs carbon** — at E1's measured real-world cadence (23 days) the loop pays **83.3 vs 78.51 g/kWh**, +6.1% over runtime cadence; and **the signal member matters more than the cadence** — a peer's published *carbon-intensity* is its own achieved intensity, so an optimised peer always looks clean (degenerate as a congestion signal), while *energy-consumption* actually says "the shared resource is busy". Coverage on real documents: intensity **3/12**, energy **12/12**. | Done for the format half of R12; R5 (no third-party publishers) stays open and is stated as an adoption problem. **A concrete recommendation for the Internet-Draft falls out: publishing load is cheaper, more available and more useful than publishing intensity.** |
 | **WP-11** | **Addendum write-up** | This file finalised, README *Corrections* updated, CHANGELOG, and a short "what changed after submission" note suitable for a revision or a follow-up paper. | Last, because it reports WP-1…WP-10. |
 
 ### Ordering
@@ -1233,7 +1269,7 @@ WP-2b is done (`npm run bounds`). Then: WP-1 → WP-2 (pure re-runs, immediate a
 trace) → WP-12 (herding + the randomised-delay/R18 arm) → **WP-17 (E5, the closed
 loop — the invention's own experiment, and the joint headline with WP-12)** → WP-5,
 WP-6, WP-7 (contracts, features, diagrams — parallelisable; WP-5/WP-6 now include the
-publication port) → WP-16 (economics twin) → WP-4 (advisory spec), WP-9 (WP-8 is
+publication port) → ~~WP-16 (economics twin)~~ (descoped 2026-09-02 — see the §5 row) → WP-4 (advisory spec), WP-9 (WP-8 is
 subsumed by WP-17) → WP-13 (optional) → WP-10 (only if a GB marginal series is shown
 to exist) → WP-11.
 
@@ -1263,20 +1299,21 @@ included).
 | WP-2b Peak vs clean-seeking split | **done** | delivered by `npm run bounds` |
 | WP-3 Forecast port + adapter | 1 | medium — depends on endpoint verification |
 | WP-4 E4 spatial advisory spec | 0.5 | high — ceiling already computed |
-| WP-5 Metering port + contract | 0.5 | high |
+| WP-5 Metering port + contract | **done** | delivered 2026-09-02 (contract + 4-test conformance suite) |
 | WP-6 BDD features per port | 1.5 | medium — scope creep is the risk |
 | WP-7 Dynamic diagrams | 1 | high |
 | WP-8 E1↔E2 seam test | 1 | medium — needs a live or fixtured gateway run |
 | WP-9 Adapter negative/chaos tests | 1 | high |
 | WP-10 Marginal re-scoring | 1–2 | **low** — data availability unknown |
-| WP-12 Herding arm (R11 → result) | 2 | medium — model design is the risk |
+| WP-12 Herding arm (R11 → result) | **done** | delivered inside `npm run loop`, negative verdict |
+| WP-12b Capacity rungs (the redirect) | 1 | medium — new rung semantics need an ADR |
 | WP-13 NESO source for GSF SDK (optional) | 1 | medium |
 | WP-14 Tiered governance | 1 | high — the sensitivity numbers already exist |
 | WP-15 Real workload trace | 1 | medium — one live run, then deterministic |
-| WP-16 Price-signal twin | 1.5 | medium — licensing on the price series is the risk |
-| WP-17 E5 closed loop (subsumes WP-8) | 2 | medium — cadence/staleness model is the research choice |
+| WP-16 Price-signal twin | **descoped** | owner decision 2026-09-02 — summary of how/why/when kept in the §5 row |
+| WP-17 closed loop with real documents | **done** | delivered as `npm run plane` |
 | WP-11 Addendum write-up | 1 | high |
-| **Total** | **≈ 17–18** (16–17 without the optional WP-13; WP-8's 1 session is absorbed into WP-17) | |
+| **Total** | **≈ 17–18** as planned; **≈ 15.5–16.5 after the WP-16 descope** (and 14.5–15.5 without the optional WP-13; WP-8's 1 session is absorbed into WP-17) | |
 | **Minimum useful subset (WP-1, 2, 14, 7, 11)** | **≈ 5** | |
 | **Headline pair (WP-12 + WP-17)** | **≈ 4** | |
 
@@ -1405,7 +1442,7 @@ verbatim; each **Decision** line is what the plan now does about it.
   produced by this roadmap is recorded in the README's *Corrections* section and in the
   manuscript's revision notes — never by silently changing the paper.
 - **Every number in this repository stays bound to `results/`.** F12 enforces it across
-  127 registered claims in 12 documents; anything this roadmap produces gets registered
+  137 registered claims in 12 documents; anything this roadmap produces gets registered
   the same way.
 - **Every experiment stays deterministic and offline-reproducible.** Fixed seeds,
   committed traces, byte-identical re-runs, no live network in CI.

@@ -1,0 +1,136 @@
+{
+  "generatedBy": "simulation/plane.js (npm run plane)",
+  "note": "WP-17: the closed loop run with documents in the SAME shape the reference gateway serves. The mandatory member set is derived from the committed gateway documents at run time, so a format drift fails this arm rather than passing silently. Closes limitation R12's 'no measured run consumes published documents as its control signal' for the document FORMAT; real third-party publishers remain the open half (R5).",
+  "mandatoryMembers": [
+    "capabilities",
+    "carbon-footprint",
+    "carbon-unit",
+    "measurement-method",
+    "methodology-uri",
+    "provider",
+    "reporting-period",
+    "target",
+    "target-type",
+    "updated",
+    "version"
+  ],
+  "memberCoverage": {
+    "carbon-intensity-gCO2e-per-kWh": {
+      "documentsCarrying": 3,
+      "documentsTotal": 12,
+      "coveragePct": 25
+    },
+    "energy-consumption": {
+      "documentsCarrying": 9,
+      "documentsTotal": 12,
+      "coveragePct": 75
+    }
+  },
+  "model": {
+    "systems": 5,
+    "unitsPerDay": 24,
+    "unitKWh": 0.05,
+    "slotCap": 4,
+    "warmupDays": 14
+  },
+  "results": {
+    "W1": {
+      "label": "winter",
+      "cadences": {
+        "30 min": {
+          "meanIntensityGPerKWh": 78.51,
+          "top5PctSlotShare": 30.95,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        },
+        "1 day": {
+          "meanIntensityGPerKWh": 78.51,
+          "top5PctSlotShare": 30.95,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        },
+        "7 days": {
+          "meanIntensityGPerKWh": 76.55,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 20,
+          "meanDocumentAgeDays": 2.91,
+          "readsOfDocumentsOlderThanADayPct": 85.2
+        },
+        "23 days (E1's measured median)": {
+          "meanIntensityGPerKWh": 83.3,
+          "top5PctSlotShare": 21.43,
+          "documentsPublished": 10,
+          "meanDocumentAgeDays": 9.61,
+          "readsOfDocumentsOlderThanADayPct": 92.6
+        }
+      },
+      "byMember": {
+        "carbon-intensity-gCO2e-per-kWh": {
+          "meanIntensityGPerKWh": 78.51,
+          "top5PctSlotShare": 30.95,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        },
+        "energy-consumption": {
+          "meanIntensityGPerKWh": 76.55,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        }
+      }
+    },
+    "W2": {
+      "label": "summer",
+      "cadences": {
+        "30 min": {
+          "meanIntensityGPerKWh": 71.46,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        },
+        "1 day": {
+          "meanIntensityGPerKWh": 71.46,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        },
+        "7 days": {
+          "meanIntensityGPerKWh": 71.46,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 20,
+          "meanDocumentAgeDays": 2.91,
+          "readsOfDocumentsOlderThanADayPct": 85.2
+        },
+        "23 days (E1's measured median)": {
+          "meanIntensityGPerKWh": 71.46,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 10,
+          "meanDocumentAgeDays": 9.61,
+          "readsOfDocumentsOlderThanADayPct": 92.6
+        }
+      },
+      "byMember": {
+        "carbon-intensity-gCO2e-per-kWh": {
+          "meanIntensityGPerKWh": 71.46,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        },
+        "energy-consumption": {
+          "meanIntensityGPerKWh": 71.46,
+          "top5PctSlotShare": 33.33,
+          "documentsPublished": 140,
+          "meanDocumentAgeDays": 0.02,
+          "readsOfDocumentsOlderThanADayPct": 0
+        }
+      }
+    }
+  }
+}

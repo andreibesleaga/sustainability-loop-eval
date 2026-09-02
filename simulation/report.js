@@ -24,8 +24,41 @@ export function renderSimulationMd(doc) {
     }
     out += `\nTasks per seed: ${v(win.tasksPerSeed)}. P1 threshold (${p.days}-day median peer signal, computed over the whole window — see ADR-010): ${win.peerMedianThresholdG} gCO2e/kWh. P1t uses a trailing ${win.p1tTrailingMedianDays}-day median instead, so it never looks ahead.\n`;
     out += `\nDelay columns describe DEFERRED work only (tasks that ran later than they arrived); \`completed\` and on-time completion are equal by construction — ${doc.invariants.completedOnTime}\n\n`;
+    out += renderTiering(id, win);
+    out += renderDecomposition(id, win);
+    out += renderSweep(id, win);
   }
   return out + summaryProse(doc);
+}
+
+/** WP-14: tiered governance — same carbon, fewer humans, every case still audited. */
+function renderTiering(id, win) {
+  const t = win.policies["P2tiered_f0.8"];
+  const p = win.policies["P2_f0.8"];
+  if (!t || !t.ruleApplied) return "";
+  return `### Tiered governance (WP-14, f = 0.8)\n\nOne standing rule is active in the \`P2tiered\` arm: a \`block\` on DEFERRABLE work is authorised by the rule ("standing-rule:T1-auto-defer-blocked-deferrable" in the approval object), not a person. The physical outcome, the gate decision and the audit record are unchanged — emissions are identical to P2 by construction — and the only movement is who authorised what.\n\n| tier | what it covers | decisions per window |\n|---|---|---|\n| T0 — automatic | \`allow\` and \`degrade\` rungs | (the rest of the workload) |\n| T1 — standing rule, audited | \`block\` on deferrable work → auto-defer | ${v(t.ruleApplied)} |\n| T2 — a person | escalations + \`block\` on non-deferrable work | ${v(t.humanDecisions)} |\n| — absolute | \`terminate\`: no authoriser exists, rule or human | ${v(t.terminations)} dropped |\n\nAcceptance, in one sentence: **given the same workload and budget, when the standing rule authorises deferral of blocked deferrable work, then total emissions equal P2's exactly (${v(t.totalGCO2e)} vs ${v(p.totalGCO2e)} gCO2e) and human decisions fall from ${v(p.humanDecisions)} to ${v(t.humanDecisions)}** — the number the untired run could only report as a sensitivity is now the measured behaviour of a mechanism.\n\n`;
+}
+
+/** WP-2: where P2's saving actually comes from — exact per-task attribution. */
+function renderDecomposition(id, win) {
+  const p = win.policies["P2_f0.8"];
+  if (!p || !p.dropShareOfSavingPct) return "";
+  let out = `### Where P2's saving comes from (WP-2 — exact attribution, f = 0.8)\n\nEvery task's contribution is split identically into drop (work never ran, priced at arrival), degrade (work made smaller, priced at arrival) and timing (what ran, moved to a different slot); the identity components ≡ P0 − P2 is enforced by a throw in the simulation, not assumed. Shares are per-seed, then mean ± sd.\n\n| component | share of the saving |\n|---|---|\n| dropped work | ${v(p.dropShareOfSavingPct)}% |\n| degraded work | ${v(p.degradeShareOfSavingPct)}% |\n| timing (deferral of what ran) | ${v(p.timingShareOfSavingPct)}% |\n\nTotal saving vs P0 at f = 0.8: ${v(p.savingVsP0G)} gCO2e.\n\n`;
+  return out;
+}
+
+/** E2b (WP-1): the horizon x fraction sweep, each cell against its own ceiling. */
+function renderSweep(id, win) {
+  if (!win.sweep) return "";
+  let out = `### E2b — the horizon and objective sweep (WP-1)\n\nP3 runs every deferrable task at the argmin of the peer signal inside its horizon — E3's objective applied to this workload — for regenerated workloads per cell (same seeds, same arrivals; only deadlines and deferrable flags change). Two comparisons per cell (${win.sweep.comparisonSource}): the peer-column EXPECTATION is the calculus for this very policy, so agreement near 100% cross-validates simulation against calculus; the ORACLE column is the true ceiling (deciding on the truth), which no peer-deciding cell may beat beyond noise.\n\n| horizon | deferrable | % vs P0 (seeded) | expectation (peer) | agreement | oracle ceiling | headroom to oracle (pp) | deferred | mean delay (min) |\n|---:|---:|---|---:|---:|---:|---:|---|---|\n`;
+  for (const [k, a] of Object.entries(win.sweep.arms)) {
+    const [h, f] = k.replace("h", "").split("_f");
+    out += `| ${h} h | ${Math.round(Number(f) * 100)}% | ${v(a.pctVsP0)} | −${a.expectationPctPeer}% | ${a.agreementPct}% | −${a.ceilingPctOracle}% | ${a.headroomToOraclePp} | ${v(a.deferred)} | ${v(a.meanDelayMin)} |\n`;
+  }
+  const a6 = win.sweep.arms["h6_f0.5"];
+  const a48 = win.sweep.arms["h48_f1"];
+  out += `\nRead against P1 above: at P1's own horizon and fraction (6 h, 50%), the argmin objective alone reaches ${v(a6.pctVsP0)}% — the objective, not the idea, was the bottleneck. The table tops out at ${v(a48.pctVsP0)}% (48 h, everything deferrable). Agreement sits within about a point of 100% in every cell — the seeded simulation and the analytic expectation are the same physics — and the headroom-to-oracle column prices what a perfect signal would add: little.\n\n`;
+  return out;
 }
 
 /** The ten lines a practitioner should read if they read nothing else. */

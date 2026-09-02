@@ -200,3 +200,90 @@ test("P1t defers on a trailing median and never looks ahead", () => {
   assert.equal(cold.totalG, 100);
   assert.deepEqual(cold.delays, []);
 });
+
+
+// ── E2b sweep invariants (WP-1) — read from the committed results ─────────────
+// The sweep's two comparisons are load-bearing: the peer-column expectation is the
+// calculus for the very policy the seeds run (agreement is a cross-validation, like
+// E3's argmin_ungated vs bounds), and the oracle column is a true ceiling. Both are
+// asserted here against results/simulation.json so a regression cannot ship quietly.
+import { readFileSync } from "node:fs";
+
+test("E2b sweep: seeded runs agree with the analytic expectation and respect the oracle ceiling", () => {
+  const doc = JSON.parse(readFileSync(new URL("../results/simulation.json", import.meta.url), "utf8"));
+  for (const id of ["W1", "W2"]) {
+    for (const [k, a] of Object.entries(doc.results[id].sweep.arms)) {
+      assert.ok(Math.abs(a.agreementPct - 100) <= 2,
+        `${id} ${k}: seeded mean must agree with the expectation within 2% (got ${a.agreementPct}%)`);
+      assert.ok(-a.pctVsP0.mean <= a.ceilingPctOracle + 0.5,
+        `${id} ${k}: a peer-deciding policy cannot beat the oracle beyond noise`);
+      assert.ok(a.headroomToOraclePp >= -0.5, `${id} ${k}: headroom to oracle cannot be meaningfully negative`);
+    }
+  }
+});
+
+test("E2b sweep: more room never saves less — monotone in horizon and in deferrable fraction", () => {
+  const doc = JSON.parse(readFileSync(new URL("../results/simulation.json", import.meta.url), "utf8"));
+  const TOL = 0.5; // seeded noise
+  for (const id of ["W1", "W2"]) {
+    const arms = doc.results[id].sweep.arms;
+    for (const f of ["0.5", "1"]) {
+      let prev = -Infinity;
+      for (const h of [6, 12, 24, 48]) {
+        const saving = -arms[`h${h}_f${f}`].pctVsP0.mean;
+        assert.ok(saving >= prev - TOL, `${id} f=${f} h=${h}: a longer horizon cannot save less`);
+        prev = saving;
+      }
+    }
+    for (const h of [6, 12, 24, 48]) {
+      assert.ok(-arms[`h${h}_f1`].pctVsP0.mean >= -arms[`h${h}_f0.5`].pctVsP0.mean - TOL,
+        `${id} h=${h}: more deferrable work cannot save less`);
+    }
+  }
+});
+
+test("E2b sweep: the argmin objective dominates the threshold at the same settings", () => {
+  const doc = JSON.parse(readFileSync(new URL("../results/simulation.json", import.meta.url), "utf8"));
+  for (const id of ["W1", "W2"]) {
+    const p1 = -doc.results[id].policies.P1.pctVsP0.mean;
+    const p3 = -doc.results[id].sweep.arms["h6_f0.5"].pctVsP0.mean;
+    assert.ok(p3 > p1, `${id}: argmin at P1's own horizon/fraction must beat the threshold (P3 ${p3} vs P1 ${p1})`);
+  }
+});
+
+
+test("WP-2 decomposition: the three exact shares reassemble the whole saving", () => {
+  const doc = JSON.parse(readFileSync(new URL("../results/simulation.json", import.meta.url), "utf8"));
+  for (const id of ["W1", "W2"]) {
+    for (const [name, pol] of Object.entries(doc.results[id].policies)) {
+      if (!pol.dropShareOfSavingPct) continue;
+      const total = pol.dropShareOfSavingPct.mean + pol.degradeShareOfSavingPct.mean + pol.timingShareOfSavingPct.mean;
+      assert.ok(Math.abs(total - 100) < 0.5,
+        `${id} ${name}: drop+degrade+timing shares must sum to 100% (got ${total})`);
+      assert.ok(pol.savingVsP0G.mean > 0, `${id} ${name}: the governor must save something to decompose`);
+    }
+  }
+});
+
+
+test("WP-14 tiering: same carbon, fewer humans — the rule moves authorisation, nothing else", () => {
+  const doc = JSON.parse(readFileSync(new URL("../results/simulation.json", import.meta.url), "utf8"));
+  for (const id of ["W1", "W2"]) {
+    const p2 = doc.results[id].policies["P2_f0.8"];
+    const t = doc.results[id].policies["P2tiered_f0.8"];
+    // The rule changes WHO authorises, never WHAT happens: emissions, completions,
+    // drops and degradations must be identical to the untired run, exactly.
+    for (const k of ["totalGCO2e", "tasksCompleted", "dropped", "degraded", "deferred"]) {
+      assert.deepEqual(t[k], p2[k], `${id}: ${k} must be identical under tiering`);
+    }
+    // The human count under the rule equals the untired run's own sensitivity
+    // prediction, exactly — the mechanism delivers the number it promised.
+    assert.deepEqual(t.humanDecisions, p2.humanDecisionsIfDeferralAutomatic,
+      `${id}: tiered human decisions must equal the predicted sensitivity`);
+    // Everything the rule authorised is exactly the blocked-deferrable set.
+    assert.deepEqual(t.ruleApplied, p2.blocksDeferrable,
+      `${id}: the rule covers blocked-deferrable work and nothing else`);
+    // Terminate stays absolute: same drops, and no rule ever authorised one.
+    assert.deepEqual(t.terminations, p2.terminations, `${id}: terminate is untouchable by rules`);
+  }
+});

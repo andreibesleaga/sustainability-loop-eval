@@ -20,14 +20,14 @@ kaiban-distributed checkout for the upstream rows.
 | F4 | Human binding on escalate/block; terminate never overridable | this package | 2,000 | yes |
 | F5 | Gate-on-path (one audit record per attempt, in order, with its own operation) | shipped gate + this package's harness | 2,100 | yes |
 | F6 | Audit-chain integrity + tamper detection | shipped gate | 500 | yes |
-| F7 | Port isolation (hexagonal import graph) | this repository | 30 | yes |
+| F7 | Port isolation (hexagonal import graph) | this repository | 35 | yes |
 | F8 | Determinism across two fresh gates | shipped gate | 300 | yes |
 | F9 | Aggregation equivalence (reference vs. shipped) | shipped gate | 2,000 | yes |
 | F10 | Audit anchoring (edits vs. truncation) | this package | 300 | yes |
 | F11 | Governor core invariants | this package + shipped severity table | 2,005 | yes |
-| F12 | Documentation agrees with results/ | this repository | 127 | yes |
+| F12 | Documentation agrees with results/ | this repository | 137 | yes |
 | F13 | Self-declared estimates: metering bounds the lie to one action | this package (the trust boundary of the core) | 1,500 | yes |
-| **Total** | **13 fitness functions, 13/13 green** | | **14,966** | **yes** |
+| **Total** | **13 fitness functions, 13/13 green** | | **14,981** | **yes** |
 | Upstream unit (kaiban-distributed) | 4 test files, `action-gate / audit-log / policy-engine / registry` | upstream | 71 | 71/71 |
 | Upstream e2e (kaiban-distributed, real Redis) | 11 test files, board/HITL, A2A, routing, scaling, security | upstream | 69 | 69/69 |
 
@@ -48,19 +48,19 @@ names) and `results/kaiban-upstream-e2e.json` + `results/kaiban-upstream-e2e-raw
 - **F4 — Human binding on escalate/block; terminate never overridable.** all 2000 random decisions obeyed the human-binding rule in governor/harness.js, including 395 terminate cases (110 of them carrying an approved approval object) that were refused as not overridable
 - **F5 — Gate-on-path (one audit record per attempt, in order, with its own operation).** 2100 audit records match the 2100 attempts one-for-one (operation + verdict); executed 1574, refused 526, every one of them exactly as the harness rule predicts; no terminate ever executed; all 3 operation types routed
 - **F6 — Audit-chain integrity + tamper detection.** 500 decisions verified valid; tampering record 82 was detected (brokenAt=82)
-- **F7 — Port isolation (hexagonal import graph).** 3 governor/ file(s) checked: carbon-governor.js + harness.js import nothing at all; gate.js imports only kaiban-distributed + the core (+ node:* built-ins); 2 shared/ module(s) import nothing; 15 adapter file(s) + 6 adapter test file(s) in simulation/dataplane/demo import only governor/, shared/, node:* and their own folder; the only external library allowed in an adapter is the optional "sustainability-wellknown-consumer" in dataplane/measure.js, alongside its one SUSTAINABILITY_CONSUMER_URL dynamic import; every other import in every adapter resolves statically; 4 actuating adapter(s) (simulation/run.js, simulation/charging.js, demo/demo.js, demo/agent.js) import governor/harness.js
+- **F7 — Port isolation (hexagonal import graph).** 3 governor/ file(s) checked: carbon-governor.js + harness.js import nothing at all; gate.js imports only kaiban-distributed + the core (+ node:* built-ins); 2 shared/ module(s) import nothing; 18 adapter file(s) + 8 adapter test file(s) in simulation/dataplane/demo import only governor/, shared/, node:* and their own folder; the only external library allowed in an adapter is the optional "sustainability-wellknown-consumer" in dataplane/measure.js, alongside its one SUSTAINABILITY_CONSUMER_URL dynamic import; every other import in every adapter resolves statically; 4 actuating adapter(s) (simulation/run.js, simulation/charging.js, demo/demo.js, demo/agent.js) import governor/harness.js
 - **F8 — Determinism across two fresh gates.** 300-step sequence byte-identical across two fresh gates (decisions + audit chain)
 - **F9 — Aggregation equivalence (reference vs. shipped).** all 2000 random verdict sets (varying carbon action + extras) agreed with mostSevere()
 - **F10 — Audit anchoring (edits vs. truncation).** 150 random single-field edits all broke verify() at exactly the edited index; 150 random tail truncations were reported VALID by verify() in 150/150 cases (tamper-evident, not tamper-resistant) and were caught by verifyAnchored() in all 150
 - **F11 — Governor core invariants.** 500 monotone, 500 idempotence/no-side-effect, 500 commit/reset (each also proving commit() throws rather than absorbing a bad value) and 500 rung-boundary cases held; GATE_ACTION_SEVERITY matches LADDER for all 5 rungs (true)
-- **F12 — Documentation agrees with results/.** all 127 registered claims across 12 documents match results/
+- **F12 — Documentation agrees with results/.** all 137 registered claims across 12 documents match results/
 - **F13 — Self-declared estimates: metering bounds the lie to one action.** 1000 random under-declaration sequences: lie never stricter than truth, and every rung reached at most one action late when commit() is charged the true grams; 500 sequences with commit() charged the declared zero: all verdicts stayed allow while true emissions ran past 1.25 x budget — the metering port is what makes the ladder mean anything against a dishonest estimate (R15)
 
 ## Reading this, plainly
 
 The governance gate this package evaluates is not a mock: it is `kaiban-distributed`'s
 shipped `ActionGate`, exercised in-process with the Carbon-Verdict Governor as its
-validator. Across 14,966 property-test cases and static checks, every property held: the gate
+validator. Across 14,981 property-test cases and static checks, every property held: the gate
 resolves to the single most-severe verdict (F1, F9), fails closed on internal errors and
 bad input while treating `enabled:false` as an honest all-or-nothing deployment switch
 rather than a bypass (F2), its severity ladder is monotone with exact rung boundaries
