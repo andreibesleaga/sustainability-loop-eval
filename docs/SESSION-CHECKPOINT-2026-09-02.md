@@ -36,7 +36,9 @@ disk is verified and the full suite is green** — nothing partial, nothing untr
 
 Three read-only audit agents (docs consistency, adversarial code/test review,
 paper-vs-repo + scenarios coverage) were launched and killed before producing
-findings. **Resume step 1: relaunch them** — their full briefs are reusable: the
+findings. **OWNER DECISION (2026-09-02, end of session): the audit moves to the
+END — next session does the remaining work packages FIRST, and the full audit runs
+last, over the finished whole.** When it runs, the three briefs are reusable: the
 three prompts cover (1) cross-doc contradictions/link integrity/unregistered
 numbers, (2) adversarial review of metering.test.js, features.test.js + features/,
 the 28 new registry regexes, plane.js, DYNAMICS.md-vs-code, (3) v1.0.0-tag claims
@@ -44,11 +46,13 @@ vs current repo, invention-story consistency, PRODUCT.md use-case coverage,
 ROADMAP C-rows. Then fix findings, re-run `npm test` + determinism, delete this
 checkpoint file.
 
-## After the audit (remaining packages, ~2 sessions)
+## Resume order (owner-decided): packages first, audit last
 
-WP-15 (real workload trace — one live OpenRouter run, then deterministic),
-WP-9 (adapter chaos tests), WP-4 (spatial advisory spec, 0.5), WP-12b (capacity
-rungs + new ADR), WP-13 (optional NESO→GSF SDK), WP-11 (final addendum, last).
+1. WP-15 (real workload trace — one live OpenRouter run, then deterministic),
+   WP-9 (adapter chaos tests), WP-4 (spatial advisory spec, 0.5), WP-12b
+   (capacity rungs + new ADR), WP-13 (optional NESO→GSF SDK).
+2. THEN the full three-lens audit (briefs above) over the finished whole.
+3. WP-11 (final addendum) last, incorporating the audit's outcome.
 
 ## Owner actions pending
 
