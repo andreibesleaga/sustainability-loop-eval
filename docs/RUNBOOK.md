@@ -155,8 +155,8 @@ submission" note; runs LAST.
 ## 2. Verification recipe (every package ends with this)
 
 ```bash
-npm test                        # 37+ unit, 13 fitness, check:docs — all green
-npm run simulate && npm run charging && npm run bounds && npm run routing && npm run loop
+npm test                        # all unit tests (89 today), 13 fitness, check:docs — all green
+npm run simulate && npm run charging && npm run bounds && npm run routing && npm run loop && npm run plane
 npm run fitness:report && npm run fitness:report
 git diff --stat results/        # only intended changes
 # determinism: md5sum results/*.json, re-run the block above, md5sum must match

@@ -6,7 +6,7 @@ Model constants: 24 units x 0.05 kWh per system per day, slot capacity 4, measur
 
 ## W1 (winter)
 
-| N | alpha | staleness (days) | mean intensity paid (g/kWh) | peak concurrency ratio | top-5%-slot share | day-to-day oscillation (L1/unit) |
+| N | alpha | staleness (days) | mean intensity paid (g/kWh) | peak concurrency ratio | top-5%-slot share (the busiest 2 of 48 slots — strictly the top 4.17%) | day-to-day oscillation (L1/unit) |
 |---:|---:|---:|---:|---:|---:|---:|
 | 2 | 0 | 1 | 76.55 | 1 | 33.33% | 1.359 |
 | 2 | 0 | 7 | 76.55 | 1 | 33.33% | 1.359 |
@@ -35,7 +35,7 @@ Model constants: 24 units x 0.05 kWh per system per day, slot capacity 4, measur
 
 ## W2 (summer)
 
-| N | alpha | staleness (days) | mean intensity paid (g/kWh) | peak concurrency ratio | top-5%-slot share | day-to-day oscillation (L1/unit) |
+| N | alpha | staleness (days) | mean intensity paid (g/kWh) | peak concurrency ratio | top-5%-slot share (the busiest 2 of 48 slots — strictly the top 4.17%) | day-to-day oscillation (L1/unit) |
 |---:|---:|---:|---:|---:|---:|---:|
 | 2 | 0 | 1 | 71.46 | 1 | 33.33% | 0.872 |
 | 2 | 0 | 7 | 71.46 | 1 | 33.33% | 0.872 |
@@ -120,15 +120,49 @@ Model constants: 24 units x 0.05 kWh per system per day, slot capacity 4, measur
 | paced | 25 | 2 | 7 | 81.99 | 41.29% | 2.36 | 1.705 | 19.06% |
 | paced_defer | 25 | 2 | 7 | 83.18 | 41.92% | 2.16 | 1.649 | 19.65% |
 
+## WP-12b — capacity rungs: does halving the cap spread what the budget could not? (W1)
+
+Same pacing ratio, same budget, same corners as WP-12; the rung sets the PER-SLOT CAP (allow 4 / degrade 2 / escalate 1 / block 1 / terminate 0 for the rest of the day) and displaced work SPILLS to the next cheapest feasible slot. "vs plane" is this cell's top-5% share minus the same (N, alpha, staleness) plane cell's — negative means the cap arm spread the crowd.
+
+| arm | N | alpha | staleness | g/kWh paid | top-5% share | vs plane | peak ratio | oscillation | dropped | terminate fired |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| capacity | 5 | 0 | 1 | 76.34 | 36.56% | +3.23 pt | 1.33 | 1.365 | 6.55% | yes |
+| capacity | 5 | 0 | 7 | 76.34 | 36.56% | +3.23 pt | 1.33 | 1.365 | 6.55% | yes |
+| capacity | 5 | 2 | 1 | 92.99 | 26.11% | +0.22 pt | 1.55 | 2.007 | 11.61% | yes |
+| capacity | 5 | 2 | 7 | 93.1 | 19.74% | -0.68 pt | 2.33 | 1.134 | 11.25% | yes |
+| capacity | 25 | 0 | 1 | 76.34 | 36.56% | +3.23 pt | 1.33 | 1.365 | 6.55% | yes |
+| capacity | 25 | 0 | 7 | 76.34 | 36.56% | +3.23 pt | 1.33 | 1.365 | 6.55% | yes |
+| capacity | 25 | 2 | 1 | 84.33 | 35.89% | +3.15 pt | 1.66 | 1.96 | 8.93% | yes |
+| capacity | 25 | 2 | 7 | 88.55 | 35.11% | +2.21 pt | 2.36 | 1.736 | 9.83% | yes |
+
+## WP-12b — capacity rungs: does halving the cap spread what the budget could not? (W2)
+
+Same pacing ratio, same budget, same corners as WP-12; the rung sets the PER-SLOT CAP (allow 4 / degrade 2 / escalate 1 / block 1 / terminate 0 for the rest of the day) and displaced work SPILLS to the next cheapest feasible slot. "vs plane" is this cell's top-5% share minus the same (N, alpha, staleness) plane cell's — negative means the cap arm spread the crowd.
+
+| arm | N | alpha | staleness | g/kWh paid | top-5% share | vs plane | peak ratio | oscillation | dropped | terminate fired |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| capacity | 5 | 0 | 1 | 71.59 | 40% | +6.67 pt | 1.62 | 0.862 | 13.99% | yes |
+| capacity | 5 | 0 | 7 | 71.59 | 40% | +6.67 pt | 1.62 | 0.862 | 13.99% | yes |
+| capacity | 5 | 2 | 1 | 81.79 | 24.72% | -1.47 pt | 1.47 | 2.003 | 18.75% | yes |
+| capacity | 5 | 2 | 7 | 86.33 | 18.78% | +1.58 pt | 2.11 | 0.93 | 21.61% | yes |
+| capacity | 25 | 0 | 1 | 71.59 | 40% | +6.67 pt | 1.62 | 0.862 | 13.99% | yes |
+| capacity | 25 | 0 | 7 | 71.59 | 40% | +6.67 pt | 1.62 | 0.862 | 13.99% | yes |
+| capacity | 25 | 2 | 1 | 78.31 | 36.21% | +3.47 pt | 1.7 | 2.025 | 17.26% | yes |
+| capacity | 25 | 2 | 7 | 82.49 | 36.28% | +3.48 pt | 2.49 | 1.527 | 19.05% | yes |
+
+## WP-12b verdict — DISPROVEN AGAIN
+
+**Disproven again.** Capacity rungs do not spread the herd either. At the blind-herd corner (N=25, alpha=0, daily cadence) the top-5%-slot share goes from the herd's 33.33% to 36.56% (W1) and 33.33% to 40% (W2) — no material fall, beside the skip-k paced arm's 36.56% / 40%, the defer arm's 41.46% / 40.17% and the inert stagger arm's 33.33% / 33.33%. Across all eight corners the change against the matching plane cell runs -0.68 to 3.23 pt (W1), -1.47 to 6.67 pt (W2). The arm also **SHEDS**: 6.55% / 13.99% of measured work is dropped, and only at the terminate rung, and it concentrates rather than flattens what survives: peak concurrency ratio 1 -> 1.33 and 1 -> 1.62. The sharpest way to put it: at the blind-herd corner the capacity arm lands on **exactly** the skip-k budget arm's share and drop rate (36.56% / 6.55% and 40% / 13.99%), with share and drop rate BIT-identical to it, differing in grams paid (76.34 vs 76.29, 71.59 vs 71.45) — two different rung semantics, one aggregate outcome, because in both the binding constraint is how much of a cheap day one budget buys. What this means for the corrected §2h.2 claim is exact and unflattering: **"the gate's anti-herd lever is capacity semantics, not budget depletion" is not established by this model either.** The slot cap bounds the herd by its LEVEL — a static system parameter — not by the rung that moves it; lowering an already-binding cap redistributes one system's own units inside a cheap band that every system agrees on, so the crowd's shape survives. A gate-side anti-herd claim now needs a mechanism that makes different systems choose DIFFERENTLY — heterogeneous caps, per-actor phase, or an allocator that can see the crowd — and this package should claim none of them until one is measured.
+
 ## What the table actually shows (the four findings)
 
-1. **The plane spreads the crowd only by paying grams.** Every alpha > 0 cell pays MORE mean intensity than its blind-herd counterpart (the herd pure-argmins the real signal; asserted as an invariant in loop.test.js). Where the top-5% share falls — most visibly at N=2, alpha=2, weekly cadence: 33.33% -> 14.88% (winter) and -> 11.9% (summer) — the price is dirtier slots (76.55 -> 99.52 and 71.46 -> 86.8 g/kWh). **A published signal alone cannot both spread the herd and stay clean.** That is the measured case for the second half of WP-17: allocation (the gate's paced budget) rather than information alone — and it is exactly Bailey et al.'s TOU-vs-managed-charging finding, reproduced in a publication-medium model.
-2. **Fresh mutual observation oscillates.** At N >= 5 with daily publication and strong heed, day-to-day oscillation sits at or near its maximum of 2 — complete daily swaps, the cobweb: everyone reads the same picture, everyone jumps together, the picture inverts. Staleness *lowers* oscillation here (phase-offset publication desynchronises the crowd) at the cost of steering on old data. Neither end is stable-and-clean; that trade is the result.
+1. **The plane spreads the crowd only by paying grams.** Every alpha > 0 cell pays MORE mean intensity than its blind-herd counterpart (the herd pure-argmins the real signal; asserted as an invariant in loop.test.js). Where the top-5% share falls — most visibly at N=2, alpha=2, weekly cadence: 33.33% -> 14.88% (winter) and -> 11.9% (summer) — the price is dirtier slots (76.55 -> 99.52 and 71.46 -> 86.8 g/kWh; peak concentration also differs — the capacity arm peaks what it keeps harder than skip-k does, see the peak column). **A published signal alone cannot both spread the herd and stay clean.** That is the measured case for the second half of WP-17: allocation (the gate's paced budget) rather than information alone — and it is exactly Bailey et al.'s TOU-vs-managed-charging finding, reproduced in a publication-medium model.
+2. **Fresh mutual observation oscillates.** At N >= 5 with daily publication and strong heed, day-to-day oscillation sits at or near 2 — complete daily swaps, the cobweb (2 is the exact maximum when the number of placed units is constant day to day; shedding arms can exceed it slightly): everyone reads the same picture, everyone jumps together, the picture inverts. Staleness *lowers* oscillation here (phase-offset publication desynchronises the crowd) at the cost of steering on old data. Neither end is stable-and-clean; that trade is the result.
 3. **The effect shrinks as N grows.** With many identical systems the per-peer signal averages out (top-5% share climbs back toward the herd's 33.33% cap-bound value at N=25). Spreading a LARGE crowd through voluntary document-reading alone does not happen in this model; it needs heterogeneity, allocation, or both.
-4. **WP-12's verdict, and it falsifies our own conjecture.** Three anti-herd mechanisms were run head-to-head (table above): a PACED BUDGET with skip-k rungs sheds work instead of spreading it (units drop, the top-5% share RISES because survivors still pile into the same slots); the same budget with the gate's true DEFER semantics reshuffles inside the same cheap band (top share rises to ~41%, no drops); and the STAGGER arm — SI 2021/1467's intent at slot resolution — is inert, because near-ties within 1 g/kWh are rare on real intensity data (consistent with the regulation targeting sub-slot synchrony, not slot-level herding). The claim "a paced budget is a staggering mechanism" is therefore FALSIFIED in this model class. What actually bounds the herd in every row is the per-system slot CAP — capacity semantics. The redirect is concrete: the gate's anti-herd lever is rate/capacity rungs (degrade = halve your per-slot cap), which is CarbonFlex's capacity limit made a governance verdict — designed, not yet built (WP-12b).
+4. **WP-12's verdict — our own conjecture is disproven.** Three anti-herd mechanisms were run head-to-head (table above): a PACED BUDGET with skip-k rungs sheds work instead of spreading it (units drop, the top-5% share RISES because survivors still pile into the same slots); the same budget with the gate's true DEFER semantics reshuffles inside the same cheap band (top share rises to ~41% at the alpha=0 corner; no rung-driven drops, though 11-21% of units still drop at their deadlines — the dropped column above prices it); and the STAGGER arm — SI 2021/1467's intent at slot resolution — is inert, because near-ties within 1 g/kWh are rare on real intensity data (consistent with the regulation targeting sub-slot synchrony, not slot-level herding). The claim "a paced budget is a staggering mechanism" is therefore disproven in this model class. What bounds the herd in every row is the per-system slot CAP — but WP-12b then built rungs that act on that cap (ADR-019) and measured them, and they concentrate rather than spread (see the WP-12b verdict above). Both anti-herd conjectures — budget depletion (WP-12) and capacity rungs (WP-12b) — were tested and disproven, so this package claims NO anti-herd property for the gate; what it does claim is that running the comparison at all is, to the checked record, unprecedented.
 
 ## Reading notes
 
 - **alpha = 0 rows are the blind herd** — every system argmins the same grid signal; the top-5% share there is this model's R11. Peak ratio 1.0 for the herd is definitional (it packs its 6 cap-bound slots exactly), which is why the discriminating columns are the share, the intensity and the oscillation.
 - Staleness 1 vs 7 days brackets a real gap: E1 measured the median published document age at **23 days**; a control loop needs cadences near the top row. The gap between the rows is the argument for runtime cadence.
-- Not modelled here, on purpose: the gate's budget pacing (WP-17's second half — the finding above says it is needed), heterogeneous workloads, and strategic misreporting — F13 and E6's Goodhart warning say what happens when publishing becomes strategic.
+- Not modelled here, on purpose: heterogeneous workloads, and strategic misreporting — F13 and E6's Goodhart warning say what happens when publishing becomes strategic.

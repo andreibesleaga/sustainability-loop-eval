@@ -9,6 +9,10 @@ Two experiments, both replayed over the **same real grid-carbon traces**:
 |---|---|---|---|
 | **E2** | Does routing every agent action through a carbon budget + verdict ladder beat always-run and a carbon-aware-scheduling baseline, and at what cost in service? | `simulation/run.js` | `results/simulation.{json,md}` |
 | **E3** | Can a gated, human-approved *start-time shift* of a fixed EV charge cut emissions without touching what the vehicle receives? | `simulation/charging.js` | `results/charging.{json,md}` |
+| **E5** | What happens when N systems read each other's published documents — and can anything dissolve the herd? | `simulation/loop.js` | `results/loop.{json,md}` |
+| **E6** | Is routed charging advice (where AND when) worth its movement cost? | `simulation/routing.js` | `results/routing.{json,md}` |
+| **bounds** | The analytic ceilings every arm above must sit under | `simulation/bounds.js` | `results/bounds.{json,md}` |
+| **plane** | The closed loop run with real gateway-shaped documents — the price of staleness | `simulation/plane.js` | `results/plane.{json,md}` |
 
 ## How to run
 
@@ -89,11 +93,15 @@ declined approval withholds the *optimisation*, never the charge.
 |---|---|
 | `fetch-traces.js` | fetch + cache the real traces, aligned onto a canonical slot grid |
 | `lib.js` | trace loading (with validation) and the workload generator |
-| `run.js` | E2 — policies P0 / P1 / P1t / P2 and the metric aggregation |
+| `run.js` | E2 — policies P0 / P1 / P1t / P2, plus P3 (argmin), the E2b sweep, the tiered arm and the real-trace pair (P2real/P2equal6) |
 | `charging.js` | E3 — fleet, proposal, gate, approver |
 | `report.js` | markdown rendering only; recomputes nothing |
 | `lib.test.js` | unit tests for the PRNG, Poisson draws, statistics, traces, workload |
 | `policies.test.js` | hand-computed micro-scenarios per policy + conservation invariants |
+| `bounds.js` / `loop.js` / `plane.js` / `routing.js` | the other deterministic experiments (see the table above) |
+| `forecast.js` / `fetch-forecast.js` | the forecast-port reference adapter and its manual capture tool (WP-3) |
+| `workload-real.js` | the WP-15 real-trace template loader and six-way splitter |
+| `*.test.js` (ten files here) | conformance, invariant and feature suites — every one offline and deterministic; `features.test.js` executes the six `features/*.feature` specs against the real code |
 
 The seeded PRNG and the statistics live one level up, in `shared/prng.js` and
 `shared/stats.js`, so the fitness suite and the data-plane measurement use exactly the

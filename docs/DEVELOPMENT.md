@@ -30,7 +30,7 @@ never as 0%.
 
 | Command | What it does | Network |
 |---|---|---|
-| `npm test` | The 70 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
+| `npm test` | The 89 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
 | `npm run fitness` | The thirteen fitness functions on their own | none |
 | `npm run fitness:report` | Re-runs the same thirteen properties and writes `results/fitness.json` **and** `results/fitness.md` | none |
 | `npm run check:docs` | F12: compares every hand-typed headline number in the docs against `results/` | none |
@@ -47,7 +47,7 @@ never as 0%.
 | `npm run agent` | The same with a real language model, and you on the human port | gateway plus the OpenRouter API |
 | `npm run arch` | Checks for circular imports with `madge` | none |
 | `npm run arch:graph` | Draws the whole import graph with `madge` — this is what produced `results/madge.txt` | none |
-| `npm run all` | `fitness:report`, then `simulate`, then `charging`, then `dataplane` | the live step is last, deliberately: everything deterministic finishes before anything touches the network |
+| `npm run all` | `fitness:report`, then `simulate`, `charging`, `bounds`, `routing`, `loop`, `plane`, then `dataplane` | the live step is last, deliberately: everything deterministic finishes before anything touches the network |
 
 ### Environment variables
 
@@ -68,7 +68,7 @@ needs any of them.
 
 These are short on purpose. They are what keeps the package checkable.
 
-1. **One file, one purpose, about 150 lines.** That is a target, not a ceiling nothing enforces. Four files are above it today — `fitness/props.js`, `simulation/run.js`, `simulation/charging.js`, `dataplane/measure.js` — and each is listed in ADR-001 with a written reason. If you take a fifth file over the target, add it to that list with a reason, or split it.
+1. **One file, one purpose, about 150 lines.** That is a target, not a ceiling nothing enforces. Twelve source files are above it today — the experiment files (one experiment each), the two registries (`fitness/props.js`, `tools/check-numbers.js`), the report renderers and the capture tools — each listed in ADR-001 with a written reason. If you take another file over the target, add it to that list with a reason, or split it.
 2. **No new runtime dependencies.** The single dependency is the artifact under test; adding a second one weakens the argument as well as the install. Tools fetched on demand with `npx` (`madge`, the Mermaid CLI) are a separate matter and should still be justified. The optional reference consumer library is the one documented exception, and it is opt-in rather than installed (ADR-017). The live agent run uses no SDK at all — it is a plain `fetch` POST (ADR-018).
 3. **No wall clock in a conclusion.** Nothing that affects a *conclusion* may call `Date.now()` or `new Date()` without an argument. Pass a clock in, or use a fixed date. The gate already takes an injected clock. There is exactly one documented exception: `fetchedAt` in the live data-plane run, which records when a live fetch actually happened (ADR-007). Adding a second exception needs an ADR.
 4. **No unseeded randomness.** Use the seeded generator. `Math.random()` does not belong in this repository.
@@ -84,9 +84,9 @@ These are short on purpose. They are what keeps the package checkable.
 
 ### Add a fitness function
 
-1. Write `f13YourProperty()` in `fitness/props.js`, returning `{ id, property, cases, passed, notes }` like the others.
+1. Write `f14YourProperty()` in `fitness/props.js`, returning `{ id, property, cases, passed, notes }` like the others.
 2. Put a comment above it saying **why the property matters architecturally**, in the same voice as F1 to F12.
-3. Add `fitness/f13.test.js`, about fifteen lines, asserting on `passed`.
+3. Add `fitness/f14.test.js`, about fifteen lines, asserting on `passed`.
 4. Add the call to the `results` array in `fitness/report.js`.
 5. Add an entry to [`FITNESS-FUNCTIONS.md`](FITNESS-FUNCTIONS.md).
 6. Give it its own fixed PRNG seed if it generates cases.
@@ -167,6 +167,10 @@ which is exactly, and in this order:
 npm run fitness:report   # writes results/fitness.{json,md}
 npm run simulate         # writes results/simulation.{json,md}
 npm run charging         # writes results/charging.{json,md}
+npm run bounds           # writes results/bounds.{json,md}
+npm run routing          # writes results/routing.{json,md}
+npm run loop             # writes results/loop.{json,md}
+npm run plane            # writes results/plane.{json,md}
 npm run dataplane        # live; writes results/dataplane.{json,md} and refreshes data/dataplane/
 ```
 

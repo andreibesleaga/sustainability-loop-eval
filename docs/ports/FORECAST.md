@@ -37,6 +37,16 @@ An adapter provides:
 - The forecast is *advice about the future*: consumers must treat `capturedAt` as the
   decision time and never mix values captured at different times inside one decision.
 
+## Staleness
+
+A forecast's age is data, not decoration: `capturedAt` is mandatory, and a consumer
+can always compute how old the series is. What no code path in this package does —
+stated here so nobody assumes otherwise — is act on that age: **no rung is made
+stricter because a signal is stale**. Signal age is measured and reported, never
+acted on; a maximum-age policy is a consumer's decision, and WP-17's measured
+staleness cost (+6.1% at the real-world cadence) is the number that decision
+should weigh.
+
 ## What the port must never do
 
 - **Never serve a backfilled "forecast"** (a series fetched after the fact — that is

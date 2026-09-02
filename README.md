@@ -49,16 +49,16 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 Demonstration only — no number in `results/` comes from the demos.
 `npm install` prints advisories from the one dependency's own tree; they are
 explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
-everything: 70 unit tests, the thirteen architecture checks through the real
+everything: 89 unit tests, the thirteen architecture checks through the real
 gate, and a check that every number in these pages still matches `results/`.
 
 ## Headline results
 
-- **The safety properties hold in shipped code.** 13/13 green over 15,011 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
+- **The safety properties hold in shipped code.** 13/13 green over 15,037 cases against the real `kaiban-distributed` gate: worst verdict always wins, bad input refuses instead of allowing, nothing above `degrade` runs without a human, `terminate` never runs at all, and the audit log catches tampering.
 - **The data plane is real and cheap to read.** 12 documents, 100% valid, median 44.6 ms and about 1.3 kB per fetch; 120 requests from 26 clients in the log window — reachability shown, adoption not yet.
 - **The governor cuts emissions — by also doing less work.** At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against −1.54% and −2.97% for plain threshold deferral. About 15% of tasks run reduced and a few are dropped; read the emissions next to the completed counts, never alone.
 - **Charging:** 32.51% of session emissions avoided in winter and 16.04% in summer at full approval (25.93% and 12.77% at 80% approval) — cars only shift *when* they charge, never how much, and every car still charges fully.
-- **The whole core is** [`carbon-governor.js`](governor/carbon-governor.js) (104 lines, imports nothing) plus a 44-line actuation harness.
+- **The whole core is** [`carbon-governor.js`](governor/carbon-governor.js) (104 lines, imports nothing) plus a 45-line actuation harness.
 
 The honest catches — the governor paces a budget rather than capping it,
 humans are the bottleneck (~19–30 approvals/day simulated), the workload is
@@ -84,6 +84,10 @@ both contracts live in [docs/ports/](docs/ports/). Full labels:
 | Is the data plane usable as a signal? | `npm run dataplane` | [results/dataplane.md](results/dataplane.md) |
 | What does the governor do on real grid data? | `npm run simulate` | [results/simulation.md](results/simulation.md) |
 | Can gated charging shift help? | `npm run charging` | [results/charging.md](results/charging.md) |
+| What are the analytic ceilings every arm must sit under? | `npm run bounds` | [results/bounds.md](results/bounds.md) |
+| What happens when N systems read each other's documents? | `npm run loop` | [results/loop.md](results/loop.md) |
+| Is routed charging advice worth its movement cost? | `npm run routing` | [results/routing.md](results/routing.md) |
+| What does the closed loop pay for stale documents? | `npm run plane` | [results/plane.md](results/plane.md) |
 
 Simulation and fitness are deterministic (fixed windows, seeded randomness) and
 reproduce `results/` byte for byte; only the live data-plane run varies. All
@@ -95,17 +99,18 @@ and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 | Page | What it answers |
 |---|---|
 | [**Plain-words overview**](docs/OVERVIEW.md) | The whole system on one page, for anyone — the invention, what was measured, what is honestly still missing |
+| [**After submission**](docs/AFTER-SUBMISSION.md) | The addendum: everything built, disproven, corrected and still open since the article froze — with the final audit archived |
 | [**RESEARCH.md**](RESEARCH.md) | The full write-up: findings, numbers, corrections, versions, everything below in context |
-| [Research questions](docs/RESEARCH-QUESTIONS.md) | The three questions, what would falsify each, the current answers |
+| [Research questions](docs/RESEARCH-QUESTIONS.md) | The three questions, what would disprove each, the current answers |
 | [Results: fitness](results/fitness.md) · [data plane](results/dataplane.md) · [simulation](results/simulation.md) · [charging](results/charging.md) · [bounds](results/bounds.md) · [loop](results/loop.md) · [routing](results/routing.md) · [plane](results/plane.md) | The experiments' full tables and caveats, the ceilings they must sit under, and the first closed-loop and routed-charging measurements |
 | [Limitations](docs/LIMITATIONS.md) | Every limitation, once, canonically |
 | [**Roadmap**](docs/ROADMAP.md) | What was proved, what was not, and what to build next — the post-audit addendum |
 | [**Executive case**](docs/EXECUTIVE-CASE.md) | One page: the honest numbers, why it is new, why it can pay, who it serves |
 | [Runbook](docs/RUNBOOK.md) | How to implement, test and present every work package — with ready-to-paste agent briefs |
 | [Architecture (arc42)](docs/architecture/ARCHITECTURE.md) · [C4 diagrams](docs/architecture/c4/README.md) · [Dynamic views](docs/architecture/DYNAMICS.md) | How it is built and why — and what it *does*: the six ports, one gated decision, a charging session with publish-back, a task's life, the budget sawtooth |
-| [Port contracts](docs/ports/) · [Feature specs](features/) | What each port promises (forecast, metering so far), and the six plain-English Gherkin specs a regulator could read — every scenario executed against the real code by `npm test` |
+| [Port contracts](docs/ports/) · [Feature specs](features/) · [Spatial advisory](docs/SPATIAL-ADVISORY.md) | What each port promises (forecast, metering so far), and the six plain-English Gherkin specs a regulator could read — every scenario executed against the real code by `npm test` |
 | [Product design](docs/architecture/PRODUCT.md) | Who it is for, requirements, use cases |
-| [Decision records](docs/adr/) | Eighteen short "why" notes |
+| [Decision records](docs/adr/) | Nineteen short "why" notes |
 | [Fitness functions](docs/FITNESS-FUNCTIONS.md) | What each of the thirteen checks proves |
 | [Search protocol](docs/SEARCH-PROTOCOL.md) | How the novelty claims were tested by trying to refute them |
 | [Artifact inventory](docs/ARTIFACT-INVENTORY.md) | Every artifact the article cites and how it was checked |
@@ -133,7 +138,9 @@ What that unlocks (all measured or simulated here, on real GB grid data):
   datacenters publishing so tenants yield; websites pricing agentic crawl load.
   `npm run loop` is the first measurement of such a multi-party loop — including the
   honest finding that a published signal alone spreads the crowd *only by paying
-  grams*, so the gate's allocation role is load-bearing, not decorative.
+  grams* — and the gate's own allocation levers, tested twice (WP-12 budget pacing,
+  WP-12b capacity rungs), do not fix that either; both conjectures were disproven
+  and withdrawn.
 - **When AND where** — EVs routed between charging regions, LLM calls routed to
   green datacenters, whole agentic runtimes re-homing to green grids
   (`npm run routing`), each with its cost priced in and a self-printed warning that

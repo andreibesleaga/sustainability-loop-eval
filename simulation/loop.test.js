@@ -8,6 +8,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { renderMd } from "./loop.js";
+// WP-12b drives the model directly as well as reading its committed output, so the
+// "nothing drops below terminate" property is a property of the CODE, not of a table.
+import { run } from "./loop.js";
+import { loadWindow } from "./lib.js";
 
 const doc = JSON.parse(readFileSync(new URL("../results/loop.json", import.meta.url), "utf8"));
 const WINDOWS = ["W1", "W2"];
@@ -98,6 +103,112 @@ test("WP-12: the anti-herd arms behave as the verdict states — binding budget 
     assert.deepEqual(x["paced_defer_N5_a0_s1"], x["paced_defer_N25_a0_s1"], `${id}: alpha=0 defer cells must be N-independent`);
   }
   const md = readFileSync(new URL("../results/loop.md", import.meta.url), "utf8");
-  assert.match(md, /FALSIFIED/, "the falsification must be stated, not softened");
+  assert.match(md, /conjecture is disproven/i, "the negative verdict must be stated plainly, not softened");
   assert.match(md, /WP-12b/, "the redirect to capacity rungs must be named");
+});
+
+test("WP-12b: the capacity arm exists at every WP-12 corner, and the plane cells it is compared against are untouched", () => {
+  for (const id of WINDOWS) {
+    const b = doc.results[id].wp12b;
+    assert.ok(b, `${id}: the WP-12b capacity comparison must exist`);
+    for (const N of [5, 25]) for (const a of [0, 2]) for (const st of [1, 7]) {
+      const c = b[`capacity_N${N}_a${a}_s${st}`];
+      assert.ok(c, `${id}: capacity_N${N}_a${a}_s${st} must be recorded`);
+      assert.equal(typeof c.terminateFired, "boolean", "every capacity cell carries the terminate flag");
+      assert.equal(typeof c.droppedUnitsPct, "number", "every capacity cell reports what it lost");
+    }
+    // alpha=0 systems are independent and identical, so N cannot matter here either.
+    assert.deepEqual(b["capacity_N5_a0_s1"], b["capacity_N25_a0_s1"], `${id}: alpha=0 capacity cells must be N-independent`);
+    assert.deepEqual(b["capacity_N5_a0_s7"], b["capacity_N25_a0_s1"], `${id}: alpha=0 capacity cells cannot see staleness`);
+  }
+  // APPEND-ONLY: WP-12b may add cells, never move the ground it is measured against.
+  // The blind-herd row is pinned by value in both windows; if adding an arm changed
+  // it, the arm changed the shared machinery and the addition was not append-only.
+  const HERD = { W1: { meanIntensityGPerKWh: 76.55, peakConcurrencyRatio: 1, top5PctSlotShare: 33.33, oscillationL1: 1.359 },
+                 W2: { meanIntensityGPerKWh: 71.46, peakConcurrencyRatio: 1, top5PctSlotShare: 33.33, oscillationL1: 0.872 } };
+  for (const id of WINDOWS) for (const N of Ns) for (const st of stalenessDays) {
+    assert.deepEqual(doc.results[id].cells[`N${N}_a0_s${st}`], HERD[id],
+      `${id} N${N} s${st}: the committed alpha=0 plane cell must be unchanged`);
+  }
+});
+
+test("WP-12b: metric sanity — the capacity cells are cells like any other", () => {
+  for (const id of WINDOWS) {
+    for (const [k, c] of Object.entries(doc.results[id].wp12b)) {
+      assert.ok(c.top5PctSlotShare > 0 && c.top5PctSlotShare <= 100, `${id} ${k}: share is a share`);
+      assert.ok(c.peakConcurrencyRatio >= 1 - 1e-9, `${id} ${k}: peak cannot be below the ideal spread`);
+      // The complete-swap bound of 2 is exact only when both days placed the same
+      // number of units; an arm that drops work normalises by the LATER day's units,
+      // so the bound relaxes by exactly that shortfall (the WP-12 paced rows show the
+      // same slight overshoot). Anything beyond it would be an accounting bug.
+      assert.ok(c.oscillationL1 >= 0 && c.oscillationL1 <= 2 * (1 + c.droppedUnitsPct / 100) + 1e-9,
+        `${id} ${k}: L1/unit is at most a complete swap, allowing for the units this arm dropped`);
+      assert.ok(c.meanIntensityGPerKWh > 0, `${id} ${k}: something was paid`);
+      assert.ok(c.droppedUnitsPct >= 0 && c.droppedUnitsPct < 100, `${id} ${k}: drops are a percentage of the work`);
+    }
+  }
+});
+
+test("WP-12b: nothing is lost below the terminate rung — halving a cap spills work, it never refuses it", () => {
+  // (a) From the committed cells, by CAUSE this time (the earlier implication-only
+  // form was vacuous while terminateFired was true in every cell): every drop in
+  // every committed capacity cell must be attributed to the terminate rung — the
+  // no-feasible-slot spill counter, the one way work could be lost BELOW
+  // terminate, must be exactly zero everywhere.
+  for (const id of WINDOWS) {
+    for (const [k, c] of Object.entries(doc.results[id].wp12b)) {
+      assert.equal(c.droppedNoFeasibleSlot, 0, `${id} ${k}: a unit was lost below the terminate rung (spill found no slot)`);
+      if (!c.terminateFired) assert.equal(c.droppedUnitsPct, 0, `${id} ${k}: no terminate, so nothing may drop`);
+    }
+  }
+  // (b) Driven directly, so the property is checked and not merely observed: under a
+  // budget too large to bind, no rung fires, nothing drops, and the capacity arm
+  // REDUCES to the plane cell exactly — the ladder is inert when there is headroom.
+  for (const id of WINDOWS) {
+    const W = loadWindow(id);
+    for (const [N, a, st] of [[25, 0, 1], [5, 2, 7]]) {
+      const loose = run(W, N, a, st, "capacity", { paceF: 50 });
+      assert.equal(loose.terminateFired, false, `${id} N${N} a${a} s${st}: a non-binding budget must fire no rung`);
+      assert.equal(loose.droppedUnitsPct, 0, `${id} N${N} a${a} s${st}: below terminate, no unit may be lost`);
+      assert.equal(loose.droppedNoFeasibleSlot, 0, `${id} N${N} a${a} s${st}: no unit may be lost below terminate`);
+      const { droppedUnitsPct, terminateFired, droppedNoFeasibleSlot, ...metrics } = loose;
+      assert.deepEqual(metrics, doc.results[id].cells[`N${N}_a${a}_s${st}`],
+        `${id} N${N} a${a} s${st}: an unbound capacity arm must be the plane arm`);
+    }
+    // And the committed cells are reproducible from the committed inputs.
+    assert.deepEqual(run(W, 25, 2, 7, "capacity"), doc.results[id].wp12b["capacity_N25_a2_s7"],
+      `${id}: the capacity cell must regenerate byte-for-byte from the committed trace`);
+  }
+});
+
+test("WP-12b: the verdict sentence in loop.md states the direction the numbers actually took", () => {
+  const md = readFileSync(new URL("../results/loop.md", import.meta.url), "utf8");
+  // The write-up's word is not allowed to drift from the measurement: recompute the
+  // test the renderer applies (blind-herd corner, >= 2 points of top-5% share) and
+  // require the prose to match it in both directions.
+  const spreads = WINDOWS.every((id) =>
+    doc.results[id].cells["N25_a0_s1"].top5PctSlotShare - doc.results[id].wp12b["capacity_N25_a0_s1"].top5PctSlotShare >= 2);
+  if (spreads) {
+    assert.match(md, /WP-12b verdict — SPREADS/, "a spreading result must be claimed as one");
+    assert.doesNotMatch(md, /WP-12b verdict — DISPROVEN AGAIN/);
+  } else {
+    assert.match(md, /WP-12b verdict — DISPROVEN AGAIN/, "a second negative result must be stated, not softened");
+    assert.match(md, /not established by this model either/, "the consequence for the corrected §2h.2 claim must be spelled out");
+    assert.doesNotMatch(md, /WP-12b verdict — SPREADS/);
+  }
+  // The table itself must be there, with the honest per-cell columns.
+  assert.match(md, /capacity rungs: does halving the cap spread/i);
+  assert.match(md, /terminate fired/i, "the drops-only-at-terminate column belongs in the table");
+  for (const id of WINDOWS) {
+    const c = doc.results[id].wp12b["capacity_N25_a0_s1"];
+    assert.ok(md.includes(`${c.top5PctSlotShare}%`), `${id}: the blind-herd capacity share must appear in the write-up`);
+  }
+});
+
+test("loop: the committed write-up IS the renderer's output — generator drift is impossible to hide", () => {
+  // F6 (audit): every prose assertion above reads results/loop.md; this one closes
+  // the loop by proving the committed .md is byte-identical to rendering the
+  // committed .json with the current renderer, so the two cannot drift silently.
+  const md = readFileSync(new URL("../results/loop.md", import.meta.url), "utf8");
+  assert.equal(md, renderMd(doc), "results/loop.md must equal renderMd(results/loop.json) byte for byte — regenerate with `npm run loop`");
 });

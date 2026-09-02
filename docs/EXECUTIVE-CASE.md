@@ -37,7 +37,7 @@ estimates; the clouds' carbon APIs are per-tenant and weeks delayed).
 
 ```mermaid
 flowchart TB
-    CORE{{Carbon-Verdict Governor<br/>104 lines, zero imports<br/>13 fitness functions, 15,011 cases}}
+    CORE{{Carbon-Verdict Governor<br/>104 lines, zero imports<br/>13 fitness functions, 15,037 cases}}
     S[signal port] --- CORE
     F[forecast port] --- CORE
     H[human port] --- CORE
@@ -53,7 +53,7 @@ flowchart TB
 
 | what | result | where |
 |---|---|---|
-| The gate's safety properties in shipped code | **13/13 fitness functions over 15,011 cases** — worst-verdict-wins, fail-closed, human-bound, tamper-evident, metering bounds a lying agent to one action of slack | `results/fitness.md` |
+| The gate's safety properties in shipped code | **13/13 fitness functions over 15,037 cases** — worst-verdict-wins, fail-closed, human-bound, tamper-evident, metering bounds a lying agent to one action of slack | `results/fitness.md` |
 | Pure temporal deferral (E2, 6 h, half deferrable) | **−1.54% / −2.97%** — and the ceiling calculus says ≤6.58%/8.44% causal, so the mechanism was never going to carry the story on GB's flat grid | `results/simulation.md`, `results/bounds.md` |
 | Shifting a load that can really move (E3, EVs overnight) | **32.85% / 16.53%** avoided — but decomposed: winter 21% is peak-avoidance, summer clean-seeking is **negative** (−4.9 pp) | `results/charging.md`, `results/bounds.md` |
 | What governance costs in carbon | **−0.34 / −0.49 pp** in E3 — the gate buys authority, audit and a bounded human cost (545.7/853 decisions per window; 442.9/637 under one tiering rule), not grams | `results/charging.md` |
@@ -77,9 +77,11 @@ flowchart TB
    (SI 2021/1467's mandated randomised delay) behind it.
 4. **The anti-herd comparison itself** — paced budget vs mandated-randomness intent
    vs the naked plane, run head-to-head, appears nowhere in the checked record. Run
-   here (2026-09-02), it **falsified our own conjecture**: depletion sheds or
-   reshuffles, it does not spread — the herd is bounded by capacity semantics, which
-   is the corrected claim this work now carries (`results/loop.md`, finding 4).
+   here (2026-09-02), it **disproved our own conjecture**: depletion sheds or
+   reshuffles, it does not spread — and the follow-up conjecture (capacity rungs,
+   WP-12b) was built, measured and disproven the same day. Both are withdrawn: this
+   work claims no anti-herd property for the gate, and says so
+   (`results/loop.md`, WP-12b verdict).
 5. **F13's metering theorem** (the lie bounded to one action, or unbounded without a
    meter) — stated and proven here, found nowhere else.
 
@@ -111,13 +113,13 @@ flowchart TB
 | Operators of agentic AI | budgets (carbon/£/tokens) their agents cannot bypass, with audit; mutual back-pressure instead of stampedes | fitness suite; E5 |
 | Businesses | ToU arbitrage + smaller bills + CSRD-grade evidence as a by-product | §2g anchors; audit chain |
 | Households | paid participation (SEG/Outgoing/DFS turn-UP verified) with authority kept local — `block` means "not my battery, not tonight", recorded | C13/C14; E3's safety inversion |
-| Grids | demand that answers signals *without* synchronising into shadow peaks — the E5 finding is exactly why allocation-aware demand is worth paying for | E5; Bailey et al.; SI 2021/1467 |
+| Grids | demand that answers signals WILL synchronise into shadow peaks — E5 measured it, and neither budget pacing nor capacity rungs dissolves it — which is exactly the problem grids would pay to see solved, stated here as open | E5; Bailey et al.; SI 2021/1467 |
 | The planet | the missing feedback wire between systems that consume a measurable share of world electricity — deployed on web conventions that demonstrably do get adopted | §3c; adoption evidence |
 
 ## What to run to see it (no network, byte-reproducible)
 
 ```bash
-npm test          # 13 fitness functions, every safety property, live doc checks
+npm test          # 13 fitness functions, every safety property, the offline registry check binding every quoted number to results/
 npm run bounds    # the ceilings every claim must sit under
 npm run loop      # E5 — the closed loop's three findings
 npm run routing   # E6/E6b — when-and-where, with the Goodhart warning it prints itself

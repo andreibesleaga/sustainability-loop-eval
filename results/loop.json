@@ -184,14 +184,16 @@
           "peakConcurrencyRatio": 1.22,
           "top5PctSlotShare": 36.56,
           "oscillationL1": 1.364,
-          "droppedUnitsPct": 6.55
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a0_s1": {
           "meanIntensityGPerKWh": 73.03,
           "peakConcurrencyRatio": 1.11,
           "top5PctSlotShare": 41.46,
           "oscillationL1": 1.415,
-          "droppedUnitsPct": 13.39
+          "droppedUnitsPct": 13.39,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N5_a0_s7": {
           "meanIntensityGPerKWh": 76.58,
@@ -204,14 +206,16 @@
           "peakConcurrencyRatio": 1.22,
           "top5PctSlotShare": 36.56,
           "oscillationL1": 1.364,
-          "droppedUnitsPct": 6.55
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a0_s7": {
           "meanIntensityGPerKWh": 73.03,
           "peakConcurrencyRatio": 1.11,
           "top5PctSlotShare": 41.46,
           "oscillationL1": 1.415,
-          "droppedUnitsPct": 13.39
+          "droppedUnitsPct": 13.39,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N5_a2_s1": {
           "meanIntensityGPerKWh": 92.7,
@@ -224,14 +228,16 @@
           "peakConcurrencyRatio": 1.55,
           "top5PctSlotShare": 29.56,
           "oscillationL1": 2.003,
-          "droppedUnitsPct": 11.31
+          "droppedUnitsPct": 11.31,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a2_s1": {
           "meanIntensityGPerKWh": 90.89,
           "peakConcurrencyRatio": 1.46,
           "top5PctSlotShare": 29.44,
           "oscillationL1": 2.052,
-          "droppedUnitsPct": 16.07
+          "droppedUnitsPct": 16.07,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N5_a2_s7": {
           "meanIntensityGPerKWh": 94.16,
@@ -244,14 +250,16 @@
           "peakConcurrencyRatio": 2.47,
           "top5PctSlotShare": 21.86,
           "oscillationL1": 1.183,
-          "droppedUnitsPct": 10.6
+          "droppedUnitsPct": 10.6,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a2_s7": {
           "meanIntensityGPerKWh": 89.95,
           "peakConcurrencyRatio": 2.53,
           "top5PctSlotShare": 24.18,
           "oscillationL1": 1.191,
-          "droppedUnitsPct": 12.74
+          "droppedUnitsPct": 12.74,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a0_s1": {
           "meanIntensityGPerKWh": 76.58,
@@ -264,14 +272,16 @@
           "peakConcurrencyRatio": 1.22,
           "top5PctSlotShare": 36.56,
           "oscillationL1": 1.364,
-          "droppedUnitsPct": 6.55
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a0_s1": {
           "meanIntensityGPerKWh": 73.03,
           "peakConcurrencyRatio": 1.11,
           "top5PctSlotShare": 41.46,
           "oscillationL1": 1.415,
-          "droppedUnitsPct": 13.39
+          "droppedUnitsPct": 13.39,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a0_s7": {
           "meanIntensityGPerKWh": 76.58,
@@ -284,14 +294,16 @@
           "peakConcurrencyRatio": 1.22,
           "top5PctSlotShare": 36.56,
           "oscillationL1": 1.364,
-          "droppedUnitsPct": 6.55
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a0_s7": {
           "meanIntensityGPerKWh": 73.03,
           "peakConcurrencyRatio": 1.11,
           "top5PctSlotShare": 41.46,
           "oscillationL1": 1.415,
-          "droppedUnitsPct": 13.39
+          "droppedUnitsPct": 13.39,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a2_s1": {
           "meanIntensityGPerKWh": 87.3,
@@ -304,14 +316,16 @@
           "peakConcurrencyRatio": 1.45,
           "top5PctSlotShare": 37.85,
           "oscillationL1": 1.984,
-          "droppedUnitsPct": 9.23
+          "droppedUnitsPct": 9.23,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a2_s1": {
           "meanIntensityGPerKWh": 80.9,
           "peakConcurrencyRatio": 1.36,
           "top5PctSlotShare": 38.06,
           "oscillationL1": 1.941,
-          "droppedUnitsPct": 13.1
+          "droppedUnitsPct": 13.1,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a2_s7": {
           "meanIntensityGPerKWh": 91.13,
@@ -324,14 +338,90 @@
           "peakConcurrencyRatio": 2.06,
           "top5PctSlotShare": 36.84,
           "oscillationL1": 1.746,
-          "droppedUnitsPct": 8.57
+          "droppedUnitsPct": 8.57,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a2_s7": {
           "meanIntensityGPerKWh": 86.57,
           "peakConcurrencyRatio": 1.95,
           "top5PctSlotShare": 37.38,
           "oscillationL1": 1.747,
-          "droppedUnitsPct": 11.4
+          "droppedUnitsPct": 11.4,
+          "droppedNoFeasibleSlot": 0
+        }
+      },
+      "wp12b": {
+        "capacity_N5_a0_s1": {
+          "meanIntensityGPerKWh": 76.34,
+          "peakConcurrencyRatio": 1.33,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.365,
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N5_a0_s7": {
+          "meanIntensityGPerKWh": 76.34,
+          "peakConcurrencyRatio": 1.33,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.365,
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N5_a2_s1": {
+          "meanIntensityGPerKWh": 92.99,
+          "peakConcurrencyRatio": 1.55,
+          "top5PctSlotShare": 26.11,
+          "oscillationL1": 2.007,
+          "droppedUnitsPct": 11.61,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N5_a2_s7": {
+          "meanIntensityGPerKWh": 93.1,
+          "peakConcurrencyRatio": 2.33,
+          "top5PctSlotShare": 19.74,
+          "oscillationL1": 1.134,
+          "droppedUnitsPct": 11.25,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a0_s1": {
+          "meanIntensityGPerKWh": 76.34,
+          "peakConcurrencyRatio": 1.33,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.365,
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a0_s7": {
+          "meanIntensityGPerKWh": 76.34,
+          "peakConcurrencyRatio": 1.33,
+          "top5PctSlotShare": 36.56,
+          "oscillationL1": 1.365,
+          "droppedUnitsPct": 6.55,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a2_s1": {
+          "meanIntensityGPerKWh": 84.33,
+          "peakConcurrencyRatio": 1.66,
+          "top5PctSlotShare": 35.89,
+          "oscillationL1": 1.96,
+          "droppedUnitsPct": 8.93,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a2_s7": {
+          "meanIntensityGPerKWh": 88.55,
+          "peakConcurrencyRatio": 2.36,
+          "top5PctSlotShare": 35.11,
+          "oscillationL1": 1.736,
+          "droppedUnitsPct": 9.83,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
         }
       }
     },
@@ -495,14 +585,16 @@
           "peakConcurrencyRatio": 1.31,
           "top5PctSlotShare": 40,
           "oscillationL1": 0.89,
-          "droppedUnitsPct": 13.99
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a0_s1": {
           "meanIntensityGPerKWh": 71.69,
           "peakConcurrencyRatio": 1.16,
           "top5PctSlotShare": 40.17,
           "oscillationL1": 0.982,
-          "droppedUnitsPct": 14.29
+          "droppedUnitsPct": 14.29,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N5_a0_s7": {
           "meanIntensityGPerKWh": 71.5,
@@ -515,14 +607,16 @@
           "peakConcurrencyRatio": 1.31,
           "top5PctSlotShare": 40,
           "oscillationL1": 0.89,
-          "droppedUnitsPct": 13.99
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a0_s7": {
           "meanIntensityGPerKWh": 71.69,
           "peakConcurrencyRatio": 1.16,
           "top5PctSlotShare": 40.17,
           "oscillationL1": 0.982,
-          "droppedUnitsPct": 14.29
+          "droppedUnitsPct": 14.29,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N5_a2_s1": {
           "meanIntensityGPerKWh": 78.75,
@@ -535,14 +629,16 @@
           "peakConcurrencyRatio": 1.58,
           "top5PctSlotShare": 33.12,
           "oscillationL1": 2.015,
-          "droppedUnitsPct": 16.96
+          "droppedUnitsPct": 16.96,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a2_s1": {
           "meanIntensityGPerKWh": 80.22,
           "peakConcurrencyRatio": 1.66,
           "top5PctSlotShare": 32.94,
           "oscillationL1": 2.021,
-          "droppedUnitsPct": 17.86
+          "droppedUnitsPct": 17.86,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N5_a2_s7": {
           "meanIntensityGPerKWh": 89.54,
@@ -555,14 +651,16 @@
           "peakConcurrencyRatio": 2.44,
           "top5PctSlotShare": 21.54,
           "oscillationL1": 1.053,
-          "droppedUnitsPct": 20.89
+          "droppedUnitsPct": 20.89,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N5_a2_s7": {
           "meanIntensityGPerKWh": 85.13,
           "peakConcurrencyRatio": 2.54,
           "top5PctSlotShare": 20.97,
           "oscillationL1": 1.006,
-          "droppedUnitsPct": 21.07
+          "droppedUnitsPct": 21.07,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a0_s1": {
           "meanIntensityGPerKWh": 71.5,
@@ -575,14 +673,16 @@
           "peakConcurrencyRatio": 1.31,
           "top5PctSlotShare": 40,
           "oscillationL1": 0.89,
-          "droppedUnitsPct": 13.99
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a0_s1": {
           "meanIntensityGPerKWh": 71.69,
           "peakConcurrencyRatio": 1.16,
           "top5PctSlotShare": 40.17,
           "oscillationL1": 0.982,
-          "droppedUnitsPct": 14.29
+          "droppedUnitsPct": 14.29,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a0_s7": {
           "meanIntensityGPerKWh": 71.5,
@@ -595,14 +695,16 @@
           "peakConcurrencyRatio": 1.31,
           "top5PctSlotShare": 40,
           "oscillationL1": 0.89,
-          "droppedUnitsPct": 13.99
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a0_s7": {
           "meanIntensityGPerKWh": 71.69,
           "peakConcurrencyRatio": 1.16,
           "top5PctSlotShare": 40.17,
           "oscillationL1": 0.982,
-          "droppedUnitsPct": 14.29
+          "droppedUnitsPct": 14.29,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a2_s1": {
           "meanIntensityGPerKWh": 74.97,
@@ -615,14 +717,16 @@
           "peakConcurrencyRatio": 1.43,
           "top5PctSlotShare": 40.27,
           "oscillationL1": 2.019,
-          "droppedUnitsPct": 15.18
+          "droppedUnitsPct": 15.18,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a2_s1": {
           "meanIntensityGPerKWh": 76.11,
           "peakConcurrencyRatio": 1.34,
           "top5PctSlotShare": 38.98,
           "oscillationL1": 2.017,
-          "droppedUnitsPct": 15.18
+          "droppedUnitsPct": 15.18,
+          "droppedNoFeasibleSlot": 0
         },
         "stagger_N25_a2_s7": {
           "meanIntensityGPerKWh": 87.44,
@@ -635,14 +739,90 @@
           "peakConcurrencyRatio": 2.36,
           "top5PctSlotShare": 41.29,
           "oscillationL1": 1.705,
-          "droppedUnitsPct": 19.06
+          "droppedUnitsPct": 19.06,
+          "droppedNoFeasibleSlot": 0
         },
         "paced_defer_N25_a2_s7": {
           "meanIntensityGPerKWh": 83.18,
           "peakConcurrencyRatio": 2.16,
           "top5PctSlotShare": 41.92,
           "oscillationL1": 1.649,
-          "droppedUnitsPct": 19.65
+          "droppedUnitsPct": 19.65,
+          "droppedNoFeasibleSlot": 0
+        }
+      },
+      "wp12b": {
+        "capacity_N5_a0_s1": {
+          "meanIntensityGPerKWh": 71.59,
+          "peakConcurrencyRatio": 1.62,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.862,
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N5_a0_s7": {
+          "meanIntensityGPerKWh": 71.59,
+          "peakConcurrencyRatio": 1.62,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.862,
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N5_a2_s1": {
+          "meanIntensityGPerKWh": 81.79,
+          "peakConcurrencyRatio": 1.47,
+          "top5PctSlotShare": 24.72,
+          "oscillationL1": 2.003,
+          "droppedUnitsPct": 18.75,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N5_a2_s7": {
+          "meanIntensityGPerKWh": 86.33,
+          "peakConcurrencyRatio": 2.11,
+          "top5PctSlotShare": 18.78,
+          "oscillationL1": 0.93,
+          "droppedUnitsPct": 21.61,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a0_s1": {
+          "meanIntensityGPerKWh": 71.59,
+          "peakConcurrencyRatio": 1.62,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.862,
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a0_s7": {
+          "meanIntensityGPerKWh": 71.59,
+          "peakConcurrencyRatio": 1.62,
+          "top5PctSlotShare": 40,
+          "oscillationL1": 0.862,
+          "droppedUnitsPct": 13.99,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a2_s1": {
+          "meanIntensityGPerKWh": 78.31,
+          "peakConcurrencyRatio": 1.7,
+          "top5PctSlotShare": 36.21,
+          "oscillationL1": 2.025,
+          "droppedUnitsPct": 17.26,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
+        },
+        "capacity_N25_a2_s7": {
+          "meanIntensityGPerKWh": 82.49,
+          "peakConcurrencyRatio": 2.49,
+          "top5PctSlotShare": 36.28,
+          "oscillationL1": 1.527,
+          "droppedUnitsPct": 19.05,
+          "droppedNoFeasibleSlot": 0,
+          "terminateFired": true
         }
       }
     }

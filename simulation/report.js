@@ -25,6 +25,7 @@ export function renderSimulationMd(doc) {
     out += `\nTasks per seed: ${v(win.tasksPerSeed)}. P1 threshold (${p.days}-day median peer signal, computed over the whole window — see ADR-010): ${win.peerMedianThresholdG} gCO2e/kWh. P1t uses a trailing ${win.p1tTrailingMedianDays}-day median instead, so it never looks ahead.\n`;
     out += `\nDelay columns describe DEFERRED work only (tasks that ran later than they arrived); \`completed\` and on-time completion are equal by construction — ${doc.invariants.completedOnTime}\n\n`;
     out += renderTiering(id, win);
+    out += renderReal(id, win);
     out += renderDecomposition(id, win);
     out += renderSweep(id, win);
   }
@@ -37,6 +38,19 @@ function renderTiering(id, win) {
   const p = win.policies["P2_f0.8"];
   if (!t || !t.ruleApplied) return "";
   return `### Tiered governance (WP-14, f = 0.8)\n\nOne standing rule is active in the \`P2tiered\` arm: a \`block\` on DEFERRABLE work is authorised by the rule ("standing-rule:T1-auto-defer-blocked-deferrable" in the approval object), not a person. The physical outcome, the gate decision and the audit record are unchanged — emissions are identical to P2 by construction — and the only movement is who authorised what.\n\n| tier | what it covers | decisions per window |\n|---|---|---|\n| T0 — automatic | \`allow\` and \`degrade\` rungs | (the rest of the workload) |\n| T1 — standing rule, audited | \`block\` on deferrable work → auto-defer | ${v(t.ruleApplied)} |\n| T2 — a person | escalations + \`block\` on non-deferrable work | ${v(t.humanDecisions)} |\n| — absolute | \`terminate\`: no authoriser exists, rule or human | ${v(t.terminations)} dropped |\n\nAcceptance, in one sentence: **given the same workload and budget, when the standing rule authorises deferral of blocked deferrable work, then total emissions equal P2's exactly (${v(t.totalGCO2e)} vs ${v(p.totalGCO2e)} gCO2e) and human decisions fall from ${v(p.humanDecisions)} to ${v(t.humanDecisions)}** — the number the untired run could only report as a sensitivity is now the measured behaviour of a mechanism.\n\n`;
+}
+
+/** WP-15: the real workload trace, replayed beside the synthetic arm. */
+function renderReal(id, win) {
+  const rw = win.realWorkload;
+  const p = win.policies["P2_f0.8"];
+  if (!rw || !p) return "";
+  const m = rw["P2real_f0.8"];
+  const eq = rw["P2equal6_f0.8"];
+  const k = rw.subtasksPerArrival;
+  const mult = (m.humanDecisions.mean / p.humanDecisions.mean).toFixed(2);
+  const shares = Object.entries(rw.tokenShares).map(([kk, x]) => `${kk} ${(x * 100).toFixed(1)}%`).join(", ");
+  return `### The real workload trace (WP-15, f = 0.8)\n\nOne LIVE run of a kaiban-distributed social-media-team workflow (captured ${rw.capturedAt}; committed as \`${rw.source}\`) supplies a template: every synthetic arrival becomes its ${k} real subtasks — extract, four parallel composers, aggregate — with energy split by the run's measured token shares (${shares}). Arrival, deadline, deferrable flag and the daily budget are unchanged, and total energy is equal by construction, so every percentage is directly comparable to P2. An EQUAL-share control (the same ${k}-way split, each piece 1/${k}) runs beside it, so the reader can see what the measured shares themselves contribute.\n\n| arm | % vs P0 | completed | dropped | human decisions |\n|---|---|---|---|---|\n| P2 (one task per arrival) | ${v(p.pctVsP0)} | ${v(p.tasksCompleted)} | ${v(p.dropped)} | ${v(p.humanDecisions)} |\n| P2real (${k} real subtasks per arrival; counts are SUBTASKS) | ${v(m.pctVsP0)} | ${v(m.tasksCompleted)} | ${v(m.dropped)} | ${v(m.humanDecisions)} |\n| P2equal (${k} equal subtasks — control) | ${v(eq.pctVsP0)} | ${v(eq.tasksCompleted)} | ${v(eq.dropped)} | ${v(eq.humanDecisions)} |\n\nWhat this measures, stated carefully. **P2's saving is invariant to decision granularity**: splitting each arrival into ${k} pieces moves the headline by a rounding step, and the CONTROL row shows the measured token shares are not what makes that true — equal shares give the same answer. So the arm validates that E2's carbon result does not depend on the synthetic task being one indivisible lump, and it says nothing further about real workloads (one run, one workflow, timing not replayed — the 20.4 s span is sub-slot). **The human-decision column is a mechanical cost, not a discovery**: the gate is asked ${k} times per arrival, so decisions scale ~linearly with ${k} (×${mult} here, and the control matches) — by construction, not by measurement. The design question it makes concrete is WHERE to place the gate: per micro-task pricing costs k× the human attention for the same carbon, which is why run-level gating or WP-14's standing rules matter. Caveats stay stated: siblings with mixed verdicts may execute out of phase order across slots (carbon and decision accounting unaffected).\n\n`;
 }
 
 /** WP-2: where P2's saving actually comes from — exact per-task attribution. */

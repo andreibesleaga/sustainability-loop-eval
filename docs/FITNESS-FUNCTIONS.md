@@ -72,7 +72,7 @@ number it decides on is supplied by the agent being governed.
   supplies about itself. What the architecture can and cannot promise about that
   is a property, not a caveat. See below.
 
-## The four added in v1.1.0
+## The four added after the article (F10–F12 in v1.1.0; F13 in the audit pass)
 
 ### F10 — audit anchoring: edits are caught; truncation needs an anchor
 
@@ -104,10 +104,13 @@ silent zero (ADR-005), with a unit test alongside.
 ### F12 — the documentation agrees with `results/`
 
 A static check, like F7. `tools/check-numbers.js` holds a registry covering every
-hand-typed headline number in `README.md`, `docs/RESEARCH-QUESTIONS.md`,
-`docs/ARTIFACT-INVENTORY.md`, `docs/architecture/ARCHITECTURE.md` and
-`docs/adr/ADR-013`, plus the line-count claims about
-`governor/carbon-governor.js`, which it computes rather than trusts. It compares
+hand-typed headline number across fifteen documents — the README, RESEARCH.md,
+the ROADMAP, the plain-words overview, the executive case, the limitations
+register, the research questions, this file, the development guide, the spatial
+advisory, the artifact inventory, the architecture document and two ADRs — plus
+the line-count claims about `governor/carbon-governor.js`, which it computes
+rather than trusts. (The F12 case count IS the registry size, so the coverage
+grows with the claims.) It compares
 each with `results/*.json` and exits non-zero on a mismatch. It runs in `npm test`
 and as `npm run check:docs`.
 
@@ -139,10 +142,11 @@ does not:
   action while true emissions ran past 1.25 × budget, the `terminate` line.
 
 This is the executable form of limitation **R15**, and the reason the port
-inventory in ARCHITECTURE §5 needs a **metering port** beside signal, forecast,
-human and actuation. The evaluation in this package does not have one: the
-simulations charge the model's own physics, which is a trusted meter by
-construction, and the demo charges a self-declared estimate. A deployment that
+inventory carries a **metering port** beside signal, forecast, human, actuation
+and publication. Its contract now exists (`docs/ports/METERING.md`, WP-5) and its
+reference implementation is the simulations' own inlined estimate/actual pair —
+the model's physics is a trusted meter by construction, and the demo charges a
+self-declared estimate; no standalone metering adapter file or hardware exists. A deployment that
 skips the meter has the ladder's vocabulary and none of its guarantee.
 
 ## What F7 checks, exactly
@@ -175,10 +179,12 @@ npm run arch:graph       # madge: the full import graph — this is what produce
 ```
 
 `fitness/` **is** the governor's test suite: the governance core has no separate
-unit tests. The `node:test` files elsewhere (`simulation/lib.test.js`,
-`simulation/policies.test.js`, `dataplane/measure.test.js`) cover the adapters'
-own arithmetic instead — statistics, trace loading, policy semantics, document
-checking. There are **70** of those, and `npm test` runs them first.
+unit tests. The `node:test` files elsewhere — twelve of them now, from
+`simulation/lib.test.js` and `simulation/policies.test.js` through the
+conformance suites (forecast, metering), the feature runner, the experiment
+invariants (loop, plane, bounds, routing, workload-real) and
+`dataplane/chaos.test.js` — cover the adapters' own arithmetic and behaviour
+instead. There are **89** of those tests, and `npm test` runs them first.
 
 Each property lives once, in `fitness/props.js`, as an exported function
 returning `{ id, property, cases, passed, notes }`; the `fitness/fN.test.js`
@@ -198,7 +204,7 @@ of the tests rather than of the architecture.
 ## Current results
 
 `results/fitness.md` is rendered from the run, so it is the authority. As of
-v1.1.0: **13/13 green over 15,011 cases.** Version 1.0.0 — the snapshot the
+v1.1.0: **13/13 green over 15,037 cases.** Version 1.0.0 — the snapshot the
 article cites — was 9/9 over 10,994 cases. The difference is properties added,
 not properties fixed.
 

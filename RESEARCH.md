@@ -53,14 +53,17 @@ verdict plus every block verdict*.
 
 The honest version, with the numbers and the catches together.
 
-- **The safety properties hold in shipped code.** Thirteen executable checks against the real gate, all green over 15,011 cases. The gate always picks the worst verdict, refuses on bad input instead of allowing, never runs anything above "degrade" without a human, never runs "terminate" at all, and its audit log catches tampering. (Nine of the thirteen, over 10,994 cases, are what the article cites; four were added afterwards. See **Versions** below.)
+- **The safety properties hold in shipped code.** Thirteen executable checks against the real gate, all green over 15,037 cases. The gate always picks the worst verdict, refuses on bad input instead of allowing, never runs anything above "degrade" without a human, never runs "terminate" at all, and its audit log catches tampering. (Nine of the thirteen, over 10,994 cases, are what the article cites; four were added afterwards. See **Versions** below.)
 - **The data plane is real and cheap to read.** Twelve live documents, all valid, median 44.6 ms and about 1.3 kB per fetch.
+- **The closed loop was run with real documents, and staleness costs carbon.** N systems publishing and consuming documents in the gateway's own shape pay **83.3 vs 78.51 g/kWh** when documents are as old as the measured real-world cadence (23 days) — and the member a control loop most needs turns out to be *load*, not intensity (energy-consumption appears on 9/12 real documents, carbon-intensity on 3/12): a concrete recommendation for the draft standard. (`npm run plane`, WP-17.)
+- **Both of our own anti-herd conjectures failed, and we say so.** A paced budget sheds or reshuffles rather than spreading the crowd (WP-12), and capacity rungs concentrate what they keep (WP-12b, ADR-019) — this package claims no anti-herd property for the gate; running the comparison at all is, to the checked record, unprecedented. (`npm run loop`.)
+- **A real workflow trace validates granularity, no more.** One live kaiban-distributed run replayed through E2 shows P2's saving is invariant to decision granularity (an equal-share control gives the same answer), while gating per subtask costs ~6× the human decisions by construction — the measured case for run-level gating or standing rules. (WP-15.)
 - **The governor cuts emissions.** About 16% less carbon in winter and 20% less in summer than just running everything, against 1.5% and 3.0% for ordinary carbon-aware scheduling.
 - **But it does less work to get there.** Around 15% of tasks run in a reduced mode and some are dropped. Read the emissions column next to the completed and dropped columns, never alone.
 - **It paces a budget; it does not cap it.** Half the days still end over budget, because work deferred past midnight spends the next day's allowance.
 - **Humans are the bottleneck.** Roughly 19 to 30 approvals a day in the simulation. Dropping the approval rate from 100% to 80% cuts the charging saving almost proportionally.
 - **The peer signal is biased.** It tracks the real grid closely in shape but sits low in level, so it is good for choosing *when* to run and not yet good for setting an absolute budget.
-- **The workload is made up.** Task arrivals, energy per task and the EV fleet are stipulated numbers, not measurements. Real loads would move the percentages.
+- **The workload is made up** (one real captured workflow trace is replayed beside it as a control — WP-15 — without changing this label). Task arrivals, energy per task and the EV fleet are stipulated numbers, not measurements. Real loads would move the percentages.
 - **The gateway is the author's own.** No independent organization publishes into it yet. Discovery and comparability are shown; adoption is not — and the request log shows crawlers, not consumers.
 - **The approvers are simulated.** Real human friction, delay and fatigue are untested.
 
@@ -94,7 +97,7 @@ them is upstream's job.
 |---|---|---|
 | `npm run demo` | Reads one real document from the public gateway, turns its carbon figure into estimates for five actions, sends them through the real gate, prints all five verdicts and what each one means. Falls back to a saved copy offline, and says so. | A real verdict in seconds |
 | `npm run agent` | A real language model (`anthropic/claude-sonnet-5` via OpenRouter, plain HTTPS, no SDK) reads a real peer document and proposes a task. The proposal goes through the same real gate. If the verdict is `escalate`, **you** approve or refuse at the terminal; if it is `block`, you are asked whether to authorise a reduced run instead; if it is `terminate`, you are not asked at all. Needs `OPENROUTER_API_KEY` (put it in a gitignored `.env`); without one it explains and exits. | You are the human in the loop |
-| `npm test` | 70 unit tests for the adapters' own arithmetic, then the thirteen architecture checks through the real `kaiban-distributed` gate, then `check:docs`. | 13/13 green over 15,011 cases; the runtime's own governance suite (4 files, 71 tests) passes at commit `17ad362` |
+| `npm test` | 89 unit tests for the adapters' own arithmetic, then the thirteen architecture checks through the real `kaiban-distributed` gate, then `check:docs`. | 13/13 green over 15,037 cases; the runtime's own governance suite (4 files, 71 tests) passes at commit `17ad362` |
 | `npm run fitness` | The thirteen architecture checks on their own. | as above |
 | `npm run dataplane` | Fetches and checks every document in the gateway's subject registry, five times each, then summarises the gateway's real request logs. | 12 documents, 100% valid, all 8 mandatory fields on each, median 44.6 ms and 1296.5 bytes, not-endorsed notice on 9/9 real-organization documents, 2 organizations honestly recorded as publishing nothing, 120 requests from 26 clients over the roughly one-week log window |
 | `npm run simulate` | Replays a made-up agent workload over real Great Britain grid data, January and July 2026, under the policies and ten random seeds. | At an 80% budget: **−16.45%** carbon in winter and **−20.27%** in summer versus always running, against **−1.54%** and **−2.97%** for plain threshold deferral. 7996.6 and 7698.8 of about 8075 tasks completed; 1238.2 and 1220.9 run reduced; 545.7 and 853 human decisions over 28 days (about 19 and 30 a day); 14 and 14.4 of 28 days over budget. Peer signal matches the real grid at r = 0.96 and 0.986. |
@@ -171,6 +174,9 @@ The article was submitted on 22 August 2026 and is frozen. Where checking this
 package against it found something imprecise, the correction is stated here
 rather than quietly fixed. Each one is small; none changes a headline number.
 
+- **"`carbon-governor.js` (under 70 lines, imports nothing)."** True at the tag (80 lines, 45 of code); the hardening pass and the estimate/actual split grew the same file to **104 lines (57 of code)**. It still imports nothing, and F7 still proves that.
+- **"The worst of those four is 13%."** The same underlying measurement (12.77%) is now printed at one decimal as **12.8%** — a re-rounding, not a re-run.
+
 - **"Block withholds the action unless a human authorizes a degraded fallback."** The precise behaviour in this package is the rung table above. Deferrable work that is blocked is *rescheduled* — paused, then run later at full energy — rather than run degraded; only non-deferrable work runs reduced, and only on a human's authorisation. `terminate` is never overridable. In the charging experiment `block` has no fallback at all.
 - **"Every document the public gateway serves (twelve)."** Twelve is the gateway's *subject registry*: nine mappings of real organizations, two synthetic `*.example` subjects, and the gateway's own document. The gateway also serves 22 adapter and wire-format demonstration documents. Experiment E1 does not measure those, and no figure in this package includes them.
 - **"11–12% for the loosest budget, with 99–100% of work completed."** The measured figures are **10.86%** in winter and **11.72%** in summer, with **100%** and **98.7%** of work completed. The article's range rounds the winter figure up.
@@ -189,9 +195,9 @@ rather than quietly fixed. Each one is small; none changes a headline number.
 | The reference core itself | `governor/` | — | [`carbon-governor.js`](governor/carbon-governor.js) (104 lines, imports nothing), [`harness.js`](governor/harness.js) (the human port, also imports nothing) and `gate.js` (wires the core into the real gate) |
 | Why the novelty claims are worded as they are | [`docs/SEARCH-PROTOCOL.md`](docs/SEARCH-PROTOCOL.md) | — | sources, phrasings and dates of the adversarial prior-art search |
 
-`npm run all` runs the fitness report, then simulate, then charging, then
-dataplane. The live step is last on purpose: everything deterministic finishes and
-can be diffed before anything touches the network.
+`npm run all` runs the fitness report, then simulate, charging, bounds, routing,
+loop and plane, then dataplane. The live step is last on purpose: everything
+deterministic finishes and can be diffed before anything touches the network.
 
 Simulation and fitness are deterministic — fixed past windows, seeded random
 numbers, an injected clock — so re-running reproduces `results/*.json` byte for
@@ -212,7 +218,7 @@ as "proceed" and sends `escalate`, `block` and `terminate` alike to a dead lette
 with no human-approval port. The rung semantics above — the human port, `block` as
 a refusal a person may convert into a fallback, `terminate` as a stop nobody can
 lift — are **this package's contribution**. So F1, F2, F5, F6, F8 and F9 test
-shipped code; F3 and F4 test these semantics; F7, F10, F11 and F12 test this
+shipped code; F3 and F4 test these semantics; F7, F10, F11, F12 and F13 test this
 repository's structure and honesty.
 
 One upstream gap, recorded rather than hidden: the shipped gate ranks verdicts by a
@@ -268,7 +274,7 @@ criteria themselves are designed, not built.
 | Folder | What is in it |
 |---|---|
 | `governor/` | The reference core, the actuation harness (the human port), and the adapter that plugs the core into the real gate |
-| `fitness/` | Twelve architecture checks, the import-graph scanner, and the report renderer |
+| `fitness/` | Thirteen architecture checks, the import-graph scanner, and the report renderer |
 | `shared/` | The seeded random generator and one definition of median, p95 and standard deviation for the whole package |
 | `simulation/` | The two trace-driven experiments and their shared plumbing |
 | `dataplane/` | Live measurement of the gateway and analysis of its real request logs |
@@ -299,6 +305,8 @@ criteria themselves are designed, not built.
 - **v1.0.0** — Zenodo [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634). The snapshot the article cites: nine fitness functions, 9/9 green over 10,994 cases. Every number the article prints comes from this tag.
 - **`main` / v1.1.0** — Zenodo [10.5281/zenodo.22068404](https://doi.org/10.5281/zenodo.22068404) (where the concept DOI now resolves). A hardening pass. The rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10 audit anchoring, F11 core invariants, F12 documentation-agrees-with-results), a portable data-plane run, client IP addresses hashed, and a documentation pass.
 
+- **`main` since v1.1.0 (unreleased)** — the work-package sessions: F13 (self-declared estimates; the fourth function added after the article) plus the forecast/metering contracts, feature specs, dynamic diagrams, the closed-loop (plane), anti-herd (loop), capacity-rung, spatial-advisory and real-trace arms, and the registry growing to cover every document. [`CHANGELOG.md`](CHANGELOG.md) carries the exact accounting.
+
 None of the headline simulation, charging or data-plane numbers changed. The
 fitness totals changed because properties were added, not because anything
 failed. [`CHANGELOG.md`](CHANGELOG.md) lists every change and says which numbers
@@ -311,7 +319,7 @@ moved.
 - [**Architecture (arc42)**](docs/architecture/ARCHITECTURE.md) — all twelve sections: goals, constraints, context, strategy, building blocks, runtime, deployment, cross-cutting concepts, decisions, quality, risks, glossary.
 - [**Product design**](docs/architecture/PRODUCT.md) — what it is for, numbered requirements, user stories, use cases.
 - [**C4 diagrams**](docs/architecture/c4/README.md) — six pictures with their Mermaid sources: [context](docs/architecture/c4/c4-context.png), [containers](docs/architecture/c4/c4-container.png), [components](docs/architecture/c4/c4-component.png), [a governed decision](docs/architecture/c4/runtime-governed-decision.png), [a simulated day](docs/architecture/c4/runtime-simulated-day.png), [the loop](docs/architecture/c4/loop-overview.png).
-- [**Decision records**](docs/adr/) — eighteen short notes on why each choice was made.
+- [**Decision records**](docs/adr/) — nineteen short notes on why each choice was made.
 - [**Development guide**](docs/DEVELOPMENT.md) — how to run, extend, keep determinism, regenerate results, and cite.
 - [**Research questions**](docs/RESEARCH-QUESTIONS.md) — the three questions, what would prove each wrong, the current answers, the limits.
 - [**Fitness functions**](docs/FITNESS-FUNCTIONS.md) — what each of the thirteen checks is, and why it matters.
@@ -338,13 +346,15 @@ moved.
 Work in progress. The data plane is live and measured; the ladder and gate are
 implemented and tested where they ship; the carbon validator and the actuation
 harness are reference implementations evaluated here and not merged anywhere; the
-forecast port and the wiring from the gate to a real approval board are designed,
-not built; the charging-protocol tool servers are separate prototypes and are not
+forecast and metering ports now have contracts and conformance suites (WP-3,
+WP-5 — the forecast capture is manual, and E2 still reads the cached trace
+directly); the wiring from the gate to a real approval board stays designed, not
+built; the charging-protocol tool servers are separate prototypes and are not
 evaluated here.
 
 What would change the numbers, roughly in order of how much:
 
-1. A real agentic workload replacing the made-up one.
+1. A real agentic workload replacing the made-up one (a first captured trace now runs beside it as a granularity control — WP-15 — but arrivals, energies and deadlines remain stipulated).
 2. Real approvers instead of simulated ones.
 3. Independent organizations publishing their own documents, so the peer signal is not a stand-in.
 4. More regions, more windows, more countries, more seeds.

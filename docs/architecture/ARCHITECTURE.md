@@ -107,16 +107,24 @@ careful about that line, and section 11 lists what it means for the results.
 
 Six decisions carry the whole design.
 
-1. **A hexagonal core with adapters at the edges.** The governor owns four ports:
+1. **A hexagonal core with adapters at the edges.** The governor owns six ports:
    a *signal port* (peer and grid readings come in), a *forecast port* (load and
-   generation forecasts), a *human port* (approvals), and an *actuation port*
-   (decisions go out). Everything concrete — an HTTP client, a charging protocol,
-   an approval board — is an adapter behind one of those ports. The core file
-   imports nothing at all, and a fitness function checks that statically.
+   generation forecasts), a *human port* (approvals), an *actuation port*
+   (decisions go out), a *metering port* (trusted actual grams back in), and a
+   *publication port* (the loop's own output edge). Everything concrete — an HTTP
+   client, a charging protocol, an approval board — is an adapter behind one of
+   those ports. The core file imports nothing at all, and a fitness function
+   checks that statically.
 
-   Three of those four ports have an adapter here. **The forecast port is
-   designed, not built**: the simulations read the peer signal straight out of
-   the cached trace, so there is no file to point at for it.
+   Signal, human and actuation have adapters on every executed path. The
+   **forecast port** has a written contract and a conformance-tested adapter
+   (WP-3: `docs/ports/FORECAST.md`, `simulation/forecast.js`), though the
+   simulations still read the peer signal straight out of the cached trace; the
+   **metering port** has a contract (WP-5: `docs/ports/METERING.md`) whose
+   reference implementation is the inlined estimate/actual pair; the
+   **publication port** is exercised by WP-17's document-native loop and pinned
+   by `features/publication.feature`, with its contract page still to write. The
+   dynamic views of all six are in [`DYNAMICS.md`](DYNAMICS.md).
 
 2. **One gate, one total order.** Every carbon-relevant decision goes through a
    single gate that aggregates all validator opinions to the most severe verdict
@@ -496,12 +504,12 @@ Each quality goal from section 1, as a scenario that a script can settle.
 | Q4 | Human in the loop | A verdict of `escalate`, `block` or `terminate` arrives with no approval, or with a refusal; and `terminate` arrives *with* an approval | F4 and F5, 4,100 cases, plus `simulation/policies.test.js` | **Green (the harness is the actuation path used by every adapter as of v1.1.0)** — before v1.1.0 the harness was the tested path but not provably the only one, because nothing checked that the adapters went through it |
 | Q5 | Nothing runs unaudited | Actions of every operation type the gate defines are evaluated; the audit length must equal executed plus refused | F5, 2,100 cases | Green |
 | Q6 | Evidence integrity | One field of one audit record is changed after the fact; and the tail of the chain is truncated | F6 plus F10, 800 cases. `verify()` must fail at the edited index; truncation is caught by `verifyAnchored()` and, honestly recorded, **not** by `verify()` alone | Green |
-| Q7 | Portability of the core | Static check of the import graph: `governor/carbon-governor.js` and `governor/harness.js` import nothing, the gate adapter imports only the runtime and the core, adapters do not import each other, every actuating adapter imports the harness, and the one external-library exception is named | F7, 37 checks | Green |
+| Q7 | Portability of the core | Static check of the import graph: `governor/carbon-governor.js` and `governor/harness.js` import nothing, the gate adapter imports only the runtime and the core, adapters do not import each other, every actuating adapter imports the harness, and the one external-library exception is named | F7, 40 checks | Green |
 | Q8 | Determinism | The same estimate sequence through two fresh gates | F8, 300 steps; decisions and audit records must be byte-identical | Green |
 | Q9 | Traceability | Every number in the article can be pointed at a file in `results/`, and every hand-typed number in the docs still matches it | F12 (`tools/check-numbers.js`), plus the inventory in [`docs/ARTIFACT-INVENTORY.md`](../ARTIFACT-INVENTORY.md) for artifacts the scripts do not measure | Green for the numbers a script produces; the inventory is still maintained by hand |
 | Q10 | Simplicity | The governor core stays readable in one sitting | 104 lines, of which 57 are code and the rest are comments and blanks; zero imports; F7 keeps it that way and F12 keeps this row honest | Green |
 
-All thirteen fitness functions pass, over 15,011 cases in total. Version 1.0.0
+All thirteen fitness functions pass, over 15,037 cases in total. Version 1.0.0
 — the snapshot the article cites — had nine, over 10,994 cases; the difference is
 properties added, not properties fixed. The same gate and audit code carries its
 own upstream governance suite (4 files, 71 tests), which also passes
@@ -552,7 +560,7 @@ Still open:
 - **The shipped gate passes a non-ladder action through verbatim** instead of failing closed on it. `gated()` normalises it to `block` and keeps the original under `rawAction`, so nothing downstream sees it — but the gap is upstream's, and is to be reported there.
 - **The audit log is tamper-evident, not tamper-resistant**, in memory, not persisted and not signed. `verify()` catches an edit and `verifyAnchored()` catches a truncation; nothing prevents either.
 - **`fetchedAt` is a real wall-clock read** — the honest exception to determinism (ADR-007), which is why `results/dataplane.json` never diffs clean.
-- **The forecast port is designed, not built**, and so is the wiring from the human port to a real approval board.
+- **The forecast port is built but not yet decided through** (WP-3: contract, capture, conformance-tested adapter; no experiment reads it yet), and the wiring from the human port to a real approval board stays designed, not built.
 - **`data/dataplane/` is a snapshot** that re-running overwrites.
 - **The deferral queue is in memory** for one simulated arm; nothing is persisted (ADR-016).
 
@@ -578,7 +586,7 @@ Still open:
 | **Deferral queue** | Where a paused task waits. Gated once on arrival, run later at full energy in the chosen slot, never re-gated (ADR-016). |
 | **`degrade`** | Second rung, automatic. Runs smaller, or is paused to a cleaner slot if it can wait. |
 | **`escalate`** | Third rung. A human decides; on approval the action does what `degrade` would have done. |
-| **Forecast port** | Where load and generation forecasts would reach the core. **Designed, not built.** |
+| **Forecast port** | Where load and generation forecasts reach the core. **Built (WP-3): contract + conformance-tested adapter; not yet on a decided path.** |
 | **Fitness function** | An automated, repeatable test of an *architectural* property, not of a feature. The term is from Ford, Parsons and Kua. |
 | **Gated Grid Actuation** | The pattern of exposing physical operations to agents only as typed tools behind the same gate and the same human approval. Prototyped elsewhere; simulated here. |
 | **Hexagonal architecture** | Ports and adapters, in Cockburn's sense: the domain logic in the middle, everything external plugged in at the edges. |

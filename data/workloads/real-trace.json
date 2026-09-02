@@ -1,0 +1,99 @@
+{
+  "generatedBy": "one live run of kaiban-distributed-examples/social-media-team (WP-15); see provenance",
+  "provenance": {
+    "capturedAt": "2026-09-02T12:34:44.356Z",
+    "sourceRepo": "kaiban-distributed-examples (local, ~/work/AI/kaiban-distributed-examples)",
+    "example": "social-media-team \u2014 heterogeneous fan-out/fan-in: extract -> 4 parallel composers -> aggregate",
+    "runtime": "kaiban-distributed@2.0.0 gateway + 6 worker processes, BullMQ driver, local Redis",
+    "model": "openai/gpt-4o-mini via OpenRouter",
+    "subject": "kaiban-distributed",
+    "outcome": "DONE",
+    "totalTokens": 7484,
+    "totalCostUSD": 0.00204645,
+    "runDurationMs": 20434,
+    "liveOnce": "network and money were spent exactly once, at capture; every replay is offline and deterministic",
+    "anonymisation": "task answers/content stripped; only phase, role, dependency, timing and token structure kept",
+    "timing": "startOffsetMs is derived: a task starts when its dependencies complete (the run-logger records completion timestamps only)"
+  },
+  "tasks": [
+    {
+      "id": "extract",
+      "phase": "extract",
+      "role": "extractor",
+      "dependsOn": [],
+      "endOffsetMs": 4626,
+      "inputTokens": 739,
+      "outputTokens": 162,
+      "startOffsetMs": 0,
+      "durationMs": 4626
+    },
+    {
+      "id": "compose-blog",
+      "phase": "compose",
+      "role": "blog",
+      "dependsOn": [
+        "extract"
+      ],
+      "endOffsetMs": 11844,
+      "inputTokens": 775,
+      "outputTokens": 420,
+      "startOffsetMs": 4626,
+      "durationMs": 7218
+    },
+    {
+      "id": "compose-discord",
+      "phase": "compose",
+      "role": "discord",
+      "dependsOn": [
+        "extract"
+      ],
+      "endOffsetMs": 11843,
+      "inputTokens": 768,
+      "outputTokens": 262,
+      "startOffsetMs": 4626,
+      "durationMs": 7217
+    },
+    {
+      "id": "compose-linkedin",
+      "phase": "compose",
+      "role": "linkedin",
+      "dependsOn": [
+        "extract"
+      ],
+      "endOffsetMs": 11843,
+      "inputTokens": 780,
+      "outputTokens": 188,
+      "startOffsetMs": 4626,
+      "durationMs": 7217
+    },
+    {
+      "id": "compose-tweet",
+      "phase": "compose",
+      "role": "tweet",
+      "dependsOn": [
+        "extract"
+      ],
+      "endOffsetMs": 11843,
+      "inputTokens": 780,
+      "outputTokens": 69,
+      "startOffsetMs": 4626,
+      "durationMs": 7217
+    },
+    {
+      "id": "aggregate",
+      "phase": "aggregate",
+      "role": "aggregator",
+      "dependsOn": [
+        "compose-tweet",
+        "compose-linkedin",
+        "compose-discord",
+        "compose-blog"
+      ],
+      "endOffsetMs": 20431,
+      "inputTokens": 1589,
+      "outputTokens": 952,
+      "startOffsetMs": 11844,
+      "durationMs": 8587
+    }
+  ]
+}

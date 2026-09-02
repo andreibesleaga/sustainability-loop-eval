@@ -1,9 +1,10 @@
 # Architecture decision records
 
-Eighteen decisions that shaped this package. Each one is short: context, decision,
+Nineteen decisions that shaped this package. Each one is short: context, decision,
 consequences, alternatives considered. ADR-001 to ADR-015 are dated 2026-08-22,
 the day the repository went public; ADR-016 to ADR-018 are dated 2026-08-23 and
-were written during the v1.1.0 hardening pass, which also rewrote ADR-006. They
+were written during the v1.1.0 hardening pass, which also rewrote ADR-006;
+ADR-019 is dated 2026-09-02, written with the WP-12b measurement it records. They
 record decisions taken while the package was built, not proposals.
 
 The format follows the one used in the `kaiban-distributed` repository.
@@ -28,6 +29,7 @@ The format follows the one used in the `kaiban-distributed` repository.
 | [ADR-016](ADR-016-gate-once-on-arrival-execute-later.md) | Gate once on arrival, execute later: the deferral queue | One task, one verdict, one audit record |
 | [ADR-017](ADR-017-consumer-library-optional.md) | The reference consumer library is resolved at run time; its absence is reported as "not measured" | A check you could not run is not a check that failed |
 | [ADR-018](ADR-018-openrouter-for-the-agent-demo.md) | The optional agent demo calls OpenRouter over plain HTTPS, defaulting to `anthropic/claude-sonnet-5` | A demonstration must not cost a dependency |
+| [ADR-019](ADR-019-capacity-rungs.md) | A rung may act on capacity, not only on run / defer / refuse | The one lever WP-12 pointed at — measured, and it did not work either |
 
 ## Writing a new one
 

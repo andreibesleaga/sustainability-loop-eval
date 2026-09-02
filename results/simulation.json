@@ -937,6 +937,212 @@
           }
         }
       },
+      "realWorkload": {
+        "source": "data/workloads/real-trace.json",
+        "capturedAt": "2026-09-02T12:34:44.356Z",
+        "subtasksPerArrival": 6,
+        "tokenShares": {
+          "extract": 0.1204,
+          "compose-blog": 0.1597,
+          "compose-discord": 0.1376,
+          "compose-linkedin": 0.1293,
+          "compose-tweet": 0.1134,
+          "aggregate": 0.3395
+        },
+        "note": "subtasks inherit arrival/deadline/deferrable; energy split by measured token share; P0 identity asserted at run time. The live run's 20.4 s span is sub-slot, so internal timing is not replayed; siblings with mixed verdicts may execute out of phase order across slots — carbon and decision accounting are unaffected.",
+        "P2real_f0.8": {
+          "totalGCO2e": {
+            "mean": 51728,
+            "sd": 516
+          },
+          "pctVsP0": {
+            "mean": -16.39,
+            "sd": 0.49
+          },
+          "tasksCompleted": {
+            "mean": 47991.6,
+            "sd": 372.7
+          },
+          "completedOnTime": {
+            "mean": 47991.6,
+            "sd": 372.7
+          },
+          "dropped": {
+            "mean": 459,
+            "sd": 180
+          },
+          "degraded": {
+            "mean": 7403.2,
+            "sd": 295.6
+          },
+          "deferred": {
+            "mean": 6965.1,
+            "sd": 343.6
+          },
+          "meanDelayMin": {
+            "mean": 286.2,
+            "sd": 5.8
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 1976.5,
+            "sd": 262.4
+          },
+          "humanDecisions": {
+            "mean": 3208.3,
+            "sd": 395.8
+          },
+          "blocks": {
+            "mean": 1231.8,
+            "sd": 190
+          },
+          "blocksDeferrable": {
+            "mean": 608.3,
+            "sd": 103.7
+          },
+          "humanDecisionsIfDeferralAutomatic": {
+            "mean": 2600,
+            "sd": 327.5
+          },
+          "terminations": {
+            "mean": 459,
+            "sd": 180
+          },
+          "savingVsP0G": {
+            "mean": 10139,
+            "sd": 321
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 6.4,
+            "sd": 2.4
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 67.7,
+            "sd": 2.2
+          },
+          "timingShareOfSavingPct": {
+            "mean": 25.9,
+            "sd": 1
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14.3,
+            "sd": 0.67
+          },
+          "dailyBudgetG": {
+            "mean": 1875,
+            "sd": 37
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 48451,
+            "sd": 345
+          }
+        },
+        "P2equal6_f0.8": {
+          "totalGCO2e": {
+            "mean": 51728,
+            "sd": 518
+          },
+          "pctVsP0": {
+            "mean": -16.39,
+            "sd": 0.49
+          },
+          "tasksCompleted": {
+            "mean": 47988.7,
+            "sd": 373.3
+          },
+          "completedOnTime": {
+            "mean": 47988.7,
+            "sd": 373.3
+          },
+          "dropped": {
+            "mean": 461.9,
+            "sd": 181.3
+          },
+          "degraded": {
+            "mean": 7408.1,
+            "sd": 295.3
+          },
+          "deferred": {
+            "mean": 6970.1,
+            "sd": 344.8
+          },
+          "meanDelayMin": {
+            "mean": 286.2,
+            "sd": 5.8
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 1981.8,
+            "sd": 262.1
+          },
+          "humanDecisions": {
+            "mean": 3212.6,
+            "sd": 397.3
+          },
+          "blocks": {
+            "mean": 1230.8,
+            "sd": 191.5
+          },
+          "blocksDeferrable": {
+            "mean": 608,
+            "sd": 105.5
+          },
+          "humanDecisionsIfDeferralAutomatic": {
+            "mean": 2604.6,
+            "sd": 327.3
+          },
+          "terminations": {
+            "mean": 461.9,
+            "sd": 181.3
+          },
+          "savingVsP0G": {
+            "mean": 10140,
+            "sd": 322
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 6.4,
+            "sd": 2.4
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 67.7,
+            "sd": 2.2
+          },
+          "timingShareOfSavingPct": {
+            "mean": 25.9,
+            "sd": 1
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14.2,
+            "sd": 0.79
+          },
+          "dailyBudgetG": {
+            "mean": 1875,
+            "sd": 37
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 48451,
+            "sd": 345
+          }
+        }
+      },
       "sweep": {
         "objective": "argmin of the peer signal within [arrival, deadline] (P3 — E3's objective)",
         "comparisonSource": "e2Potential() exported by bounds.js — peer column = expectation of this policy; oracle column = the ceiling",
@@ -1888,6 +2094,212 @@
           "auditRecordsPerSeed": {
             "mean": 8075,
             "sd": 57
+          }
+        }
+      },
+      "realWorkload": {
+        "source": "data/workloads/real-trace.json",
+        "capturedAt": "2026-09-02T12:34:44.356Z",
+        "subtasksPerArrival": 6,
+        "tokenShares": {
+          "extract": 0.1204,
+          "compose-blog": 0.1597,
+          "compose-discord": 0.1376,
+          "compose-linkedin": 0.1293,
+          "compose-tweet": 0.1134,
+          "aggregate": 0.3395
+        },
+        "note": "subtasks inherit arrival/deadline/deferrable; energy split by measured token share; P0 identity asserted at run time. The live run's 20.4 s span is sub-slot, so internal timing is not replayed; siblings with mixed verdicts may execute out of phase order across slots — carbon and decision accounting are unaffected.",
+        "P2real_f0.8": {
+          "totalGCO2e": {
+            "mean": 39930,
+            "sd": 649
+          },
+          "pctVsP0": {
+            "mean": -20.21,
+            "sd": 1.3
+          },
+          "tasksCompleted": {
+            "mean": 46217.4,
+            "sd": 597.8
+          },
+          "completedOnTime": {
+            "mean": 46217.4,
+            "sd": 597.8
+          },
+          "dropped": {
+            "mean": 2233.2,
+            "sd": 457.4
+          },
+          "degraded": {
+            "mean": 7322.2,
+            "sd": 177.4
+          },
+          "deferred": {
+            "mean": 4895.2,
+            "sd": 231
+          },
+          "meanDelayMin": {
+            "mean": 232.4,
+            "sd": 5.8
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 2485.7,
+            "sd": 288.4
+          },
+          "humanDecisions": {
+            "mean": 5095.3,
+            "sd": 317.1
+          },
+          "blocks": {
+            "mean": 2609.6,
+            "sd": 247.5
+          },
+          "blocksDeferrable": {
+            "mean": 1283.6,
+            "sd": 112.9
+          },
+          "humanDecisionsIfDeferralAutomatic": {
+            "mean": 3811.7,
+            "sd": 283.9
+          },
+          "terminations": {
+            "mean": 2233.2,
+            "sd": 457.4
+          },
+          "savingVsP0G": {
+            "mean": 10115,
+            "sd": 672
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 39.4,
+            "sd": 4.6
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 52.4,
+            "sd": 4.4
+          },
+          "timingShareOfSavingPct": {
+            "mean": 8.2,
+            "sd": 0.6
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14.4,
+            "sd": 0.84
+          },
+          "dailyBudgetG": {
+            "mean": 1405,
+            "sd": 32
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 48451,
+            "sd": 345
+          }
+        },
+        "P2equal6_f0.8": {
+          "totalGCO2e": {
+            "mean": 39928,
+            "sd": 649
+          },
+          "pctVsP0": {
+            "mean": -20.22,
+            "sd": 1.3
+          },
+          "tasksCompleted": {
+            "mean": 46210.5,
+            "sd": 597.2
+          },
+          "completedOnTime": {
+            "mean": 46210.5,
+            "sd": 597.2
+          },
+          "dropped": {
+            "mean": 2240.1,
+            "sd": 457.8
+          },
+          "degraded": {
+            "mean": 7325.7,
+            "sd": 177.7
+          },
+          "deferred": {
+            "mean": 4899.8,
+            "sd": 230.9
+          },
+          "meanDelayMin": {
+            "mean": 232.4,
+            "sd": 5.7
+          },
+          "p95DelayMin": {
+            "mean": 360,
+            "sd": 0
+          },
+          "escalations": {
+            "mean": 2486.6,
+            "sd": 289.2
+          },
+          "humanDecisions": {
+            "mean": 5093.3,
+            "sd": 317.7
+          },
+          "blocks": {
+            "mean": 2606.7,
+            "sd": 248.6
+          },
+          "blocksDeferrable": {
+            "mean": 1281.3,
+            "sd": 112.9
+          },
+          "humanDecisionsIfDeferralAutomatic": {
+            "mean": 3812,
+            "sd": 284.1
+          },
+          "terminations": {
+            "mean": 2240.1,
+            "sd": 457.8
+          },
+          "savingVsP0G": {
+            "mean": 10118,
+            "sd": 674
+          },
+          "ruleApplied": {
+            "mean": 0,
+            "sd": 0
+          },
+          "dropShareOfSavingPct": {
+            "mean": 39.5,
+            "sd": 4.6
+          },
+          "degradeShareOfSavingPct": {
+            "mean": 52.3,
+            "sd": 4.4
+          },
+          "timingShareOfSavingPct": {
+            "mean": 8.2,
+            "sd": 0.6
+          },
+          "days": 28,
+          "daysOverBudget": {
+            "mean": 14.4,
+            "sd": 0.84
+          },
+          "dailyBudgetG": {
+            "mean": 1405,
+            "sd": 32
+          },
+          "auditChainValidAllSeeds": true,
+          "auditRecordsPerSeed": {
+            "mean": 48451,
+            "sd": 345
           }
         }
       },

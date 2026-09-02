@@ -7,11 +7,11 @@
 > either measured in `results/`, proved by a fitness function, or explicitly labelled as
 > a proposal.
 
-## 0. The whole thing in ten plain sentences
+## 0. The whole thing in eleven plain sentences
 
 1. We built a safety gate for AI agents: before an agent acts, the gate says *yes / do
    it smaller / ask a person / no / stop*, and writes the reason where nobody can
-   quietly edit it. That gate is real, shipped, and passed every one of 15,011 attack
+   quietly edit it. That gate is real, shipped, and passed every one of 15,037 attack
    cases. It is the part that lasts.
 2. We then asked the gate to keep an AI workload inside a daily carbon budget, on real
    British grid data. It worked — but most of the "carbon saved" came from doing less
@@ -36,9 +36,12 @@
    exists: `npm run loop` shows the published plane spreads the herd only by paying
    grams, and fresh mutual observation oscillates — information alone is not enough.
    WP-12 then tested whether the gate's paced budget dissolves the herd: it does not
-   (it sheds or reshuffles — our own conjecture, falsified and said so), and the real
-   anti-herd lever turns out to be capacity semantics. Honest negative results at an
-   unmeasured frontier are still firsts; WP-17's document-native loop remains open.
+   (it sheds or reshuffles — our own conjecture, tested, disproven and said so), and
+   WP-12b tested the follow-up conjecture — rungs acting on capacity — which also
+   failed (shares rise, work sheds; ADR-019). Both conjectures are withdrawn: this
+   package claims NO anti-herd property for the gate. Honest negative results at an
+   unmeasured frontier are still firsts; WP-17's document-native loop is delivered
+   (`npm run plane`).
 8. The actual invention is bigger than scheduling: every system *publishes* its own
    sustainability data at a standard web address and *reads* everyone else's, so
    systems regulate each other — like `robots.txt`, but with numbers, for carbon. That
@@ -58,9 +61,10 @@
 This file answers the questions the audit left open — what this is (§1), whether it is
 worth it (§2, with the new maximum-optimisation calculus in §2f and the economics in
 §2g), what a real "when and where" mechanism would be (§3), what the verified
-literature says (§3b), what specs and tests are missing (§4) — and then gives the plan
+literature says (§3b — placed after §3c–§3e on disk, in writing order), what specs and tests are missing (§4) — and then gives the plan
 (§5), session estimates (§6), the owner's answers and the decisions taken on them (§7),
-what will never change (§8), and the exact commands to publish it all (§9). The
+and what will never change (§8; the paper's snapshot is the existing `v1.0.0` tag,
+and the publishing commands live in `docs/DEVELOPMENT.md` and the CHANGELOG). The
 innovation inventory is §2h and the map onto the world's biggest emitters is §2i.
 
 ---
@@ -97,7 +101,7 @@ the governor.
   that the agent cannot route around, plus a record a human can audit later. That place
   is architectural, not a feature. This package's real result is that such a place
   *exists in shipped code* and holds its properties under adversarial testing:
-  13 fitness functions over 15,011 cases against the real `kaiban-distributed`
+  13 fitness functions over 15,037 cases against the real `kaiban-distributed`
   `ActionGate`, not a mock. That result does not depend on carbon being the constraint.
 - **The carbon half: needed, but currently over-claimed by the framing, not by the
   numbers.** See section 2 — the numbers in `results/` are honest; it is easy to *read*
@@ -269,7 +273,7 @@ governance *legitimising and recording* a reduction that a scheduler produced.
 
 | claim | status |
 |---|---|
-| A governance gate can hold ladder semantics, fail-closed, human binding and a tamper-evident record in shipped agentic runtime code | **Proved.** 13 fitness functions, 15,011 cases, real `ActionGate`. |
+| A governance gate can hold ladder semantics, fail-closed, human binding and a tamper-evident record in shipped agentic runtime code | **Proved.** 13 fitness functions, 15,037 cases, real `ActionGate`. |
 | Carbon can be one such constraint, end to end, from a published signal to an audited verdict | **Demonstrated**, on real grid traces and a live data plane. |
 | Carbon-aware *deferral* is worth a large saving | **Under-measured, not disproved.** E3 says 32.85% with room to move; E2 says 1.54% with a 6-hour horizon. |
 | The governor's headline 16–20% is a carbon saving from smarter timing | **No.** Mostly degrade and drop. Say so plainly. |
@@ -371,11 +375,13 @@ Checked against the verified literature pass (§3b), not against enthusiasm:
    spent budget and are pushed off the common argmin — while writing down why. WP-12
    tests whether governance beats mandated randomness at dissolving the herd. No
    published work makes that comparison.
-   **TESTED 2026-09-02, and falsified in-model** (`results/loop.md`, finding 4):
+   **TESTED 2026-09-02, and disproven in this model** (`results/loop.md`, finding 4):
    depletion sheds or reshuffles, it does not spread, and the stagger arm is inert at
-   slot resolution. The claim this repository now owns is the corrected one — **the
-   gate's anti-herd lever is capacity semantics, not budget depletion** (WP-12b) —
-   and running the comparison at all remains, to the checked record, unprecedented.
+   slot resolution. The follow-up conjecture — that capacity rungs are the real
+   anti-herd lever — was then built and measured the same day (**WP-12b**, ADR-019)
+   and disproven too: capacity rungs concentrate what they keep. Both conjectures are
+   withdrawn; **this repository claims no anti-herd property for the gate**, and
+   running the comparison at all remains, to the checked record, unprecedented.
 3. **F13's metering theorem** — "with a trusted meter an under-declaring agent lags
    every rung by at most one action; without one a zero-declarer is never caught" — a
    property statement about self-declared estimates we found nowhere in the literature.
@@ -402,9 +408,11 @@ Checked against the verified literature pass (§3b), not against enthusiasm:
    names, including its stability (damp vs amplify) as a function of publication
    cadence and staleness (§3c).
 10. **The publication port** — the sixth port, the invention's defining edge
-   (act → publish → peers sense), currently the only one with no contract or test in
-   this package. Specifying it (with attestation hooks, closing toward R15) makes
-   "every reporter is a sensor" an interface instead of a slogan.
+   (act → publish → peers sense) — now exercised end to end by WP-17 (`npm run
+   plane`) and pinned by `features/publication.feature`; the one piece still
+   missing is its contract page. Writing it (with attestation hooks, closing
+   toward R15) makes "every reporter is a sensor" an interface instead of a
+   slogan.
 11. **Carbon back-pressure for the agentic web** — governors reading each other's
    well-known documents as mutual ECN marks (§3c uses 1–3). No precedent surfaced in
    the adversarial search or in our own pass; it is the `robots.txt`-shaped move for
@@ -480,7 +488,7 @@ where consumption is cleaner. My answer, before any literature is cited:
 > from 1.5% to something serious are a longer horizon, a proper objective, and a second
 > dimension (place). None of them requires a learned model, because *the forecast is
 > already published by the grid operator*. Building an ML forecaster here would be
-> re-deriving a public input, and would add an unfalsifiable component to a package
+> re-deriving a public input, and would add an untestable component to a package
 > whose entire value is that every claim is checkable.
 
 Four mechanisms, in descending order of value-per-effort:
@@ -696,18 +704,18 @@ tested here is a slide, not a plan.
 | C3 | **Carbon + price dual signal** (WP-16 — descoped 2026-09-02, see §5) | carbon trace + committed GB half-hourly price trace | £ AND carbon; exposes the hours where they fight | new arm beside every existing one, same seeds; report agreement/conflict slots | §2g: 333.3 kWh/night off-peak is the quantity; Agile documents the spread |
 | C4 | **Tiered governance over any of these** (WP-14) | any + rung rules | human attention (the scarcest resource) | re-run E2/E3 with the auto-defer rule; report decisions/day per tier | 545.7→442.9 and 853→637 already measured |
 | C5 | **Spatial advisory from the data plane** (WP-4) | per-peer regional forecasts | carbon (advice), £ (cross-region price) | bounds spatial section (done); one-page advisory spec | 54.72% below peer mean, forecast-scored |
-| C6 | **EV routing between intervals — WHERE to charge, hour by hour** (owner's case) | per-region forecasts + plug-in windows | carbon + grid relief; directs demand to where energy needs a home | E3 extended: each session picks (region, window) argmin instead of window-only argmin, over the three committed regional series — a pure calculus arm first (bounds-style), a seeded arm second | spatial × temporal product of C2 and C5; precedent verification in flight (lit-E) |
+| C6 | **[DELIVERED 2026-09-02 as E6 — `npm run routing`] EV routing between intervals — WHERE to charge, hour by hour** (owner's case) | per-region forecasts + plug-in windows | carbon + grid relief; directs demand to where energy needs a home | E3 extended: each session picks (region, window) argmin instead of window-only argmin, over the three committed regional series — a pure calculus arm first (bounds-style), a seeded arm second | spatial × temporal product of C2 and C5; precedent verification in flight (lit-E) |
 | C7 | **Token/spend budget on agentic work** (§2g.3) | token meter instead of grams | £ and tokens directly | same governor, `estimatedGramsCO2e`→tokens; demo agent + WP-15's real trace replay | F1–F13 hold verbatim; Sprout is the degrade precedent |
-| C8 | **Mutual regulation between agentic systems** (WP-17 core) | each other's published documents | herd stability, fairness, carbon | E5: N governors, publish-after-commit, consume peers' documents; damp-vs-amplify vs cadence | §3c; the article's open problem |
+| C8 | **[DELIVERED 2026-09-02 — `npm run loop` + `npm run plane`] Mutual regulation between agentic systems** (WP-17 core) | each other's published documents | herd stability, fairness, carbon | E5: N governors, publish-after-commit, consume peers' documents; damp-vs-amplify vs cadence | §3c; the article's open problem |
 | C9 | **Datacenter publishes, tenants defer** (§3c.2) | one publisher's live doc as N tenants' signal | carbon + the datacenter's peak | E5 variant with one hub publisher (the gateway pattern E1 already measures) | IEA scale numbers; R12 closes |
 | C10 | **Website governs agentic crawl/inference load** (§3c.3) | target site's published doc | the target's energy + the agent's tokens | demo extension: the agent reads a gateway doc and its governor throttles its own calls — the demo already reads real documents; add the throttle rung path | `npm run demo` + one new validator; no new data needed |
 | C11 | **Human-attention router** (WP-14 × C8) | peers' documents + rung rules | escalations land on the right human across systems | E5 + tier rules: count cross-system escalations per day | extends C4's measured curve |
-| C12 | **Curtailment-soak / expedite** (§2i brainstorm) | negative-price or curtailment events (public proxy: Agile plunge) | absorbing surplus clean energy — the inverse budget | WP-16's price trace gives the events; an `expedite`-as-validator arm on E2 | needs WP-16 first; no core change (stays five rungs) |
+| C12 | **[PERMANENT CANDIDATE — needs WP-16's price trace, and WP-16 is descoped] Curtailment-soak / expedite** (§2i brainstorm) | negative-price or curtailment events (public proxy: Agile plunge) | absorbing surplus clean energy — the inverse budget | WP-16's price trace gives the events; an `expedite`-as-validator arm on E2 | needs WP-16 first; no core change (stays five rungs) |
 | C13 | **Prosumer households — rooftop solar and home batteries publishing and giving back** | home/aggregator published docs (generation, export headroom, battery state) + grid need | matching household surplus to grid need hour by hour; export revenue for the household | E5 variant: N small publishers with *generation* (negative intensity contribution) + one consumer grid-side governor; calculus arm first over synthetic-but-shaped export profiles against the committed regional series | precedent verification in flight (lit-E prosumer addendum); the E3 safety pattern carries over — a refused verdict withholds the *export optimisation*, never household power |
-| C14 | **Grid-side agentic orchestration over published prosumer fleets** | thousands of C13 documents as the signal plane | grid balancing with auditable authority — every curtail/dispatch request a gated, recorded decision | E5 at larger N with one grid-side governor; herding + fairness metrics from WP-12 reused (which homes get asked first is R16's fairness question, now with money attached) | composes C8 + C13; the audit chain is the regulator-facing part |
+| C14 | **[CANDIDATE — note: both WP-12/WP-12b anti-herd mechanisms were disproven, so this row cannot lean on them] Grid-side agentic orchestration over published prosumer fleets** | thousands of C13 documents as the signal plane | grid balancing with auditable authority — every curtail/dispatch request a gated, recorded decision | E5 at larger N with one grid-side governor; herding + fairness metrics from WP-12 reused (which homes get asked first is R16's fairness question, now with money attached) | composes C8 + C13; the audit chain is the regulator-facing part |
 | C15 | **Green inference routing — LLM/agent calls routed to the cleanest region** | per-region forecasts (later: datacenters' own published docs, C9) | carbon per token; datacenter peak relief | E6's machinery with the movement cost → ~0 (bits, not cars) plus a latency/SLO budget as the constraint: the moveKWh0 row IS this arm's ceiling; a seeded arm adds request arrivals and an SLO gate refusing routes that break latency | the one case where the spatial ceiling (54.72% below peer mean, forecast-scored) is nearly reachable, because requests travel free; Sukprasert's "spatial dominates" applies at full strength |
 | C16 | **Green agentic networks — kaiban-distributed boards placed and loaded by region** | regions' (or each board's published) intensity | carbon of multi-agent work; mutual load balance | design + E5: one board per region, each publishing its document (C8); the A2A router prefers the board whose document is cleanest, the gate audits each cross-board handoff; ties to the kaiban roadmap §5 rung-controls | composes C8 + C15 on the runtime this package already tests upstream (71-test governance suite); needs no new science, needs the publication port |
-| C17 | **Geo-migrating agentic runtimes — the system itself re-homes to green grids** | regions'/sites' published documents, all conditions in one signal | the runtime's own footprint; follows green power through the week | E6b (in `simulation/routing.js`): daily re-homing argmin with a switch cost and hysteresis, forecast-scored; the full version is C16 plus checkpointed migration (kaiban's CheckpointStore/ADR-018 is the mechanism a real migration would ride) | the strongest form of "dynamic agentic AI distributed geo-physically on green grids"; each migration is a gated, audited, reversible action with a cost the gate can refuse |
+| C17 | **[DELIVERED 2026-09-02 as E6b — committed in `results/routing.*`] Geo-migrating agentic runtimes — the system itself re-homes to green grids** | regions'/sites' published documents, all conditions in one signal | the runtime's own footprint; follows green power through the week | E6b (in `simulation/routing.js`): daily re-homing argmin with a switch cost and hysteresis, forecast-scored; the full version is C16 plus checkpointed migration (kaiban's CheckpointStore (that repository's own ADR-018, not this one's) is the mechanism a real migration would ride) | the strongest form of "dynamic agentic AI distributed geo-physically on green grids"; each migration is a gated, audited, reversible action with a cost the gate can refuse |
 
 Reading the matrix honestly:
 
@@ -1172,13 +1180,15 @@ Here is the gap analysis, honestly scoped: **this package is unusually well test
 its size, and the gaps are specific, not general.**
 
 ### What already exists and does not need redoing
-60 adapter unit tests; 13 architecture fitness functions over 15,011 cases against
+89 adapter unit tests; 13 architecture fitness functions over 15,037 cases against
 shipped code; F7 enforcing the hexagonal import graph *structurally* (an adapter that
-imports another adapter fails the build); F12 binding 137 hand-typed numbers across 12
-documents to `results/`; an arc42 architecture document; 17+ ADRs; determinism proved
+imports another adapter fails the build); F12 binding 188 hand-typed numbers across 15
+documents to `results/`; an arc42 architecture document; 19 ADRs; determinism proved
 by re-running to byte-identical output; CI on two Node versions.
 
 ### Gap 1 — There is no behavioural specification anyone but a programmer can read
+
+**CLOSED by WP-6 (2026-09-02):** six plain-English `.feature` files under `features/`, every scenario executed against the real code by `npm test`.
 Every property is expressed as a JavaScript assertion. The *rules* — "nothing above
 degrade runs without an approval", "terminate is never overridable", "a refused verdict
 never withholds charge, only the optimisation" — exist in prose and in test code, but
@@ -1190,6 +1200,8 @@ its deadline in every arm, including when the gate refuses* — is exactly the k
 sentence that must be a readable, executable acceptance criterion.
 
 ### Gap 2 — The ports are named but not specified
+
+**CLOSED for forecast and metering by WP-3/WP-5 (2026-09-02):** contracts in `docs/ports/`, each with a conformance suite; the publication port is pinned by `features/publication.feature` and WP-17, its contract page still to write.
 ARCHITECTURE names four ports (signal, forecast, human, actuation). Only some are
 built. None has a written **contract**: its interface, its failure modes, what it may
 assume, what it must never do. And the audit has now identified a **fifth, missing
@@ -1202,6 +1214,8 @@ contract per port plus a **contract test suite** that any adapter must pass, so 
 claim.
 
 ### Gap 3 — The EV adapter is the strongest worked example and is under-documented
+
+**Addressed by WP-7 (2026-09-02):** the E3/E6 session, publish-back included, is one of the five committed dynamic diagrams in `docs/architecture/DYNAMICS.md`; `docs/SPATIAL-ADVISORY.md` (WP-4) specifies the advisory half.
 E3 is the most convincing part of this work for a non-specialist: a real, physical,
 safety-constrained load with a genuine deadline and an owner whose consent matters. It
 deserves the full port-and-adapter treatment — a sequence diagram from
@@ -1211,6 +1225,8 @@ only*, and the safety argument (start-time shifting only, no V2G, no partial cha
 stated as an invariant with a test behind it.
 
 ### Gap 4 — The diagrams are static only
+
+**CLOSED by WP-7 (2026-09-02):** `docs/architecture/DYNAMICS.md` — the C4 L3 component view, two sequence diagrams, the task state machine and the budget sawtooth, all parser-validated Mermaid.
 There is a structure diagram and an import graph. There is **no dynamic view**: no
 sequence diagram of a single decision through gate → audit → harness, no state model of
 a task's life (`arrived → gated → deferred → executed → committed`), no diagram of the
@@ -1220,6 +1236,8 @@ session), one state machine, all as committed source (Mermaid) so they cannot ro
 silently.
 
 ### Gap 5 — The seam between the two experiments is assumed, not tested
+
+**CLOSED by WP-17 (2026-09-02):** `npm run plane` runs the loop end to end in the gateway's own document shape — the seam is a measured arm now.
 Limitation R12: no measured run consumes the gateway's published documents as its
 scheduling signal. E1 measures the data plane; E2 uses grid traces. They are joined by
 an assumption. **One end-to-end test that drives a single gated decision from a real
@@ -1227,6 +1245,8 @@ published document through to an audit record** would close the package's bigges
 structural gap, and it is not a large test.
 
 ### Gap 6 — No negative or chaos testing of the adapters
+
+**CLOSED by WP-9 (2026-09-02):** `dataplane/chaos.test.js`, nine adversarial tests over the real hardening paths, with 17 remaining weaknesses pinned as findings.
 The fitness functions attack the *core* adversarially (F2 fail-closed, F6 tamper, F13
 dishonest estimates). The *adapters* are not attacked: what happens when the gateway
 serves malformed JSON, when the API times out mid-run, when a peer publishes an absurd
@@ -1248,20 +1268,21 @@ land in `results/`, prose lands in this file, the README *Corrections* section, 
 | **WP-2** | **E2c — saving decomposition** | **DELIVERED 2026-09-02**, and without ablation arms: P2 itself now carries an exact per-task attribution (drop / degrade / timing ≡ P0−P2, identity enforced in code). Measured at f = 0.8: winter **6.5 / 67.7 / 25.8%**, summer **39.7 / 52.2 / 8.2%** — timing is a quarter of the saving in winter and 8% in summer. | Done. The paper's most contestable number is now decomposed, not argued. |
 | **WP-2b** | **Peak-avoidance vs clean-seeking split** | **DELIVERED 2026-09-01** by `npm run bounds`: every E3 arm now carries the decomposition in `results/bounds.json` (winter 7.03 pp peak-avoidance + 25.82 pp clean-seeking; summer 21.42 pp + **−4.9 pp**). | Done. The strongest over-claim in my own analysis is now corrected by a run, not by hand. |
 | **WP-3** | **Forecast port + adapter** | **DELIVERED 2026-09-02**: contract page `docs/ports/FORECAST.md` (the template for the other five ports); capture tool `simulation/fetch-forecast.js` (manual, network — like fetch-traces) with the **prospective grading protocol** built in (`--grade` writes MAPE/MAE/bias *by lead time* once a capture's window settles; regional honestly ungradable, R2); a first live capture committed under `data/forecast/` — which immediately taught something: the *available* fw48h horizon varies by time of day (this capture holds 62 of the nominal 96 periods); offline reference adapter `simulation/forecast.js` + conformance suite. | Done. The first graded error curve arrives 48 h after the first capture — by protocol, not by backfill. |
-| **WP-4** | **E4 — spatial, advisory** | Per the owner's answer: advisory and minimal. The ceiling is already computed (`results/bounds.json` spatial section); what remains is a one-page advisory spec — the loop *recommends* a region, records the recommendation in the audit chain, and nothing pretends to move work. | Shrunk from 2 sessions to 0.5. The regional series is forecast-only (R2), so "forecast-scored advice" is the whole claim, stated as such. |
+| **WP-4** | **E4 — spatial, advisory** | **DELIVERED 2026-09-02** as `docs/SPATIAL-ADVISORY.md`: the one-page spec in the port-contract house style — the advisory object (region + window + compared signals + movement cost + rejected alternatives + audit record), what a conforming implementation must never do (move work, claim a GB regional actual, drop the movement cost, present advice as a verdict, bypass the rungs when advice is acted on), and the honesty box (E6 is forecast-scored, R2; the self-printed warning is mandatory). The spec states plainly which parts today's `routing.js` does NOT yet do: it never calls the gate/audit chain and keeps only aggregate alternatives — specified here, open work there. | Done. The regional series is forecast-only (R2), so "forecast-scored advice" is the whole claim, stated as such. |
 | **WP-5** | **Metering port + contract** | **DELIVERED 2026-09-02**: contract page `docs/ports/METERING.md` (Purpose / Interface / never-do / Conformance / the F13 guarantee stated where the port is defined / what stays open) + 4-test offline conformance suite `simulation/metering.test.js` run against the REAL `commit()` path and `runP2` — including the one-action bound on an under-declaring agent and the throw-on-junk reading (ADR-005). Honest note kept: the reference implementation is the inlined `exec()`+`commit()` pair; no standalone adapter file, no attestation yet. | Done — closes R15's contract half; trusted measurement/attestation stay open in R15. |
 | **WP-6** | **BDD feature files, one per port** | **DELIVERED 2026-09-02**: six `.feature` files under `features/` (signal, forecast, human, actuation, metering, publication), each ≤1 page and written for a non-programmer, executed by a thin runner (`simulation/features.test.js`: ~50-line Gherkin reader, step table, loud failure on any unmapped sentence — no framework, no parallel implementation) against the REAL code: the shipped gate, `runP2`, `charging.js`, `forecast.js`, `plane.js`. The E3 safety invariant — a refusal withholds the optimisation, never power or charge — is a scenario, as are terminate-never-overridable, fail-closed on a broken adapter, the one-action metering bound, and stale-documents-served-never-invented. 25 scenarios, 6 runner tests. | Done — gaps 1 and 2 addressed without a parallel implementation: the features drive the same code the fitness functions do. |
 | **WP-7** | **Dynamic diagrams** | **DELIVERED 2026-09-02** as `docs/architecture/DYNAMICS.md`: five committed Mermaid diagrams, each with a what-to-notice caption — the C4 L3 component view of the six ports (built vs designed-not-built named in the picture), the E2 gated decision end to end (gate-once-on-arrival, ADR-016, visible), the E3/E6 charging session including the WP-17 publish-back edge, the task state machine (stopped/refused/paused are three different things), and the budget sawtooth (degrade fires at 0.8, before the budget is spent). All five blocks machine-validated with the Mermaid parser; a grounding table maps every diagram to the code and ADRs it draws. | Done — gap 4 closed; the dynamic view of a control system finally exists. |
-| **WP-8** | **E1↔E2 seam test** | One end-to-end run: real published document → signal → gate → audit record. | Closes limitation R12, the biggest structural gap. |
-| **WP-9** | **Adapter negative/chaos tests** | Malformed JSON, timeout, absurd values, hostile registry entries (the existing hardening gets its test). | Addresses gap 6. |
+| **WP-8** | **E1↔E2 seam test** | **SUBSUMED by WP-17 (2026-09-02)**: the document-native loop runs the seam end to end as its smallest case. | R12's format half closed there; see the WP-17 row. |
+| **WP-9** | **Adapter negative/chaos tests** | **DELIVERED 2026-09-02** as `dataplane/chaos.test.js` (9 tests, ~250 assertions + a full-prefix truncation sweep) driving the REAL registry guard, byte cap, JSON parse path, doc-check, governor boundary and log analyser against hostile input. What held: traversal/scheme/homoglyph/oversize refusals, the streaming byte cap, abort signals on every fetch, prototype-pollution, the governor blocking/terminating every absurd intensity, IP anonymisation. What it pinned (17 `// FINDING:` cases, behaviour pinned, source untouched): the two that matter are the presence-only mandatory-member and intensity checks (a document of nulls scores 100% coverage) and a NaN `reportingPeriodAgeDays` escaping the null filter; also YYYY-MM calendar leniency, log-line non-object crash, markdown injection into the report, and `measure.js` exporting nothing (its guards are compiled from its own source bytes to stay testable). | Done — gap 6 addressed, with the found weaknesses recorded as findings for a hardening pass rather than silently fixed. |
 | **WP-10** | **Marginal-signal re-scoring** | Re-score E2/E3 against a marginal series if one is obtainable for GB; report both. | Addresses R17. **Now believed not buildable** — Electricity Maps discontinued marginal signals in Jan 2025, NESO is average-only, and WattTime never documents GB explicitly. Downgraded to a written limitation unless a series can be shown to exist. |
-| **WP-12** | **Herding arm — can anything dissolve the herd?** | **DELIVERED 2026-09-02** inside `npm run loop`: three anti-herd mechanisms head-to-head against the blind herd — a binding paced budget with skip-k rungs (**sheds** 6.6–14% of work; top-share rises), the same budget with the gate's true defer semantics (**reshuffles** inside the cheap band, top-share ~41%, no drops), and the SI-1467-intent stagger arm (**inert**: near-ties within 1 g/kWh are rare on real data). **Our own §2h.2 conjecture — "a paced budget is a staggering mechanism" — is falsified in this model class**, and the thing bounding the herd in every row is the per-system slot cap. | Done, with a negative verdict stated as such — and a concrete redirect: **WP-12b**, capacity rungs (degrade = halve your per-slot cap; CarbonFlex's limit made a governance verdict). Designed, not built. |
+| **WP-12** | **Herding arm — can anything dissolve the herd?** | **DELIVERED 2026-09-02** inside `npm run loop`: three anti-herd mechanisms head-to-head against the blind herd — a binding paced budget with skip-k rungs (**sheds** 6.55–11.31% of work in winter, 13.99–20.89% in summer; top-share rises), the same budget with the gate's true defer semantics (**reshuffles** inside the cheap band, top-share ~41% at the alpha=0 corner; no rung-driven drops, though 11–21% still drop at their deadlines), and the SI-1467-intent stagger arm (**inert**: near-ties within 1 g/kWh are rare on real data). **Our own §2h.2 conjecture — "a paced budget is a staggering mechanism" — is disproven in this model class**, and the thing bounding the herd in every row is the per-system slot cap. | Done, with a negative verdict stated as such — and the redirect it pointed at — **WP-12b**, capacity rungs — was built and measured the same day (next row): disproven too. |
+| **WP-12b** | **Capacity rungs — the WP-12 redirect, tested** | **DELIVERED 2026-09-02** inside `npm run loop` as the `capacity` arm (ADR-019: degrade halves the per-slot cap, escalate quarters it, block = 1/slot, terminate = 0 for the day; displaced work spills to the next cheapest feasible slot). **Disproven again**: the blind-herd top-5% share RISES 33.33% → **36.56%** (W1) / **40%** (W2) at **6.55%** / **13.99%** dropped — exactly the skip-k budget arm's share and drop rate — and peak concurrency rises 1 → 1.33 / 1.62. | Done, second negative verdict stated as such: the corrected §2h.2 claim ("capacity semantics, not budget depletion") is **not** established either — the cap bounds the herd by its *level*, not by the rung that moves it; any gate-side anti-herd claim now needs heterogeneous caps, per-actor phase, or a crowd-aware allocator, none of which is measured or claimed. |
 | **WP-13** | **A NESO data source for the GSF Carbon Aware SDK** | Upstream contribution: the standard tool supports only WattTime and ElectricityMaps, both keyed. Britain's free signal is unreachable through it. | Small, outward-facing, and independently useful. Optional. |
 | **WP-14** | **Tiered governance — rules first, humans for what matters** | **DELIVERED 2026-09-02** as the `P2tiered_f0.8` arm: one standing rule authorises deferral of blocked-deferrable work (the approval object names the rule), humans keep escalations + non-deferrable blocks, `terminate` stays absolute. Tests assert emissions/completions/drops **identical** to P2 and human decisions **exactly equal** to the promised sensitivity: 545.7 → 442.9 (winter) and 853 → 637 (summer). | Done — the sensitivity became a mechanism, and the constraint held: the rule moved authorisation, nothing else. |
-| **WP-15** | **Real workload trace** | One live run of a `kaiban-distributed-examples` workflow (OpenRouter), recording durations, token counts and deadlines; the anonymised trace committed as a fixture and replayed as a new E2 arm beside the synthetic one. | Converts E2's biggest "stipulated" caveat into a measurement. Live once, locally; deterministic forever after. |
+| **WP-15** | **Real workload trace** | **DELIVERED 2026-09-02**: one live run of the `social-media-team` workflow (6 tasks: extract → 4 parallel composers → aggregate; kaiban-distributed@2.0.0 gateway + 6 worker processes, BullMQ, gpt-4o-mini via OpenRouter; 7,484 tokens, $0.002, 20.4 s, zero errors) captured by the runtime's own run-logger, anonymised (answers stripped, structure kept) and committed as `data/workloads/real-trace.json`. Replayed as the `P2real_f0.8` arm (`simulation/workload-real.js`): each synthetic arrival becomes the 6 real subtasks with energy split by measured token shares, totals conserved by an asserted identity. **What it establishes, stated carefully: P2's saving is invariant to decision granularity — −16.39%/−20.21% vs P2's −16.45%/−20.27% — and an EQUAL-share control (`P2equal6_f0.8`) lands on the same answer, so the measured token shares are not what drives it; the arm validates that E2's carbon result never depended on tasks being indivisible lumps, and says nothing further about real workloads. The human-decision column is a mechanical cost of gate placement, not a discovery: asked k=6 times per arrival, the gate is answered ~6× as often (545.7 → 3208.3 winter, 853 → 5095.3 summer, and the control matches) — by construction, which is exactly why run-level gating or WP-14's standing rules matter.** | Done. Live once, locally; deterministic forever after — the replay is offline and byte-stable. |
 | **WP-16** | **Price-signal twin (economics arm)** | **DESCOPED 2026-09-02 (owner decision) — not implemented.** *What it would be:* fetch and commit a half-hourly GB day-ahead price trace the way `fetch-traces.js` commits carbon; score every existing arm on £ as well as gCO2e; report where the two signals agree and where they fight. *How to build it if ever needed:* (1) verify the licence of a price source **before** fetching (Octopus Agile tariff API, or N2EX/EPEX day-ahead — the licence check is the known risk); (2) commit the trace beside `data/simulation/`; (3) add a £ column to every existing arm, same seeds; (4) the same trace unlocks the curtailment/plunge `expedite` arm (C12) and the second-signal-adapter proof (§2i). *When it is needed:* only when an economics/£ claim, the C3/C12 candidate experiments, or a second-grid adapter demonstration is actually wanted — none of the paper's claims or this package's carbon results depend on it. | Descoped: §2g's arithmetic stays labelled illustrative, the portability claim stays architectural, and 1.5 sessions move to the audit and remaining packages. |
 | **WP-17** | **The closed loop with REAL documents** | **DELIVERED 2026-09-02** as `npm run plane`: N systems publish and consume documents in the gateway's own shape (the mandatory member set is derived from the committed documents at run time, so a format drift fails the arm). Two results: **staleness costs carbon** — at E1's measured real-world cadence (23 days) the loop pays **83.3 vs 78.51 g/kWh**, +6.1% over runtime cadence; and **the signal member matters more than the cadence** — a peer's published *carbon-intensity* is its own achieved intensity, so an optimised peer always looks clean (degenerate as a congestion signal), while *energy-consumption* actually says "the shared resource is busy". Coverage on real documents: intensity **3/12** (25%), energy **9/12** (75%). | Done for the format half of R12; R5 (no third-party publishers) stays open and is stated as an adoption problem. **A concrete recommendation for the Internet-Draft falls out: publishing load is cheaper, more available and more useful than publishing intensity.** |
-| **WP-11** | **Addendum write-up** | This file finalised, README *Corrections* updated, CHANGELOG, and a short "what changed after submission" note suitable for a revision or a follow-up paper. | Last, because it reports WP-1…WP-10. |
+| **WP-11** | **Addendum write-up** | **DELIVERED 2026-09-02** as `docs/AFTER-SUBMISSION.md` — the number-free, link-rich account of everything built, disproven, corrected and still open since the article froze, written for a revision letter or follow-up paper; the three-lens audit reports and their complete fix list are archived in `archive/audit-2026-09-02/`. | Done last, as planned — it reports everything through WP-17 and the final audit. |
 
 ### Ordering
 WP-2b is done (`npm run bounds`). Then: WP-1 → WP-2 (pure re-runs, immediate answers)
@@ -1294,25 +1315,25 @@ included).
 
 | Work package | Sessions | Confidence |
 |---|---:|---|
-| WP-1 E2b horizon/objective sweep | 1.5 | high — same data, same gate |
-| WP-2 E2c decomposition | 0.5 | high |
+| WP-1 E2b horizon/objective sweep | **done** | delivered 2026-09-02 (§5 row) |
+| WP-2 E2c decomposition | **done** | delivered 2026-09-02 (§5 row) |
 | WP-2b Peak vs clean-seeking split | **done** | delivered by `npm run bounds` |
-| WP-3 Forecast port + adapter | 1 | medium — depends on endpoint verification |
-| WP-4 E4 spatial advisory spec | 0.5 | high — ceiling already computed |
+| WP-3 Forecast port + adapter | **done** | delivered 2026-09-02 (§5 row) |
+| WP-4 E4 spatial advisory spec | **done** | delivered 2026-09-02 (`docs/SPATIAL-ADVISORY.md`) |
 | WP-5 Metering port + contract | **done** | delivered 2026-09-02 (contract + 4-test conformance suite) |
 | WP-6 BDD features per port | **done** | delivered 2026-09-02 (6 features, 25 scenarios, thin runner, no framework) |
 | WP-7 Dynamic diagrams | **done** | delivered 2026-09-02 (5 parser-validated Mermaid views) |
-| WP-8 E1↔E2 seam test | 1 | medium — needs a live or fixtured gateway run |
-| WP-9 Adapter negative/chaos tests | 1 | high |
+| WP-8 E1↔E2 seam test | **subsumed** | absorbed into WP-17's document-native loop |
+| WP-9 Adapter negative/chaos tests | **done** | delivered 2026-09-02 (9 tests, 17 pinned findings) |
 | WP-10 Marginal re-scoring | 1–2 | **low** — data availability unknown |
 | WP-12 Herding arm (R11 → result) | **done** | delivered inside `npm run loop`, negative verdict |
-| WP-12b Capacity rungs (the redirect) | 1 | medium — new rung semantics need an ADR |
+| WP-12b Capacity rungs (the redirect) | **done** | delivered 2026-09-02 (ADR-019; disproven again) |
 | WP-13 NESO source for GSF SDK (optional) | 1 | medium |
-| WP-14 Tiered governance | 1 | high — the sensitivity numbers already exist |
-| WP-15 Real workload trace | 1 | medium — one live run, then deterministic |
+| WP-14 Tiered governance | **done** | delivered 2026-09-02 (§5 row) |
+| WP-15 Real workload trace | **done** | delivered 2026-09-02 (live once; carbon unchanged, humans ×5.9) |
 | WP-16 Price-signal twin | **descoped** | owner decision 2026-09-02 — summary of how/why/when kept in the §5 row |
 | WP-17 closed loop with real documents | **done** | delivered as `npm run plane` |
-| WP-11 Addendum write-up | 1 | high |
+| WP-11 Addendum write-up | **done** | delivered 2026-09-02 (`docs/AFTER-SUBMISSION.md`) |
 | **Total** | **≈ 17–18** as planned; **≈ 15.5–16.5 after the WP-16 descope** (and 14.5–15.5 without the optional WP-13; WP-8's 1 session is absorbed into WP-17) | |
 | **Minimum useful subset (WP-1, 2, 14, 7, 11)** | **≈ 5** | |
 | **Headline pair (WP-12 + WP-17)** | **≈ 4** | |
@@ -1335,7 +1356,7 @@ verbatim; each **Decision** line is what the plan now does about it.
    **Decision (agreed):** the repo gets a permanent tag at the article's snapshot so the
    paper's version is always one `git checkout` away, every later change lands on top,
    and the README *Corrections* section stays the short, plain-words summary of every
-   difference. Tag command is in section 9. Backward compatible: the tag never moves.
+   difference. The tag already exists (`v1.0.0`, created at submission — see the CHANGELOG). Backward compatible: the tag never moves.
    Forward compatible: everything new is additive — new arms, new results files, new
    ports — never a rewrite of what the paper cites.
 
@@ -1376,7 +1397,7 @@ verbatim; each **Decision** line is what the plan now does about it.
    - advisory, but spend the least on it as you choos best. also reframe all these questions and results to be more human like and easier to understand.
 
    **Decision (agreed):** E4 shrinks from a 2-session simulation to what the bounds
-   calculus already computed for free — the spatial ceiling in \`results/bounds.json\`
+   calculus already computed for free — the spatial ceiling in `results/bounds.json`
    (section 2f below) — plus a one-page advisory spec: the loop *recommends* a region
    and records the recommendation in the audit log; nothing pretends to move work. And
    the whole document now opens with a plain-words summary (section 0).
@@ -1402,7 +1423,7 @@ verbatim; each **Decision** line is what the plan now does about it.
    - try to introduce a model where only critical work is governed by hitl and the rest could be automated more by some rules or something.
 
    **Decision (agreed, and the data already supports it):** new work package **WP-14 —
-   tiered governance**. The rule: a \`block\` on *deferrable* work auto-defers under a
+   tiered governance**. The rule: a `block` on *deferrable* work auto-defers under a
    standing, audited policy — no human; humans see only what is irreversible (terminate
    stays absolute), physical, or non-deferrable-above-degrade. The existing sensitivity
    numbers say what that buys: human decisions drop from **545.7 → 442.9** (winter) and
@@ -1430,8 +1451,8 @@ verbatim; each **Decision** line is what the plan now does about it.
    put the effort into WP-4 and WP-9 instead.
    - might be useful also for me or others, yes, as simple as possible but complete.
 
-   **Decision (agreed):** WP-6 stays, scoped to exactly one \`.feature\` file per port
-   (five files), each under a page, each executed against the real adapters — no
+   **Decision (agreed):** WP-6 stays, scoped to exactly one `.feature` file per port
+   (six files — six ports), each under a page, each executed against the real adapters — no
    step-library framework, no parallel implementation.
 
 ---
@@ -1442,7 +1463,7 @@ verbatim; each **Decision** line is what the plan now does about it.
   produced by this roadmap is recorded in the README's *Corrections* section and in the
   manuscript's revision notes — never by silently changing the paper.
 - **Every number in this repository stays bound to `results/`.** F12 enforces it across
-  165 registered claims in 13 documents; anything this roadmap produces gets registered
+  188 registered claims in 15 documents; anything this roadmap produces gets registered
   the same way.
 - **Every experiment stays deterministic and offline-reproducible.** Fixed seeds,
   committed traces, byte-identical re-runs, no live network in CI.

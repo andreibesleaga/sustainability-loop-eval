@@ -2,9 +2,9 @@
 
 One page for anyone — a colleague, a reviewer, a regulator, a manager — who wants to
 understand what this project is, what was actually measured, and what is honestly
-still missing. Every number on this page is checked automatically against the files
-in [`results/`](../results/) by `npm test`; if this page drifts from the evidence,
-the build fails.
+still missing. Every headline number on this page is checked automatically against
+the files in [`results/`](../results/) by `npm test`; if a checked number drifts
+from the evidence, the build fails.
 
 ## The invention
 
@@ -32,7 +32,8 @@ allows, and every decision lands in a tamper-evident audit log.
 - **Real:** the enforcement gate and audit log (shipped code, `kaiban-distributed`,
   imported not mocked); the published documents and their format checks; the
   Great-Britain grid-carbon traces; the live measurements of the reference gateway.
-- **Simulated:** the agent workload, the EV fleet, the human approver, the peer
+- **Simulated:** the agent workload (one real captured workflow trace is replayed
+  beside it as a granularity control — WP-15), the EV fleet, the human approver, the peer
   systems — all seeded, so every result reproduces byte-for-byte.
 - **Designed, not built:** the wiring to a real approval board; a trusted meter
   (the contract exists — [ports/METERING.md](ports/METERING.md) — the traces stand
@@ -45,7 +46,7 @@ the README's corrections pointer.
 ## What was measured (and what it honestly means)
 
 - **The safety properties hold in shipped code.** 13 architecture fitness functions,
-  15,011 cases, all green — worst-verdict-wins, fail-closed, humans bound to the top
+  15,037 cases, all green — worst-verdict-wins, fail-closed, humans bound to the top
   rungs, `terminate` never overridable, tampering detected.
 - **The governor cuts carbon — partly by doing less work.** At an 80% budget it
   saves −16.45% (winter) / −20.27% (summer) versus always-run. The exact attribution:
@@ -70,11 +71,13 @@ the README's corrections pointer.
   clean — while its energy consumption actually says "the shared resource is busy".
   On the real committed documents, intensity appears on 3/12, energy on 9/12.
   That is a concrete recommendation for the draft standard: **publish load.**
-- **We falsified our own idea.** The conjecture that a paced budget doubles as an
-  anti-herding stagger is wrong in this model class: a binding budget sheds work or
-  reshuffles it, and what actually bounds the herd is each system's capacity cap.
-  Stated as FALSIFIED in [results/loop.md](../results/loop.md), with the redirect
-  (capacity-based verdicts, WP-12b) designed but not built.
+- **We tested our own ideas, and both failed.** The conjecture that a paced budget
+  doubles as an anti-herding stagger is wrong in this model class (a binding budget
+  sheds work or reshuffles it), and so is the follow-up conjecture that
+  capacity-based verdicts would spread the crowd — built and measured (WP-12b,
+  ADR-019), they concentrate instead. Both are recorded as disproven in
+  [results/loop.md](../results/loop.md); this work claims no anti-herd property for
+  the gate.
 
 ## What is still open
 
@@ -90,8 +93,8 @@ estimates, is [ROADMAP.md](ROADMAP.md) §5–6.
 npm install && npm test
 ```
 
-That runs 70 adapter unit tests, the 13 fitness functions through the real gate
-(15,011 cases), six plain-English feature specs executed against the real code, and
-a checker that re-verifies every number on this page — including the ones above —
+That runs 89 adapter unit tests, the 13 fitness functions through the real gate
+(15,037 cases), six plain-English feature specs executed against the real code, and
+a checker that re-verifies every headline number on this page —
 against `results/`. The diagrams of how it all moves are in
 [architecture/DYNAMICS.md](architecture/DYNAMICS.md).

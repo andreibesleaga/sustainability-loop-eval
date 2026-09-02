@@ -27,6 +27,7 @@ import { makeGate, gated } from "../governor/gate.js";
 import { execute } from "../governor/harness.js";
 import { mean, median, p95, pearson, r, ms } from "../shared/stats.js";
 import { loadWindow, generateWorkload, trailingMedians, WORKLOAD } from "./lib.js";
+import { loadRealTemplate, realizeWorkload } from "./workload-real.js";
 import { e2Potential } from "./bounds.js";
 import { renderSimulationMd } from "./report.js";
 
@@ -322,6 +323,48 @@ async function main() {
         runs.push(await runP2(workloads[i], W, budgetG, WORKLOAD.degradedEnergyFraction, true));
       }
       win.policies["P2tiered_f0.8"] = summarize(runs, p0Totals);
+    }
+
+    // ── WP-15: the real workload trace, replayed at f = 0.8 ────────────────────
+    // One live kaiban-distributed run (6 tasks: extract → 4 parallel composers →
+    // aggregate) becomes the template: every synthetic task is replaced by the
+    // template's six subtasks, energy split by the run's measured token shares,
+    // arrival/deadline/deferrable inherited. Totals are conserved by construction
+    // (asserted below), so pctVsP0 is directly comparable to P2_f0.8 and the one
+    // variable is decision granularity: six real, unequal pieces per arrival.
+    {
+      const template = loadRealTemplate();
+      const realWorkloads = workloads.map((tasks) => realizeWorkload(tasks, template));
+      // Identity check: P0 equality holds BY CONSTRUCTION (shares sum to 1);
+      // this assertion exists to catch future edits to the splitter, not to
+      // prove anything about the trace.
+      for (let i = 0; i < SEEDS.length; i++) {
+        const p0r = runP0(realWorkloads[i], W).totalG;
+        if (Math.abs(p0r - p0Totals[i]) > 1e-6 * p0Totals[i]) {
+          throw new Error(`real-workload split broke P0: seed ${SEEDS[i]} ${p0r} vs ${p0Totals[i]}`);
+        }
+      }
+      const runs = [];
+      // Control arm: the same six-way split with EQUAL shares. If the real token
+      // shares carry information the control lacks, these two arms must differ;
+      // the renderer prints both so the reader sees how much they actually do.
+      const equalTemplate = { ...template, tasks: template.tasks.map((t) => ({ ...t, share: 1 / template.tasks.length })) };
+      const equalWorkloads = workloads.map((tasks) => realizeWorkload(tasks, equalTemplate));
+      const equalRuns = [];
+      for (let i = 0; i < SEEDS.length; i++) {
+        const budgetG = 0.8 * median(p0[i].dayG); // the SAME budget P2_f0.8 pays
+        runs.push(await runP2(realWorkloads[i], W, budgetG, WORKLOAD.degradedEnergyFraction));
+        equalRuns.push(await runP2(equalWorkloads[i], W, budgetG, WORKLOAD.degradedEnergyFraction));
+      }
+      win.realWorkload = {
+        source: template.source,
+        capturedAt: template.capturedAt,
+        subtasksPerArrival: template.tasks.length,
+        tokenShares: Object.fromEntries(template.tasks.map((t) => [t.id, r(t.share, 4)])),
+        note: "subtasks inherit arrival/deadline/deferrable; energy split by measured token share; P0 identity asserted at run time. The live run's 20.4 s span is sub-slot, so internal timing is not replayed; siblings with mixed verdicts may execute out of phase order across slots — carbon and decision accounting are unaffected.",
+        "P2real_f0.8": summarize(runs, p0Totals),
+        "P2equal6_f0.8": summarize(equalRuns, p0Totals),
+      };
     }
 
     // ── E2b (WP-1): the horizon x deferrable-fraction sweep, argmin objective ──

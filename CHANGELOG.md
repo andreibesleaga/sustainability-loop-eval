@@ -4,7 +4,7 @@ All notable changes to this evaluation package. Dates are ISO. The one thing thi
 exists to make unambiguous is **which numbers changed and which did not** — see the
 section of that name under each release.
 
-## [Unreleased] — 2026-08-31 — audit pass
+## [Unreleased] — 2026-08-31 → 2026-09-02 — audit pass, work packages, final audit
 
 A multi-lens audit of v1.1.0 (code correctness, documentation consistency, systems
 theory and cybernetics, external references checked live, planetary-design and
@@ -22,12 +22,50 @@ prosecution before anything was changed. No experiment was re-run against new da
   are unchanged value for value. It is the R13 comparison made runnable rather than
   asserted: **32.85% / 16.53% avoided by the scheduler alone** against **32.51% /
   16.04%** governed (winter / summer).
-- **Fitness totals: 12/12 over 13,366 → 13/13 over 14,981.** Two reasons, both additive:
-  F12 grew from 33 to 92 registered claims because more hand-typed numbers were bound to
-  `results/` (see below), and **F13** was added with 1,500 cases. Nothing failed; the
-  suite got larger.
-- **Adapter unit tests: 32 → 33** (one structural test added; the "26" the docs said was
-  already stale at v1.1.0 — the actual count then was 32).
+- **Fitness totals: 12/12 over 13,366 at v1.1.0 → 13/13 over 15,037 now.** All of it
+  additive, and the arithmetic closes exactly: **F13** added (+1,500 cases), **F12**
+  grew from 33 registered claims to **188 across 15 documents** (+155) as every
+  hand-typed number in every document — the plain-words overview and the newest
+  results included — was bound to `results/`, and **F7** grew from 24 to **40**
+  static checks (+16) by auto-scanning the files added since. 13,366 + 1,500 + 155 + 16 = 15,037. (Two earlier interim totals quoted below in this section's history
+  — 14,981 and 15,011 — were snapshots taken mid-growth; the registry now binds the
+  final figures so this line cannot drift again.) Nothing failed; the suite got
+  larger.
+- **Adapter unit tests: 32 → 87.** One structural test at the audit (32 → 33), then
+  the conformance, feature, chaos and workload suites added during the work-package
+  sessions (forecast 3, metering 4, features 6, plane 5, loop +5 incl. the
+  renderer-identity test, chaos 9, workload-real +5 incl. its identity test, and
+  the earlier policy/sweep additions). The "26" the docs said at v1.1.0 was already
+  stale then — the actual count was 32.
+
+### Added — the final audit, the addendum, and the archive
+
+- **WP-11 delivered — `docs/AFTER-SUBMISSION.md`**: the short addendum for a
+  revision or follow-up paper. Number-free by design; every figure lives once in
+  the linked, registry-checked pages.
+- **A three-lens audit ran over the finished package** (documentation
+  consistency; adversarial code/test review; paper alignment and scenarios) and
+  every finding was fixed or explicitly accepted — the reports and the complete
+  fix list are in `archive/audit-2026-09-02/`. The substantive fixes: the
+  anti-herd story now states both disproven conjectures everywhere; WP-15 is
+  reframed to what it measures (granularity-invariance, with a new equal-share
+  control arm `P2equal6_f0.8`; the ~6× decision cost stated as k-by-construction);
+  a vacuous WP-12b property test now counts drops by cause; three chaos
+  assertions were made falsifiable; renderer-identity tests pin
+  `results/{loop,simulation}.md` to their JSON; the CI byte-diff gate covers all
+  eight result sets; ten documents lost their stale pre-delivery labels; and the
+  CHANGELOG itself joined the registry (188 claims across 15 documents).
+- **`archive/`** — session checkpoints and audit reports now live outside the
+  docs layer, dated and frozen, so the living documentation stays clean.
+
+### Changed — wording only
+
+- **Negative results are now stated in plain language** (owner request,
+  2026-09-02): every "falsified / FALSIFIED-AGAIN" became "disproven /
+  disproven again", and "what would falsify it" became "what would disprove
+  it", across docs, the loop renderer and the tests that pin the verdict
+  wording. No number, verdict, or result changed — `results/loop.json` is
+  byte-identical; only `results/loop.md`'s phrasing moved with its renderer.
 
 ### Fixed
 
@@ -55,6 +93,46 @@ prosecution before anything was changed. No experiment was re-run against new da
 
 ### Added
 
+- **WP-15 delivered — the real workload trace** (`data/workloads/real-trace.json`
+  + `simulation/workload-real.js` + the `P2real_f0.8` arm in `npm run simulate`):
+  one LIVE run of the kaiban-distributed `social-media-team` workflow (6 tasks:
+  extract → 4 parallel composers → aggregate; real gateway + 6 worker processes,
+  BullMQ, gpt-4o-mini via OpenRouter; 7,484 tokens, $0.002, 20.4 s, zero errors),
+  captured by the runtime's own run-logger, anonymised (answers stripped,
+  structure and token counts kept) and replayed offline: each synthetic arrival
+  becomes the six real subtasks, energy split by measured token shares, totals
+  equal by construction. **What it establishes, stated carefully: P2's saving is
+  invariant to decision granularity (−16.39%/−20.21% vs −16.45%/−20.27%), and an
+  equal-share control arm gives the same answer — so the measured shares are not
+  what drives it, and the arm says nothing further about real workloads (one run,
+  one workflow, timing not replayed). The ~6× human-decision multiplication
+  (545.7 → 3208.3, 853 → 5095.3) is k-by-construction — the gate is asked six
+  times per arrival — which is precisely the argument for run-level gating or
+  WP-14's standing rules, stated as mechanics, not as a measurement.** Network and
+  money were spent exactly once, at capture.
+- **WP-12b delivered — capacity rungs, and a second conjecture disproven** (`capacity`
+  arm in `npm run loop`, `wp12b` cells, ADR-019): rungs acting on the per-slot
+  cap (degrade halves it, escalate quarters it, block = 1/slot, terminate = 0 for
+  the day, spill to the next cheapest feasible slot) **also fail to spread the
+  herd** — the blind-herd top-5% share rises 33.33% → 36.56% (W1) / 40% (W2) at
+  6.55% / 13.99% dropped, exactly the skip-k budget arm's share and drop rate,
+  and peak concurrency rises 1 → 1.33 / 1.62. The corrected §2h.2 anti-herd claim
+  is withdrawn rather than defended. Append-only: every pre-existing
+  `results/loop.json` cell is byte-identical.
+- **WP-9 delivered — the chaos suite** (`dataplane/chaos.test.js`, 9 tests, ~250
+  assertions + a full-prefix truncation sweep) driving the real registry guard,
+  byte cap, JSON parse path, doc-check, governor boundary and log analyser with
+  hostile input. The fail-closed core held everywhere it matters — the governor
+  blocks or terminates every absurd published intensity, and `commit()` throws —
+  and 17 weaknesses in the *reporting* plane are pinned as `// FINDING:` cases
+  rather than silently fixed, the two significant ones being presence-only
+  mandatory-member/intensity checks (a document of all-null members scores 100%
+  coverage) and a NaN `reportingPeriodAgeDays` escaping a null filter.
+- **WP-4 delivered — the spatial advisory spec** (`docs/SPATIAL-ADVISORY.md`):
+  one page in the port-contract style — the advisory object, its never-do list
+  (move work, claim a GB regional actual, drop the movement cost, present advice
+  as a verdict, bypass the rungs), the honesty box (forecast-scored, R2), and a
+  plain statement of which parts `routing.js` does not yet implement.
 - **`docs/OVERVIEW.md` — the whole system in plain words**, one page for anyone:
   the invention, the five verdicts, what is real vs simulated vs designed-only,
   every headline finding with its honest caveat, and what is still open. Every
@@ -113,11 +191,12 @@ prosecution before anything was changed. No experiment was re-run against new da
   herd's own achievable day — the first calibration, f x the uncontrolled mean,
   never fired a rung, which is itself recorded) with skip-k rung semantics — it
   **sheds** 6.6–14% of the work and the top-5% share *rises*; the same budget with
-  the gate's true DEFER semantics — no drops, but the crowd **reshuffles** inside
+  the gate's true DEFER semantics — no rung-driven drops (11–21% still drop at
+  their deadlines), and the crowd **reshuffles** inside
   the same cheap band (top share ~41%); and a STAGGER arm carrying SI 2021/1467's
   intent at slot resolution — **inert**, because near-ties within 1 g/kWh are rare
   on real intensity data (noted beside R18). The repository's own §2h.2 conjecture
-  ("a paced budget is a staggering mechanism") is **falsified in this model class**
+  ("a paced budget is a staggering mechanism") is **disproven in this model class**
   and corrected in ROADMAP/EXECUTIVE-CASE rather than reworded; what bounds the
   herd in every row is the per-system slot cap, so the corrected claim is that the
   gate's anti-herd lever is **capacity semantics** (WP-12b: capacity rungs,

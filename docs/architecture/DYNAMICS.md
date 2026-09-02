@@ -24,7 +24,7 @@ Two labels are used throughout, because the honest reading depends on them:
 |---|---|---|
 | 1 | [The six ports](#1-c4-level-3--the-six-ports-their-adapters-and-the-gate) | C4 level 3: the governor core, the six ports, every adapter behind them, the real gate, and the data plane |
 | 2 | [One E2 gated decision](#2-one-gated-decision-end-to-end-e2) | Task arrival → signal → pacing ratio → rung → gate verdict → approval → execute or defer → metered commit |
-| 3 | [One charging session, including publish-back](#3-one-charging-session-including-publish-back-e3--e6--wp-17) | Plug-in → proposal → gate → owner consent → actuation → metered commit → published document → peers read it |
+| 3 | [One charging session, including publish-back](#3-one-charging-session-including-publish-back-e3-e6-and-wp-17) | Plug-in → proposal → gate → owner consent → actuation → metered commit → published document → peers read it |
 | 4 | [The life of a task](#4-the-life-of-a-task--state-machine) | Arrival → gated → allowed / degraded / deferred / blocked / terminated → executed or dropped |
 | 5 | [Budget dynamics](#5-budget-dynamics--the-daily-sawtooth) | The daily sawtooth: spend accumulates, rungs fire at 0.8 / 1.0 / 1.1 / 1.25, midnight resets |
 

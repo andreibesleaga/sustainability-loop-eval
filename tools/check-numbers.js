@@ -64,11 +64,12 @@ function evidence() {
   const loop = readJson("results/loop.json");
   const routing = readJson("results/routing.json");
   const plane = readJson("results/plane.json");
+  const workloadTrace = readJson("data/workloads/real-trace.json");
   const gatewayIndex = readJson("data/dataplane/index.json").body; // the committed registry snapshot
   const core = lineCounts("governor/carbon-governor.js");
   const fn = (id) => fitness.functions.find((f) => f.id === id);
   return {
-    simulation, charging, dataplane, fitness, bounds, loop, routing, plane,
+    simulation, charging, dataplane, fitness, bounds, loop, routing, plane, workloadTrace,
     index: {
       // "22 adapter and wire-format demonstration documents" = the two demonstration
       // collections the gateway's registry snapshot lists; not part of E1's twelve.
@@ -122,6 +123,8 @@ const C = (p) => ["charging", p];
 const D = (p) => ["dataplane", p];
 const K = (p) => ["computed", p];
 const P = (p) => ["plane", p];
+const L = (p) => ["loop", p];
+const WT = (p) => ["workloadTrace", p];
 const I = (p) => ["index", p];
 const B = (p) => ["bounds", p];
 const RT = (p) => ["routing", p];
@@ -327,6 +330,37 @@ const REGISTRY = [
   ["docs/OVERVIEW.md", "energy coverage (documents carrying)", /energy on (\d+)\/12/i, P("memberCoverage|energy-consumption|documentsCarrying")],
   ["docs/OVERVIEW.md", "adapter unit-test count", /runs (\d+) adapter unit tests/i, K("unitTests")],
   ["docs/OVERVIEW.md", "fitness total cases (check-yourself section)", /\(([\d,]+) cases\)/i, K("fitnessCases"), "thousands"],
+  // ── WP-12b / results/loop.json — the disproven capacity-rung conjecture, in numbers ─
+  ["docs/ROADMAP.md", "WP-12b capacity top-5% share, W1", /RISES 33\.33% → \*\*(\d+\.\d+)%\*\* \(W1\)/i, L("results|W1|wp12b|capacity_N25_a0_s1|top5PctSlotShare")],
+  ["docs/ROADMAP.md", "WP-12b capacity top-5% share, W2", /RISES 33\.33% → \*\*\d+\.\d+%\*\* \(W1\) \/ \*\*(\d+)%\*\* \(W2\)/i, L("results|W2|wp12b|capacity_N25_a0_s1|top5PctSlotShare")],
+  ["docs/ROADMAP.md", "WP-12b capacity dropped, W1", /at \*\*(\d+\.\d+)%\*\* \/ \*\*\d+\.\d+%\*\* dropped/i, L("results|W1|wp12b|capacity_N25_a0_s1|droppedUnitsPct")],
+  ["docs/ROADMAP.md", "WP-12b capacity dropped, W2", /at \*\*\d+\.\d+%\*\* \/ \*\*(\d+\.\d+)%\*\* dropped/i, L("results|W2|wp12b|capacity_N25_a0_s1|droppedUnitsPct")],
+  ["docs/ROADMAP.md", "WP-12b peak concurrency, W1", /peak concurrency rises 1 → (\d+\.\d+) \/ \d+\.\d+/i, L("results|W1|wp12b|capacity_N25_a0_s1|peakConcurrencyRatio")],
+  ["docs/ROADMAP.md", "WP-12b peak concurrency, W2", /peak concurrency rises 1 → \d+\.\d+ \/ (\d+\.\d+)/i, L("results|W2|wp12b|capacity_N25_a0_s1|peakConcurrencyRatio")],
+
+  // ── WP-15 / the real-workload arm and its committed trace ────────────────────
+  ["docs/ROADMAP.md", "WP-15 real-arm saving, W1", /granularity — −(\d+\.\d+)%\/−\d+\.\d+% vs P2's/i, S("results|W1|realWorkload|P2real_f0.8|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "WP-15 real-arm saving, W2", /granularity — −\d+\.\d+%\/−(\d+\.\d+)% vs P2's/i, S("results|W2|realWorkload|P2real_f0.8|pctVsP0|mean"), "neg"],
+  ["docs/ROADMAP.md", "WP-15 human decisions, real arm W1", /~6× as often \(545\.7 → (\d+\.\d+) winter/i, S("results|W1|realWorkload|P2real_f0.8|humanDecisions|mean")],
+  ["docs/ROADMAP.md", "WP-15 human decisions, real arm W2", /853 → (\d+\.\d+) summer/i, S("results|W2|realWorkload|P2real_f0.8|humanDecisions|mean")],
+  ["docs/ROADMAP.md", "WP-15 live-run token total", /(\d[\d,]*) tokens, \$0\.002/i, WT("provenance|totalTokens"), "thousands"],
+
+  // ── WP-4 / docs/SPATIAL-ADVISORY.md — the three quoted numbers ───────────────
+  ["docs/SPATIAL-ADVISORY.md", "spatial oracle bound, W1", /cheapest peer region \*\*(\d+\.\d+)% below\*\*/i, B("results|W1|spatial|pctBelowPeerSignal")],
+  ["docs/SPATIAL-ADVISORY.md", "routed saving at zero movement cost, W1", /zero movement cost realises \*\*(\d+\.\d+)%\*\*/i, RT("results|W1|routed|moveKWh0|pctAvoidedVsBestHomeForecast")],
+  ["docs/SPATIAL-ADVISORY.md", "sessions routed away at 5 kWh cost, W1", /\*\*(\d+\.\d+)%\*\* of winter sessions away from home/i, RT("results|W1|routed|moveKWh5|sessionsRoutedAwayPct")],
+  // ── CHANGELOG.md — the accounting file itself, finally inside the net ────────
+  ["CHANGELOG.md", "final fitness total (reconciled accounting line)", /13\/13 over ([\d,]+) now/i, K("fitnessCases"), "thousands"],
+  ["CHANGELOG.md", "final registry claim count", /grew from 33 registered claims to \*\*(\d+) across \d+ documents\*\*/i, K("registryClaims")],
+  ["CHANGELOG.md", "final registry document count", /grew from 33 registered claims to \*\*\d+ across (\d+) documents\*\*/i, K("registryDocs")],
+
+  // ── RESEARCH.md — the numbers added by the final audit pass ──────────────────
+  ["RESEARCH.md", "WP-17 intensity at the 23-day cadence", /pay \*\*(\d+\.\d+) vs \d+\.\d+ g\/kWh\*\*/i, P("results|W1|cadences|23 days (E1's measured median)|meanIntensityGPerKWh")],
+  ["RESEARCH.md", "WP-17 intensity at runtime cadence", /pay \*\*\d+\.\d+ vs (\d+\.\d+) g\/kWh\*\*/i, P("results|W1|cadences|30 min|meanIntensityGPerKWh")],
+  ["RESEARCH.md", "WP-17 energy coverage (documents carrying)", /energy-consumption appears on (\d+)\/12 real documents/i, P("memberCoverage|energy-consumption|documentsCarrying")],
+  ["RESEARCH.md", "WP-17 intensity coverage (documents carrying)", /carbon-intensity on (\d+)\/12/i, P("memberCoverage|carbon-intensity-gCO2e-per-kWh|documentsCarrying")],
+  ["RESEARCH.md", "core total lines (corrections bullet)", /grew the same file to \*\*(\d+) lines/i, K("coreLines")],
+  ["RESEARCH.md", "core code lines (corrections bullet)", /grew the same file to \*\*\d+ lines \((\d+) of code\)\*\*/i, K("coreCodeLines")],
 ];
 
 // ── the checker ──────────────────────────────────────────────────────────────

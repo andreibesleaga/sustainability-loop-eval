@@ -22,7 +22,7 @@ deterministically. Do those properties actually hold in the code that ships?
 Carbon-Verdict Governor plugged in as a validator — not merely in a description
 of it, and not merely in a reimplementation written for this package.
 
-**What the package measures.** Twelve architecture fitness functions
+**What the package measures.** Thirteen architecture fitness functions
 (`fitness/props.js`), each testing one clause of the claim against the real
 `ActionGate` and the real `AuditLog` imported from npm. Every property except the
 two static ones (F7, F12) draws its cases from a seeded generator, so they are
@@ -34,12 +34,12 @@ behaviour: aggregation, fail-closed on a validator error, the audit chain,
 determinism. F3 and F4 test *this package's* rung semantics, because the runtime
 ships the vocabulary `allow < degrade < escalate < block < terminate` but not its
 meaning — its own default actor path treats the top three rungs identically and
-has no human-approval port. F7, F10, F11 and F12 test this repository's structure,
+has no human-approval port. F7, F10, F11 and F12 test this repository's structure, F13 tests what a trusted meter buys against a self-declared estimate,
 invariants and documentation. A green table is not a claim that the runtime
 guarantees the human-in-the-loop semantics; it guarantees the aggregation and the
 record, and this package guarantees the rest.
 
-**What would falsify it.** Any one of these:
+**What would disprove it.** Any one of these:
 
 - The gate resolves a verdict set to something other than its most severe member (F1), or the package's reference rule disagrees with the gate (F9).
 - A throwing validator or an invalid estimate produces anything other than `block` (F2).
@@ -53,8 +53,8 @@ record, and this package guarantees the rest.
 - `decide()` is non-monotone in the estimate, or has a side effect, or a rung boundary is off by one (F11).
 - A headline number typed into a document no longer matches the file it points at (F12).
 
-**Current answer.** All thirteen pass, over **15,011** cases in total — of
-which F7's 37 and F12's are static checks rather than generated cases. At
+**Current answer.** All thirteen pass, over **15,037** cases in total — of
+which F7's 40 and F12's are static checks rather than generated cases. At
 v1.0.0, the snapshot the article cites, it was nine functions over **10,994**
 cases; the difference is properties added, not properties fixed. Upstream, the
 same gate and audit code passes its own governance suite (4 files, **71** tests)
@@ -67,12 +67,12 @@ broker. Source: [`results/fitness.md`](../results/fitness.md),
 
 - One implementation of the ladder, in one process. A second independent implementation would be a stronger check.
 - F4 checks the reference actuation harness in this package, `governor/harness.js`. As of v1.1.0 F7 also checks that every adapter which actuates imports it, so it is the *only* actuation path and not merely *an* actuation path. What is on the other end of the human port is still a simulated approver or a terminal prompt: **wiring the gate to a real approval board is designed, not built.**
-- **The forecast port is designed, not built.** The simulations read the peer signal straight from the cached trace rather than through a forecast adapter.
+- **The forecast port is built (WP-3: contract, committed capture, conformance-tested adapter), but no experiment decides through it yet.** The simulations still read the peer signal straight from the cached trace rather than through the adapter.
 - The audit chain is in memory and verifiable. It is not persisted or signed. It is tamper-*evident* — `records()` returns the live objects, so code in the process can mutate them and `verify()` will notice, but nothing prevents the mutation. Truncation is invisible to `verify()` alone and needs an external anchor (F10).
 - The shipped gate itself passes a verdict that is not on the ladder through verbatim rather than failing closed on it. This package normalises that to `block`; the upstream gap is real and is recorded (ADR-002, ARCHITECTURE section 11).
 - A property can only test something you can state precisely. Properties nobody thought to state are not covered by a green table.
 
-**How to extend.** Add F13 and beyond (the recipe is in
+**How to extend.** Add F14 and beyond (the recipe is in
 [`DEVELOPMENT.md`](DEVELOPMENT.md)); check the same properties against a second
 runtime; run the gate under concurrency; persist and sign the chain and test the
 verification path across a restart.
@@ -100,7 +100,7 @@ rather than the wall clock; and reads the live negative-findings register.
 `dataplane/logs.js` then summarises a raw capture of the gateway's real HTTP
 access logs.
 
-**What would falsify it.** Documents that fail schema validation; missing
+**What would disprove it.** Documents that fail schema validation; missing
 mandatory members; latency or size large enough to make polling impractical;
 documents stale by months; no disclaimer on documents mapped from third parties'
 reports; or a log window showing no real traffic at all.
@@ -172,7 +172,7 @@ gated charging shift on the same traces. Emissions always come from the national
 *actual* series; the peer signal is the mean of three regional *forecast* series
 standing in for peers' published documents.
 
-**What would falsify it.** The governor failing to beat P1; the peer signal
+**What would disprove it.** The governor failing to beat P1; the peer signal
 failing to track the national actual; the audit chain failing on any run; the
 savings turning out to be entirely explained by dropped work at a budget level
 where nothing is dropped; or the deferred work missing its deadlines.
@@ -216,7 +216,7 @@ Four things in that table matter as much as the headline:
 - The charging scenario shifts start times only. No discharge, no state-of-charge logic, and no live charging-protocol call — it runs through the governor and the gate, not over a real protocol wire. In it, `block` and `terminate` refuse the shift outright with no fallback and nobody asked; the car charges as it would have anyway.
 - A deferred task is gated once, on arrival, and executed later without re-evaluation (ADR-016). If grid conditions change between the decision and the slot, nothing re-checks.
 
-**How to extend.** Replay a real agentic workload instead of a Poisson one; add
+**How to extend.** Replace the Poisson workload wholesale with real traces (WP-15's captured run already replays beside it as a granularity control); add
 regions, countries and seasons; run a study with real approvers and measure their
 latency and refusal rate; put real multi-party peers on the signal port; wire the
 charging scenario to a live protocol endpoint through the tool servers; and
@@ -238,8 +238,9 @@ Every limitation named above is indexed, with its canonical wording, in
 
 Loop closure itself — actions changing consumption, changing the next published
 document — is shown here by construction, and its sense → decide → gate → act half by
-simulation. The publish-back half is *not* exercised by any experiment: the signal the
-simulations read is an exogenous cached trace, so nothing the governor does can change
-what it senses next (limitation R12). It is not yet shown by a live deployment with
-independent parties on both ends. That is the open problem, and it is why the
+simulation. The publish-back half is now exercised in simulation: E5 (`npm run loop`) has every
+system publishing what its own actions did and reading the crowd's documents back,
+and WP-17 (`npm run plane`) does it in the gateway's own document shape — closing
+the *format* half of limitation R12. What remains open is R5's half: it is not yet
+shown by a live deployment with independent parties on both ends. That is the open problem, and it is why the
 convention is published rather than kept.

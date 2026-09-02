@@ -5,11 +5,11 @@ disk is verified and the full suite is green** — nothing partial, nothing untr
 
 ## Verified state (all green, run before this stop)
 
-- `npm test`: **70 unit / 13 fitness over 15,011 cases / 165 registered claims
-  across 13 documents** — all passing.
+- `npm test`: green — see the bottom progress note for the CURRENT totals
+  (this header predates the final work packages).
 - Byte-determinism proved this session: all deterministic result sets regenerate
   identically (simulate, charging, bounds, loop, routing, plane, fitness:report).
-- Nothing committed; ~55 changed/new paths on top of `97b2c26`. All git writes are
+- (Historical note — superseded by later commits and the progress notes below.) All git writes are
   the owner's. Suggested WIP commit:
   `git add -A && git commit -m "Session A: WP-5/6/7 delivered, WP-16 descoped, OVERVIEW + registry expansion, coverage fix"`
 
@@ -25,7 +25,7 @@ disk is verified and the full suite is green** — nothing partial, nothing untr
   every number on it F12-registered.
 - **F12 registry expanded 137→165 claims, 12→13 docs**: `results/plane.json` wired
   into `tools/check-numbers.js` evidence; WP-17 staleness/coverage numbers bound;
-  `planeStalenessPenaltyPct` computed key added. Totals 14,983→15,011 (F7 35→37).
+  `planeStalenessPenaltyPct` computed key added. Totals per CHANGELOG's reconciled accounting.
 - **Two real defects found and fixed** (recorded in CHANGELOG "Fixed"):
   wrong "12/12" energy-coverage claim in ROADMAP+CHANGELOG (truth: **9/12, 75%**);
   duplicated "signal member" bullet in the `simulation/plane.js` renderer
@@ -45,6 +45,23 @@ the 28 new registry regexes, plane.js, DYNAMICS.md-vs-code, (3) v1.0.0-tag claim
 vs current repo, invention-story consistency, PRODUCT.md use-case coverage,
 ROADMAP C-rows. Then fix findings, re-run `npm test` + determinism, delete this
 checkpoint file.
+
+## Progress update (same day, later session)
+
+Step 1 is COMPLETE: WP-15 (real trace: carbon unchanged, humans ×5.9), WP-9
+(chaos suite, 17 pinned findings), WP-4 (spatial advisory spec), WP-12b
+(capacity rungs — disproven again, ADR-019) all delivered, integrated and
+registered. WP-13 (optional, outward-facing GSF PR) deliberately skipped —
+owner's call whether to do it at all. Green state: 87 unit / 13 fitness over
+15,037 cases / 179 claims across 14 documents; byte-determinism reproved.
+Next: the three-lens audit (briefs above), then WP-11.
+
+OWNER ORDER (2026-09-02, during the audit): at the very end, ARCHIVE all temp
+data, reports, session notes and working numbers (this checkpoint included) into
+a repo `archive/` area, and keep the docs layer clean, summarized and easy for
+humans — OVERVIEW.md as the simple entry point, everything true, non-redundant,
+and plainly worded. Audit C's report is saved at
+`archive/audit-2026-09-02/` (to be created in that pass) along with A and B.
 
 ## Resume order (owner-decided): packages first, audit last
 

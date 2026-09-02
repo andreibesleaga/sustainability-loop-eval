@@ -38,6 +38,18 @@ One standing rule is active in the `P2tiered` arm: a `block` on DEFERRABLE work 
 
 Acceptance, in one sentence: **given the same workload and budget, when the standing rule authorises deferral of blocked deferrable work, then total emissions equal P2's exactly (51691 ± 517 vs 51691 ± 517 gCO2e) and human decisions fall from 545.7 ± 67.7 to 442.9 ± 56.1** — the number the untired run could only report as a sensitivity is now the measured behaviour of a mechanism.
 
+### The real workload trace (WP-15, f = 0.8)
+
+One LIVE run of a kaiban-distributed social-media-team workflow (captured 2026-09-02T12:34:44.356Z; committed as `data/workloads/real-trace.json`) supplies a template: every synthetic arrival becomes its 6 real subtasks — extract, four parallel composers, aggregate — with energy split by the run's measured token shares (extract 12.0%, compose-blog 16.0%, compose-discord 13.8%, compose-linkedin 12.9%, compose-tweet 11.3%, aggregate 34.0%). Arrival, deadline, deferrable flag and the daily budget are unchanged, and total energy is equal by construction, so every percentage is directly comparable to P2. An EQUAL-share control (the same 6-way split, each piece 1/6) runs beside it, so the reader can see what the measured shares themselves contribute.
+
+| arm | % vs P0 | completed | dropped | human decisions |
+|---|---|---|---|---|
+| P2 (one task per arrival) | -16.45 ± 0.48 | 7996.6 ± 61.7 | 78.5 ± 30.1 | 545.7 ± 67.7 |
+| P2real (6 real subtasks per arrival; counts are SUBTASKS) | -16.39 ± 0.49 | 47991.6 ± 372.7 | 459 ± 180 | 3208.3 ± 395.8 |
+| P2equal (6 equal subtasks — control) | -16.39 ± 0.49 | 47988.7 ± 373.3 | 461.9 ± 181.3 | 3212.6 ± 397.3 |
+
+What this measures, stated carefully. **P2's saving is invariant to decision granularity**: splitting each arrival into 6 pieces moves the headline by a rounding step, and the CONTROL row shows the measured token shares are not what makes that true — equal shares give the same answer. So the arm validates that E2's carbon result does not depend on the synthetic task being one indivisible lump, and it says nothing further about real workloads (one run, one workflow, timing not replayed — the 20.4 s span is sub-slot). **The human-decision column is a mechanical cost, not a discovery**: the gate is asked 6 times per arrival, so decisions scale ~linearly with 6 (×5.88 here, and the control matches) — by construction, not by measurement. The design question it makes concrete is WHERE to place the gate: per micro-task pricing costs k× the human attention for the same carbon, which is why run-level gating or WP-14's standing rules matter. Caveats stay stated: siblings with mixed verdicts may execute out of phase order across slots (carbon and decision accounting unaffected).
+
 ### Where P2's saving comes from (WP-2 — exact attribution, f = 0.8)
 
 Every task's contribution is split identically into drop (work never ran, priced at arrival), degrade (work made smaller, priced at arrival) and timing (what ran, moved to a different slot); the identity components ≡ P0 − P2 is enforced by a throw in the simulation, not assumed. Shares are per-seed, then mean ± sd.
@@ -99,6 +111,18 @@ One standing rule is active in the `P2tiered` arm: a `block` on DEFERRABLE work 
 | — absolute | `terminate`: no authoriser exists, rule or human | 376.3 ± 76.1 dropped |
 
 Acceptance, in one sentence: **given the same workload and budget, when the standing rule authorises deferral of blocked deferrable work, then total emissions equal P2's exactly (39899 ± 651 vs 39899 ± 651 gCO2e) and human decisions fall from 853 ± 52.4 to 637 ± 47.2** — the number the untired run could only report as a sensitivity is now the measured behaviour of a mechanism.
+
+### The real workload trace (WP-15, f = 0.8)
+
+One LIVE run of a kaiban-distributed social-media-team workflow (captured 2026-09-02T12:34:44.356Z; committed as `data/workloads/real-trace.json`) supplies a template: every synthetic arrival becomes its 6 real subtasks — extract, four parallel composers, aggregate — with energy split by the run's measured token shares (extract 12.0%, compose-blog 16.0%, compose-discord 13.8%, compose-linkedin 12.9%, compose-tweet 11.3%, aggregate 34.0%). Arrival, deadline, deferrable flag and the daily budget are unchanged, and total energy is equal by construction, so every percentage is directly comparable to P2. An EQUAL-share control (the same 6-way split, each piece 1/6) runs beside it, so the reader can see what the measured shares themselves contribute.
+
+| arm | % vs P0 | completed | dropped | human decisions |
+|---|---|---|---|---|
+| P2 (one task per arrival) | -20.27 ± 1.3 | 7698.8 ± 99.7 | 376.3 ± 76.1 | 853 ± 52.4 |
+| P2real (6 real subtasks per arrival; counts are SUBTASKS) | -20.21 ± 1.3 | 46217.4 ± 597.8 | 2233.2 ± 457.4 | 5095.3 ± 317.1 |
+| P2equal (6 equal subtasks — control) | -20.22 ± 1.3 | 46210.5 ± 597.2 | 2240.1 ± 457.8 | 5093.3 ± 317.7 |
+
+What this measures, stated carefully. **P2's saving is invariant to decision granularity**: splitting each arrival into 6 pieces moves the headline by a rounding step, and the CONTROL row shows the measured token shares are not what makes that true — equal shares give the same answer. So the arm validates that E2's carbon result does not depend on the synthetic task being one indivisible lump, and it says nothing further about real workloads (one run, one workflow, timing not replayed — the 20.4 s span is sub-slot). **The human-decision column is a mechanical cost, not a discovery**: the gate is asked 6 times per arrival, so decisions scale ~linearly with 6 (×5.97 here, and the control matches) — by construction, not by measurement. The design question it makes concrete is WHERE to place the gate: per micro-task pricing costs k× the human attention for the same carbon, which is why run-level gating or WP-14's standing rules matter. Caveats stay stated: siblings with mixed verdicts may execute out of phase order across slots (carbon and decision accounting unaffected).
 
 ### Where P2's saving comes from (WP-2 — exact attribution, f = 0.8)
 

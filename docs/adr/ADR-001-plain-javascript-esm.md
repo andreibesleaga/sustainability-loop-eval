@@ -24,8 +24,8 @@ On file size, state the rule as it is actually followed rather than as an
 aspiration nothing enforces:
 
 - **Roughly 150 lines is the target** for a source file. Past that, a file is usually doing two things.
-- **A file over that target needs a written reason.** The accepted exceptions today are `fitness/props.js` (every fitness property lives exactly once, and the test files and the report both call it — splitting it would duplicate the registry rather than the logic), `simulation/run.js` and `simulation/charging.js` (one experiment each, and cutting an experiment in half hides the loop a reader came to read), and `dataplane/measure.js` (one fetch-and-check pass over one document, written out straight).
-- Nothing else may cross it without being added to that list.
+- **A file over that target needs a written reason.** The accepted exceptions today, updated 2026-09-02 after the work-package sessions: `fitness/props.js` (every fitness property lives exactly once, and the test files and the report both call it — splitting it would duplicate the registry rather than the logic); the one-experiment-per-file rule — `simulation/run.js`, `simulation/charging.js`, `simulation/bounds.js`, `simulation/loop.js`, `simulation/plane.js`, `simulation/routing.js` (cutting an experiment in half hides the loop a reader came to read); `dataplane/measure.js` (one fetch-and-check pass, written out straight); `fitness/report.js` and `tools/check-numbers.js` (each IS a registry — splitting one duplicates it); `simulation/fetch-traces.js` and `demo/agent.js` (a whole capture/demonstration each, marginally over). Test files are exempt: a test registry reads top to bottom.
+- Nothing else may cross it without being added to that list — and an earlier version of this list went stale while six experiment files crossed the line, which is exactly the drift this bullet exists to prevent; the audit that caught it is in the CHANGELOG.
 
 The earlier wording said "roughly 150 lines is the ceiling" without listing the
 files that were already above it. That was a rule the repository did not keep.

@@ -28,6 +28,7 @@ jobs:
       # fitness.json that the first run rewrites (documented in tools/check-numbers.js).
       - run: npm run simulate
       - run: npm run charging
+      - run: npm run bounds && npm run routing && npm run loop && npm run plane
       - run: npm run fitness:report && npm run fitness:report
-      - run: git diff --exit-code -- results/simulation.json results/simulation.md results/charging.json results/charging.md results/fitness.json results/fitness.md
+      - run: git diff --exit-code -- results/simulation.json results/simulation.md results/charging.json results/charging.md results/fitness.json results/fitness.md results/bounds.json results/bounds.md results/routing.json results/routing.md results/loop.json results/loop.md results/plane.json results/plane.md
       - run: npm run arch
