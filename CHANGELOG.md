@@ -63,6 +63,20 @@ article is published (policy: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#version-
   manual dispatch, and a separate informational `advisories` job that never blocks.
 - **`.github/dependabot.yml`**: routine version-update pull requests switched off
   for npm and GitHub Actions; security updates still raised.
+- **Final all-lens audit before parking (2026-09-03), fixes applied — no number
+  changed**: `SECURITY.md`'s proof column corrected to what each fitness function
+  literally asserts (F6 detects an edited field, F4 uses well-formed approvals and
+  the feature file adds the malformed one, F12 binds *registered* numbers), its
+  "not covered" cells now name the deployment-wide `enabled:false` off switch, the
+  unauthenticated approver identity and the live `fetchedAt` exception; `LICENSE`'s
+  data notes now cover `data/forecast/**` and `data/workloads/real-trace.json`;
+  ADR-012 gained the IP-hashing privacy section that `dataplane/logs.js` and
+  NOTICE already cited; `simulation/fetch-forecast.js` got the timeout every other
+  live fetch already had; F12's property string names all four registered
+  document groups (the one line that moved in `results/fitness.json`); CI
+  checkouts set `persist-credentials: false` and the byte-diff step now also
+  fails on a new untracked file under `results/`; `.gitattributes` added (LF
+  normalisation, so the byte-diff gate cannot fail on line endings).
 - **Professional package files added at the root**: `SECURITY.md` (private
   reporting, supported versions, and the security-and-safety matrix of every part
   of the cybernetic system — threat, mechanism, proof, not covered — plus the
@@ -84,7 +98,7 @@ article is published (policy: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#version-
   reframed to what it measures (granularity-invariance, with a new equal-share
   control arm `P2equal6_f0.8`; the ~6× decision cost stated as k-by-construction);
   a vacuous WP-12b property test now counts drops by cause; three chaos
-  assertions were made falsifiable; renderer-identity tests pin
+  assertions that could not fail were made able to fail; renderer-identity tests pin
   `results/{loop,simulation}.md` to their JSON; the CI byte-diff gate covers all
   eight result sets; ten documents lost their stale pre-delivery labels; and the
   CHANGELOG itself joined the registry (188 claims across 15 documents).
@@ -94,9 +108,9 @@ article is published (policy: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#version-
 ### Changed — wording only
 
 - **Negative results are now stated in plain language** (owner request,
-  2026-09-02): every "falsified / FALSIFIED-AGAIN" became "disproven /
-  disproven again", and "what would falsify it" became "what would disprove
-  it", across docs, the loop renderer and the tests that pin the verdict
+  2026-09-02): the jargon verdict word for a refuted conjecture became
+  "disproven / disproven again" everywhere, and the matching "what would … it"
+  headings became "what would disprove it", across docs, the loop renderer and the tests that pin the verdict
   wording. No number, verdict, or result changed — `results/loop.json` is
   byte-identical; only `results/loop.md`'s phrasing moved with its renderer.
 

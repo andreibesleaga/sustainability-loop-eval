@@ -678,7 +678,7 @@ export function f12DocsAgreeWithResults() {
   const ok = mismatches.length === 0;
   return {
     id: "F12",
-    property: "Documentation agrees with results/: every registered headline number in README.md and docs/ matches the value in results/*.json it is drawn from",
+    property: "Documentation agrees with results/: every registered headline number in README.md, RESEARCH.md, CHANGELOG.md and docs/ matches the value in results/*.json it is drawn from",
     cases: checks.length,
     passed: ok,
     notes: ok

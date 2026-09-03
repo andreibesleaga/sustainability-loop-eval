@@ -29,6 +29,17 @@ is synthetic, and carries the provenance of its inputs.
 - The repository carries data files. This is accepted: they are small, and they are the evidence.
 - Regeneration is manual and ordered. There is no single command that rebuilds everything and checks the Markdown against the JSON; that is recorded as debt in ARCHITECTURE.md section 11. *(Status 2026-08-31: closed in v1.1.0 — `npm run all` rebuilds everything and `npm run check:docs`, run as fitness function F12 inside `npm test`, checks the Markdown against the JSON. ARCHITECTURE.md section 11 lists it under "Fixed in v1.1.0".)*
 
+## Privacy of the committed log capture
+
+The raw request log under `data/dataplane/` is committed with **no client IP
+addresses**. Each `srcIp` was replaced once, at capture time, by `srcIpHash` — the
+first 16 hex characters of sha256(salt + ip) under a random salt that was never
+written down — so the mapping is irreversible and only "same client / different
+client" survives, which is all the crawler caveat in the write-up needs. Railway's
+`deploymentId`, `deploymentInstanceId` and `upstreamAddress` (an internal address)
+were dropped. `dataplane/logs.js` applies the same transform, with a fresh per-run
+salt, to any future capture at ingest.
+
 ## Alternatives considered
 
 - **Ship scripts only.** Smaller repository, unverifiable claims.

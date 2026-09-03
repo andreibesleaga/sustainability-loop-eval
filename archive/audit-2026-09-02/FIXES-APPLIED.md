@@ -32,7 +32,7 @@ file. Every finding was either fixed or explicitly accepted; nothing was ignored
    (`P2equal6_f0.8`) now runs and is printed beside the real one; the claim is
    granularity-invariance, the ~6× decision cost is stated as mechanics, and the
    tests pin the new wording (including that the old overclaim may not return).
-3. **Vacuous tests made falsifiable**: WP-12b drops are now counted by cause
+3. **Vacuous tests made able to fail**: WP-12b drops are now counted by cause
    (`droppedNoFeasibleSlot`, asserted zero everywhere); three chaos assertions
    were replaced with source-pinned or genuinely hostile versions; and two new
    identity tests prove `results/{loop,simulation}.md` are byte-equal to

@@ -35,6 +35,8 @@ jobs:
         node: [22, 24] # engines: >=22.9 (--env-file-if-exists); 20 lacks it
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: ${{ matrix.node }}
@@ -51,7 +53,8 @@ jobs:
       - run: npm run charging
       - run: npm run bounds && npm run routing && npm run loop && npm run plane
       - run: npm run fitness:report && npm run fitness:report
-      - run: git diff --exit-code -- results/
+      # Tracked files must be byte-identical AND no new file may have appeared.
+      - run: git diff --exit-code -- results/ && test -z "$(git status --porcelain -- results/)"
       # Import graph: no circular imports (madge is a pinned devDependency).
       - run: npm run arch
 
@@ -63,6 +66,8 @@ jobs:
     continue-on-error: true
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22

@@ -700,6 +700,12 @@ Note on the data files, which are not covered by the GNU GPL above:
   The documents describing real organizations are illustrative mappings prepared
   by the gateway operator from those organizations' public reports; they are not
   published, reviewed, authorized, or endorsed by the organizations named in them.
+* `data/forecast/**` is forward carbon-intensity forecast data from the same
+  Carbon Intensity API, © National Energy System Operator, CC BY 4.0.
+* `data/workloads/real-trace.json` is the author's own capture of one workflow
+  run, with content stripped and structure kept.
+
+NOTICE summarises all of the above in one place.
 
 Note on earlier releases:
 

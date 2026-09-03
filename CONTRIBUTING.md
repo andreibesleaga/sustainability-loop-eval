@@ -30,7 +30,8 @@
 - **No new runtime dependency.** The one dependency is the artifact under test.
   Development tools are pinned exactly (`.npmrc` sets `save-exact`).
 - **No wall clock in a conclusion, no unseeded randomness, no live network** outside
-  the four commands allowed it (`fetch-traces`, `dataplane`, `demo`, `agent`).
+  the four npm commands allowed it (`fetch-traces`, `dataplane`, `demo`, `agent`) and
+  the manual capture tool `simulation/fetch-forecast.js`.
 - **Every hand-typed number in a document is bound to `results/`** in
   `tools/check-numbers.js`; every relative link must resolve (`tools/check-links.js`).
 - **Results are regenerated, never edited.** If your change moves a number, say so

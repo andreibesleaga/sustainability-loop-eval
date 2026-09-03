@@ -29,6 +29,7 @@ import { mean, r } from "../shared/stats.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const OUT_DIR = path.resolve(__dirname, "..", "data", "forecast");
 const API = "https://api.carbonintensity.org.uk";
+const TIMEOUT_MS = 15_000; // every live fetch in the package has a timeout
 const PEER_REGIONS = [
   { regionid: 1, name: "North Scotland" },
   { regionid: 13, name: "London" },
@@ -36,7 +37,7 @@ const PEER_REGIONS = [
 ];
 
 async function getJson(url) {
-  const res = await fetch(url, { headers: { accept: "application/json" } });
+  const res = await fetch(url, { headers: { accept: "application/json" }, signal: AbortSignal.timeout(TIMEOUT_MS) });
   if (!res.ok) throw new Error(`${url} -> HTTP ${res.status}`);
   return res.json();
 }

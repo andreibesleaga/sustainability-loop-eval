@@ -1,0 +1,8 @@
+# Line endings are normalised to LF: CI's determinism gate is a byte diff of results/.
+* text=auto eol=lf
+*.png binary
+*.jsonl -text
+# Evidence and the lockfile are generated: keep them out of diff summaries and language stats.
+results/** linguist-generated=true
+data/** linguist-generated=true
+package-lock.json linguist-generated=true
