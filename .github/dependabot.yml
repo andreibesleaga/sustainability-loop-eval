@@ -1,0 +1,18 @@
+# Dependency policy: the package is PINNED and PARKED (docs/DEVELOPMENT.md,
+# "Version and dependency policy"). Routine version-update pull requests are
+# switched off (open-pull-requests-limit: 0). GitHub still raises Dependabot
+# SECURITY updates for advisories in package-lock.json; the ci workflow runs on
+# each of those and its byte-diff gate proves nothing in results/ moved before
+# the owner merges. Nothing is ever merged automatically.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 0
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 0

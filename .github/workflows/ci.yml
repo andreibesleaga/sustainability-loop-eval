@@ -1,27 +1,48 @@
-# Offline, deterministic checks only. Nothing here touches the network after `npm ci`:
-# the live data-plane measurement (npm run dataplane), the trace fetch (npm run
-# fetch-traces) and both demos are deliberately NOT run — they are live, keyed, or both.
+# Offline, deterministic checks only. Nothing here touches the network after `npm ci`
+# except the informational advisories job: the live data-plane measurement
+# (npm run dataplane), the trace fetch (npm run fetch-traces) and both demos are
+# deliberately NOT run — they are live, keyed, or both.
+#
+# Everything is pinned so this file keeps working unattended: actions by commit SHA
+# (the tag is in the comment), the runner image by version, Node by major (the two
+# majors the package is tested on), packages by package-lock.json (`npm ci`).
+# The monthly schedule re-proves the whole package on a fresh runner even when
+# nobody pushes, so any drift in the outside world (runner image, Node patch
+# release, registry) shows up as a failed run instead of a surprise later.
 name: ci
 
 on:
   push:
   pull_request:
+  schedule:
+    - cron: "17 6 1 * *" # monthly, 1st at 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     strategy:
+      fail-fast: false
       matrix:
         node: [22, 24] # engines: >=22.9 (--env-file-if-exists); 20 lacks it
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: ${{ matrix.node }}
           cache: npm
       - run: npm ci
-      # Unit tests → the twelve architecture fitness functions through the real gate →
-      # F12 / check:docs (every registered number in the docs still matches results/).
+      # Unit tests → the thirteen architecture fitness functions through the real
+      # gate → F12 / check:docs (every registered number in the docs still matches
+      # results/) → check:links (every relative link and anchor resolves).
       - run: npm test
       # Determinism: the seeded, offline experiments must reproduce the committed
       # results byte for byte. fitness:report runs twice because F12 reads the
@@ -30,5 +51,21 @@ jobs:
       - run: npm run charging
       - run: npm run bounds && npm run routing && npm run loop && npm run plane
       - run: npm run fitness:report && npm run fitness:report
-      - run: git diff --exit-code -- results/simulation.json results/simulation.md results/charging.json results/charging.md results/fitness.json results/fitness.md results/bounds.json results/bounds.md results/routing.json results/routing.md results/loop.json results/loop.md results/plane.json results/plane.md
+      - run: git diff --exit-code -- results/
+      # Import graph: no circular imports (madge is a pinned devDependency).
       - run: npm run arch
+
+  # Informational only — never blocks. Advisories live in the transitive tree of
+  # the one runtime dependency and are handled by the policy in docs/DEVELOPMENT.md.
+  advisories:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high

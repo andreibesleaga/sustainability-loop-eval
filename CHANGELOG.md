@@ -6,7 +6,7 @@ is named, and the article's own numbers never changed. Dates are ISO. The one th
 exists to make unambiguous is **which numbers changed and which did not** — see the
 section of that name under each release.
 
-## [Unreleased] — 2026-08-31 → 2026-09-02 — audit pass, work packages, final audit
+## [Unreleased] — 2026-08-31 → 2026-09-03 — audit pass, work packages, final audit, parked
 
 A multi-lens audit of v1.1.0 (code correctness, documentation consistency, systems
 theory and cybernetics, external references checked live, planetary-design and
@@ -39,6 +39,30 @@ prosecution before anything was changed. No experiment was re-run against new da
   renderer-identity test, chaos 9, workload-real +5 incl. its identity test, and
   the earlier policy/sweep additions). The "26" the docs said at v1.1.0 was already
   stale then — the actual count was 32.
+
+### Pinned and parked — 2026-09-03
+
+No number changed. The package was locked so it keeps working unattended until the
+article is published (policy: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#version-and-dependency-policy--pinned-and-parked)):
+
+- **`madge@8.0.0` became an exact `devDependency`** (it was fetched by `npx` at CI
+  time, so its own tree was never locked); `package-lock.json` now carries every
+  package with an integrity hash and its root metadata matches `package.json`
+  (it still said version 0.1.0, MIT, Node ≥22). The runtime tree is unchanged
+  package for package; the only other lockfile movement is the type-only
+  `typescript` peer (7.0.2 → 5.9.3), which nothing executes.
+- **`.npmrc`** (`engine-strict`, `save-exact`) and **`.nvmrc`** (22).
+- **`tools/check-links.js`** — `npm run check:links`, now the last step of
+  `npm test`: every relative Markdown link points at an existing file and every
+  `#anchor` at a real heading (275 links on 2026-09-03, all resolve).
+- **CI hardened**: actions pinned by commit SHA (`checkout` v5.1.0, `setup-node`
+  v5.0.0 — both on the Node 24 action runtime, which removes the Node 20
+  deprecation warning the v4 actions produced), runner `ubuntu-24.04`, least
+  privilege (`contents: read`), timeouts, concurrency, `fail-fast: false`, the
+  byte-diff gate widened to the whole of `results/`, a monthly scheduled run plus
+  manual dispatch, and a separate informational `advisories` job that never blocks.
+- **`.github/dependabot.yml`**: routine version-update pull requests switched off
+  for npm and GitHub Actions; security updates still raised.
 
 ### Added — the final audit, the addendum, and the archive
 

@@ -56,7 +56,10 @@ Demonstration only — no number in `results/` comes from the demos.
 `npm install` prints advisories from the one dependency's own tree; they are
 explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
 everything: 89 unit tests, the thirteen architecture checks through the real
-gate, and a check that every number in these pages still matches `results/`.
+gate, a check that every number in these pages still matches `results/`, and a
+check that every link resolves. Every version is pinned and the package is
+parked — it needs no routine updates; a monthly CI run re-proves it
+([policy](docs/DEVELOPMENT.md#version-and-dependency-policy--pinned-and-parked)).
 
 ## Headline results
 

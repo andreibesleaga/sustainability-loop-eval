@@ -13,3 +13,6 @@ node_modules/
 # article's numbers come from (cached carbon traces, saved gateway documents, raw
 # Railway log lines, and every results/*.json + *.md). Deleting or ignoring them
 # would make the package unreproducible offline.
+
+# Local audit reports for the owner; not part of the package.
+.audit/

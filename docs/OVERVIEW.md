@@ -100,5 +100,5 @@ npm install && npm test
 That runs 89 adapter unit tests, the 13 fitness functions through the real gate
 (15,037 cases), six plain-English feature specs executed against the real code, and
 a checker that re-verifies every headline number on this page —
-against `results/`. The diagrams of how it all moves are in
+against `results/` — and a check that every link in these pages resolves. The diagrams of how it all moves are in
 [architecture/DYNAMICS.md](architecture/DYNAMICS.md).

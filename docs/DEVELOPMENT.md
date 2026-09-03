@@ -2,8 +2,10 @@
 
 > **At a glance.** One dependency, plain JavaScript, deterministic everywhere, and a
 > single `npm test` that runs the unit suites, the fitness functions through the
-> real gate, the feature specs and the number-binding check — all offline. Clone,
-> install, test: everything reproduces byte for byte.
+> real gate, the feature specs, the number-binding check and the link check — all
+> offline. Clone, install, test: everything reproduces byte for byte. Every version
+> is pinned and the package is parked: it needs no routine updates, ever
+> ([policy](#version-and-dependency-policy--pinned-and-parked)).
 
 How to run this package, how to extend it, and the rules that keep it honest and
 reproducible. Written for someone who has just cloned the repository.
@@ -12,10 +14,10 @@ reproducible. Written for someone who has just cloned the repository.
 
 ```bash
 node -v          # must be 22.9 or newer
-npm install      # installs exactly one runtime dependency
+npm install      # the one runtime dependency, plus madge (dev tool for the import-graph check)
 ```
 
-The one dependency is `kaiban-distributed@2.0.0`. It ships the real action gate
+The one runtime dependency is `kaiban-distributed@2.0.0`. It ships the real action gate
 and the hash-chained audit log this package evaluates. Nothing here mocks it.
 22.9 is the floor because the scripts use Node's own `--env-file-if-exists`.
 
@@ -35,10 +37,11 @@ never as 0%.
 
 | Command | What it does | Network |
 |---|---|---|
-| `npm test` | The 89 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs` | none |
+| `npm test` | The 89 adapter unit tests, then the thirteen architecture fitness functions through the real gate, then `check:docs`, then `check:links` | none |
 | `npm run fitness` | The thirteen fitness functions on their own | none |
 | `npm run fitness:report` | Re-runs the same thirteen properties and writes `results/fitness.json` **and** `results/fitness.md` | none |
 | `npm run check:docs` | F12: compares every hand-typed headline number in the docs against `results/` | none |
+| `npm run check:links` | Every relative link in every Markdown file points at a file that exists, and every `#anchor` names a real heading | none |
 | `npm run dataplane` | Fetches and checks every document the public gateway serves, then summarises its request logs | live gateway |
 | `npm run fetch-traces` | Fetches and caches the real grid-carbon traces. Run once. | NESO API |
 | `node simulation/fetch-forecast.js` | MANUAL, live network: capture NESO's forward forecast to `data/forecast/` (add `--grade <capture>` after ≥48 h to write the by-lead-time error file) | NESO API |
@@ -74,7 +77,7 @@ needs any of them.
 These are short on purpose. They are what keeps the package checkable.
 
 1. **One file, one purpose, about 150 lines.** That is a target, not a ceiling nothing enforces. Twelve source files are above it today — the experiment files (one experiment each), the two registries (`fitness/props.js`, `tools/check-numbers.js`), the report renderers and the capture tools — each listed in ADR-001 with a written reason. If you take another file over the target, add it to that list with a reason, or split it.
-2. **No new runtime dependencies.** The single dependency is the artifact under test; adding a second one weakens the argument as well as the install. Tools fetched on demand with `npx` (`madge`, the Mermaid CLI) are a separate matter and should still be justified. The optional reference consumer library is the one documented exception, and it is opt-in rather than installed (ADR-017). The live agent run uses no SDK at all — it is a plain `fetch` POST (ADR-018).
+2. **No new runtime dependencies.** The single dependency is the artifact under test; adding a second one weakens the argument as well as the install. `madge` is a pinned *development* dependency for the import-graph check and is never loaded by anything that produces a number; tools fetched on demand with `npx` (the Mermaid CLI) are a separate matter and should still be justified. The optional reference consumer library is the one documented exception, and it is opt-in rather than installed (ADR-017). The live agent run uses no SDK at all — it is a plain `fetch` POST (ADR-018).
 3. **No wall clock in a conclusion.** Nothing that affects a *conclusion* may call `Date.now()` or `new Date()` without an argument. Pass a clock in, or use a fixed date. The gate already takes an injected clock. There is exactly one documented exception: `fetchedAt` in the live data-plane run, which records when a live fetch actually happened (ADR-007). Adding a second exception needs an ADR.
 4. **No unseeded randomness.** Use the seeded generator. `Math.random()` does not belong in this repository.
 5. **No live network at run time except where it is the point.** `fetch-traces`, `dataplane`, `demo` and `agent` may. Nothing else may.
@@ -226,7 +229,8 @@ Apache-2.0, which is compatible with GPL-3.0.
 
 ## Dependency advisories
 
-`npm audit` reports advisories (21 on 2026-08-22: 12 moderate, 9 high). All of
+`npm audit` reports advisories (23 on 2026-09-03: 13 moderate, 10 high, 0
+critical; 21 on 2026-08-22). All of
 them sit in transitive dependencies of the one direct dependency,
 `kaiban-distributed` (kaibanjs → LangChain / langsmith / OpenTelemetry / uuid /
 fast-xml-parser).
@@ -238,3 +242,41 @@ worth being exact about:
 - **Nothing here invokes them.** This package uses `ActionGate`, `AuditLog` and `GATE_ACTION_SEVERITY`. No script calls LangChain, calls a model through it, or parses untrusted input with those libraries.
 - **They were checked for load-time side effects.** The advisory-bearing modules were verified not to patch `fs`, `http` or `fetch` on import.
 - **None is fixable here** without forking the runtime. They resolve upstream when kaiban-distributed bumps kaibanjs. Re-run `npm audit` after any version bump.
+- **How they are handled while the package is parked** is the policy below: GitHub raises a security pull request, the CI byte-diff gate proves nothing in `results/` moved, and only then does the owner merge. The `advisories` CI job re-runs `npm audit` monthly for information and never blocks.
+
+## Version and dependency policy — pinned and parked
+
+**At a glance.** Since 2026-09-03 the package is frozen in a known-good state and
+needs no routine updates, ever. Everything that could drift is pinned; a monthly
+scheduled CI run re-proves the whole package on a fresh machine; and the only
+changes that should ever be merged are security fixes that the CI byte-diff gate
+has already proved harmless.
+
+| What | Pinned by | Value |
+|---|---|---|
+| Node | `engines` in `package.json`, `.nvmrc`, the CI matrix; `.npmrc` `engine-strict` makes the wrong Node fail at install | `>=22.9`; tested on 22 and 24 (22.22.3 and 24.18.0 on 2026-09-03, byte-identical results on both) |
+| Runtime dependency | exact version in `package.json`; every package in `package-lock.json` with an integrity hash; CI installs with `npm ci` | `kaiban-distributed@2.0.0` |
+| Development tool | exact `devDependency` | `madge@8.0.0` (import-graph check only) |
+| GitHub Actions | commit SHA, tag in the comment; runner image by version | `checkout` v5.1.0, `setup-node` v5.0.0, `ubuntu-24.04` |
+| Anything added later | `.npmrc` `save-exact` | `npm install x` pins exactly, never `^` |
+| Routine update pull requests | `.github/dependabot.yml` | switched off; **security** updates still raised |
+
+The rules, in plain words:
+
+1. **Do not update anything to "stay current".** Nothing here needs it. The tests
+   prove that the pinned set works, and the monthly CI run keeps proving it.
+2. **A security advisory is the one reason to change a version.** Dependabot opens
+   the pull request; CI runs the whole suite on it, including the byte-diff of
+   `results/`. Merge only when that is green. If a fix would need a new major of
+   `kaiban-distributed`, that is a new evaluation of a different artifact, not a
+   bump — the article's numbers were measured against 2.0.0.
+3. **Node's own calendar is the only date to watch.** Node 22 reaches end of life
+   in April 2027 and Node 24 in April 2028. The matrix already tests both; when 22
+   ends, drop it from the matrix and raise `engines` to `>=24` — nothing else
+   changes. The package uses no API that is deprecated on either line.
+4. **Coming back after a long pause:** `nvm use && npm ci && npm test`, then look at
+   the latest scheduled run on the Actions tab. Green means the package still
+   reproduces on today's runner; a red scheduled run names exactly what drifted.
+5. **Advisory counts are dated statements, not results.** They change upstream
+   without anything here changing; the number that matters — every value in
+   `results/` — is what CI compares byte for byte.
