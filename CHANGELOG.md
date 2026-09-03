@@ -63,6 +63,13 @@ article is published (policy: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#version-
   manual dispatch, and a separate informational `advisories` job that never blocks.
 - **`.github/dependabot.yml`**: routine version-update pull requests switched off
   for npm and GitHub Actions; security updates still raised.
+- **Professional package files added at the root**: `SECURITY.md` (private
+  reporting, supported versions, and the security-and-safety matrix of every part
+  of the cybernetic system — threat, mechanism, proof, not covered — plus the
+  known issues stated plainly), `CONTRIBUTING.md`, `SUPPORT.md`,
+  `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1), `NOTICE` (ownership, licences,
+  third-party components, data sources, priority record), `.editorconfig`, and
+  under `.github/`: `CODEOWNERS`, a pull-request template and two issue templates.
 
 ### Added — the final audit, the addendum, and the archive
 

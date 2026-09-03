@@ -1,0 +1,68 @@
+The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability
+Data Plane — evaluation package
+Copyright (C) 2026 Andrei N. Besleaga (https://orcid.org/0009-0001-3464-5283)
+
+This file lists what is in the package, who owns it, and under which terms. It is
+a summary; LICENSE is authoritative.
+
+1. THE AUTHOR'S WORK
+
+   Source code (*.js, package.json, tools/)      GPL-3.0-only (LICENSE)
+   Documentation, text, diagrams, figures and
+   result write-ups (README.md, RESEARCH.md,
+   docs/**, results/*.md, *.mmd, *.png)          (c) Andrei N. Besleaga, all rights
+                                                 reserved; cite the article and the
+                                                 Zenodo DOI when using them
+
+   The design, the names and the claims in this package — the Carbon-Verdict
+   Governor, the five-rung verdict ladder as applied to sustainability budgets,
+   the closed sustainability loop across organisations over
+   /.well-known/sustainability-data, and the architecture fitness functions that
+   prove them — are the author's original work. Priority is recorded by
+   timestamped, DOI-registered archives:
+
+   - preprint of the article           doi:10.5281/zenodo.22056747
+   - evaluation package, all versions  doi:10.5281/zenodo.22056633
+   - evaluation package v1.0.0         doi:10.5281/zenodo.22056634
+
+   The names above identify this work. Use them to refer to it; do not use them to
+   imply that the author reviewed, endorses or is affiliated with another work.
+
+2. THIRD-PARTY COMPONENTS
+
+   kaiban-distributed 2.0.0 (npm)      Apache-2.0    the real governance gate and
+                                                     hash-chained audit log under
+                                                     test; imported, never modified
+   madge 8.0.0 (npm, development only) MIT           import-graph check; never loaded
+                                                     by anything that produces a number
+   Contributor Covenant 2.1            CC BY 4.0     CODE_OF_CONDUCT.md
+
+   Their transitive dependencies are listed with versions and integrity hashes in
+   package-lock.json, each under its own licence.
+
+3. DATA
+
+   data/simulation/W1.json, W2.json    CC BY 4.0     (c) National Energy System
+   (grid carbon intensity, Great Britain)            Operator, Carbon Intensity API,
+                                                     https://api.carbonintensity.org.uk
+   data/forecast/**                    CC BY 4.0     same source, forward forecast
+   data/dataplane/**                   author's own  snapshots of the author's
+                                                     reference gateway and its request
+                                                     logs (client IPs hashed, ADR-012)
+   data/workloads/real-trace.json      author's own  one captured workflow run,
+                                                     content stripped, structure kept
+
+   The gateway documents describing real organisations are illustrative mappings
+   prepared by the gateway operator from those organisations' public reports. They
+   are NOT published, reviewed, authorized, or endorsed by the organisations named
+   in them, and each document says so in band.
+
+4. STANDARDS REFERENCED
+
+   draft-besleaga-sustainability-wellknown (IETF Internet-Draft, by the author):
+   the document format the data plane publishes and consumes. Revision -05 is the
+   one the article cites; the member lists are identical in -06.
+
+5. NO WARRANTY
+
+   The package is provided as is, for research and evaluation. See LICENSE.

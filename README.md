@@ -60,6 +60,10 @@ gate, a check that every number in these pages still matches `results/`, and a
 check that every link resolves. Every version is pinned and the package is
 parked — it needs no routine updates; a monthly CI run re-proves it
 ([policy](docs/DEVELOPMENT.md#version-and-dependency-policy--pinned-and-parked)).
+Package files: [SECURITY.md](SECURITY.md) (the security and safety matrix of the
+whole system, and how to report), [CONTRIBUTING.md](CONTRIBUTING.md),
+[SUPPORT.md](SUPPORT.md), [NOTICE](NOTICE) (who owns what, under which licence),
+[CITATION.cff](CITATION.cff).
 
 ## Headline results
 
