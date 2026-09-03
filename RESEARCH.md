@@ -96,13 +96,15 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 **Demonstration only: no number in `results/` comes from `npm run demo` or
 `npm run agent`.** They exist to show the loop, not to measure it.
 
-`npm install` prints advisories (21 as of 2026-08-22). All are in transitive
-dependencies of `kaiban-distributed` (its kaibanjs / LangChain tree), not in this
-package. Importing the package root loads its whole dependency tree, including
-the advisory-bearing LangChain modules — they are in the process. Nothing here
-invokes them: this package uses only `ActionGate`, `AuditLog` and the severity
-table. They were verified not to patch `fs`, `http` or `fetch` on import. Bumping
-them is upstream's job.
+`npm audit` reports **zero advisories** (since v1.5.0, 2026-09-03). The
+advisories that existed (21 on 2026-08-22, 23 on 2026-09-03) were all in
+transitive dependencies of `kaiban-distributed` (its kaibanjs / LangChain tree),
+not in this package, and nothing here ever invoked them: this package uses only
+`ActionGate`, `AuditLog` and the severity table. They are now closed by pinned
+`overrides` in `package.json` that move only those transitive packages to their
+patched versions; the gate itself is still `kaiban-distributed@2.0.0`, and every
+result regenerates byte-identically under the overridden tree (CI proves it on
+every run). Details: [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#dependency-advisories).
 
 ## What happens when you run it
 
@@ -318,7 +320,7 @@ criteria themselves are designed, not built.
 - **v1.0.0** — Zenodo [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634). The snapshot the article cites: nine fitness functions, 9/9 green over 10,994 cases. Every number the article prints comes from this tag.
 - **`main` / v1.1.0** — Zenodo [10.5281/zenodo.22068404](https://doi.org/10.5281/zenodo.22068404) (where the concept DOI now resolves). A hardening pass. The rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10 audit anchoring, F11 core invariants, F12 documentation-agrees-with-results), a portable data-plane run, client IP addresses hashed, and a documentation pass.
 
-- **`main` since v1.1.0 (unreleased)** — the work-package sessions: F13 (self-declared estimates; the fourth function added after the article) plus the forecast/metering contracts, feature specs, dynamic diagrams, the closed-loop (plane), anti-herd (loop), capacity-rung, spatial-advisory and real-trace arms, and the registry growing to cover every document. [`CHANGELOG.md`](CHANGELOG.md) carries the exact accounting.
+- **v1.5.0 — 2026-09-03, the complete and parked package** — the work-package sessions: F13 (self-declared estimates; the fourth function added after the article) plus the forecast/metering contracts, feature specs, dynamic diagrams, the closed-loop (plane), anti-herd (loop), capacity-rung, spatial-advisory and real-trace arms, and the registry growing to cover every document. [`CHANGELOG.md`](CHANGELOG.md) carries the exact accounting.
 
 None of the headline simulation, charging or data-plane numbers changed. The
 fitness totals changed because properties were added, not because anything

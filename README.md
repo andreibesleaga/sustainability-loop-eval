@@ -53,8 +53,9 @@ npm run agent    # optional: a real model proposes, the real gate decides (OPENR
 ```
 
 Demonstration only — no number in `results/` comes from the demos.
-`npm install` prints advisories from the one dependency's own tree; they are
-explained in [RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
+`npm audit` reports zero advisories: the few that lived in the one dependency's
+own tree are closed by pinned overrides, explained in
+[RESEARCH.md](RESEARCH.md#try-it-in-30-seconds). `npm test` runs
 everything: 89 unit tests, the thirteen architecture checks through the real
 gate, a check that every number in these pages still matches `results/`, and a
 check that every link resolves. Every version is pinned and the package is
@@ -194,7 +195,8 @@ unconfirmed item marked, is in [ROADMAP §3b–§3c](docs/ROADMAP.md) and the
 
 The article cites **v1.0.0** (Zenodo
 [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634)); this
-branch is **v1.1.0**, a hardening pass — no headline number changed. The
+branch is **v1.5.0**, the complete and parked package — no headline number
+changed since v1.0.0. The
 correction is stated openly in
 [RESEARCH.md → Corrections](RESEARCH.md#corrections-relative-to-the-submitted-article-v100).
 

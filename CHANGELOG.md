@@ -6,7 +6,25 @@ is named, and the article's own numbers never changed. Dates are ISO. The one th
 exists to make unambiguous is **which numbers changed and which did not** — see the
 section of that name under each release.
 
-## [Unreleased] — 2026-08-31 → 2026-09-03 — audit pass, work packages, final audit, parked
+## [1.5.0] — 2026-09-03 — the complete and parked package
+
+Everything from 2026-08-31 to 2026-09-03: the audit pass, every work package, the
+final all-lens audit, the professional package files, and the pin-and-park. This
+is the release to tag and freeze until the article is published.
+
+### Zero advisories — pinned overrides (2026-09-03)
+
+`npm audit` went from 23 advisories (all transitive, none in code this package
+calls) to **zero** by adding exact `overrides` to `package.json`: `langsmith`
+0.6.3, `uuid` 11.1.1, `fast-xml-parser` 5.11.1, `@opentelemetry/propagator-jaeger`
+2.11.0, `langchain` 1.5.10, `@langchain/core` 1.2.9, `@langchain/openai` 1.5.11,
+`@langchain/community` 1.1.18, and `expr-eval` → `expr-eval-fork` 3.0.3 (no
+patched `expr-eval` exists). The gate under test is still `kaiban-distributed@2.0.0`
+unmodified; **no number changed** — every result set regenerates byte-identically
+under the overridden tree on Node 22 and 24, and the CI `advisories` job is now a
+blocking gate at high severity. The Dependabot pull request that bumped `fast-uri`
+(3.1.5 → 3.1.7) was merged by the owner the same day. `package.json`, the lockfile
+and `CITATION.cff` say 1.5.0.
 
 A multi-lens audit of v1.1.0 (code correctness, documentation consistency, systems
 theory and cybernetics, external references checked live, planetary-design and

@@ -35,10 +35,15 @@ a summary; LICENSE is authoritative.
                                                      test; imported, never modified
    madge 8.0.0 (npm, development only) MIT           import-graph check; never loaded
                                                      by anything that produces a number
+   expr-eval-fork 3.0.3 (npm)          MIT           stands in for expr-eval (no
+                                                     patched release exists) through
+                                                     a pinned override; never called
    Contributor Covenant 2.1            CC BY 4.0     CODE_OF_CONDUCT.md
 
    Their transitive dependencies are listed with versions and integrity hashes in
-   package-lock.json, each under its own licence.
+   package-lock.json, each under its own licence; the nine transitive packages
+   moved to patched versions by package.json "overrides" are named in
+   docs/DEVELOPMENT.md ("Dependency advisories").
 
 3. DATA
 

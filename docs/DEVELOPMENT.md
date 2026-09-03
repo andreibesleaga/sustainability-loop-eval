@@ -199,7 +199,8 @@ result file. If a number needs to change, change what produced it.
 | Version | What it is |
 |---|---|
 | **v1.0.0** — Zenodo [10.5281/zenodo.22056634](https://doi.org/10.5281/zenodo.22056634) | The snapshot the article cites. Nine fitness functions, 9/9 green over 10,994 cases; every number the article prints comes from this tag. The archive's files carry an MIT licence file; the Zenodo record's licence metadata was later set by the author to GPL-3.0 (Zenodo lists it as `gpl-3.0-or-later`). |
-| **v1.1.0** — `main`, Zenodo [10.5281/zenodo.22068404](https://doi.org/10.5281/zenodo.22068404) (the concept DOI 10.5281/zenodo.22056633 resolves here) | A hardening pass: the rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10, F11, F12), a portable data-plane run, client IPs hashed, and a documentation pass. Code licensed GPL-3.0-only from this version. |
+| **v1.5.0** — `master`, 2026-09-03 | The complete and parked package: every work package delivered, the audits fixed, every version pinned, zero advisories, professional package files. No headline number changed since v1.0.0. |
+| **v1.1.0** — Zenodo [10.5281/zenodo.22068404](https://doi.org/10.5281/zenodo.22068404) (the concept DOI 10.5281/zenodo.22056633 resolves here) | A hardening pass: the rung semantics written down once and enforced, the actuation harness moved into `governor/`, three new fitness functions (F10, F11, F12), a portable data-plane run, client IPs hashed, and a documentation pass. Code licensed GPL-3.0-only from this version. |
 
 `CHANGELOG.md` lists every change and says explicitly which numbers moved. The
 short answer: none of the headline simulation, charging or data-plane numbers
@@ -211,8 +212,8 @@ Cite the article, and cite this package as its replication material:
 
 > A. N. Besleaga, "The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane," submitted to *IEEE Software*, 22 August 2026; preprint doi:10.5281/zenodo.22056747. Replication package: `sustainability-loop-eval` v1.0.0, doi:10.5281/zenodo.22056634.
 
-Cite **v1.0.0** when you are checking a number the article prints. Cite `main` or
-v1.1.0 when you are reusing the code.
+Cite **v1.0.0** when you are checking a number the article prints. Cite v1.5.0
+when you are reusing the code.
 
 Machine-readable metadata is in `CITATION.cff` at the repository root; GitHub
 renders a ready-made citation from it. Release v1.0.0 is archived on Zenodo as
@@ -229,11 +230,24 @@ Apache-2.0, which is compatible with GPL-3.0.
 
 ## Dependency advisories
 
-`npm audit` reports advisories (23 on 2026-09-03: 13 moderate, 10 high, 0
-critical; 21 on 2026-08-22). All of
-them sit in transitive dependencies of the one direct dependency,
-`kaiban-distributed` (kaibanjs → LangChain / langsmith / OpenTelemetry / uuid /
-fast-xml-parser).
+`npm audit` reports **zero advisories** since v1.5.0 (2026-09-03). Before that it
+reported 23 (13 moderate, 10 high, 0 critical; 21 on 2026-08-22), all in
+transitive dependencies of the one direct dependency, `kaiban-distributed`
+(kaibanjs → LangChain / langsmith / OpenTelemetry / uuid / fast-xml-parser /
+expr-eval).
+
+**How they were closed — pinned `overrides` in `package.json`.** Each override
+moves one transitive package to its first patched version and nothing else:
+`langsmith` 0.6.3, `uuid` 11.1.1, `fast-xml-parser` 5.11.1,
+`@opentelemetry/propagator-jaeger` 2.11.0, `langchain` 1.5.10, `@langchain/core`
+1.2.9, `@langchain/openai` 1.5.11, `@langchain/community` 1.1.18, and `expr-eval`
+(no patched release exists) replaced by the maintained `expr-eval-fork` 3.0.3,
+which is what newer LangChain releases use themselves. The gate under test is
+still `kaiban-distributed@2.0.0`, unmodified; the overrides touch only the
+LangChain and telemetry layers it carries but this package never calls. The proof
+that nothing evaluated changed: the full suite and the byte-diff of every result
+set pass on Node 22 and 24 under the overridden tree, and CI's `advisories` job
+now fails on any advisory of high severity or above.
 
 Stated precisely, because "not in code this package exercises" is easy to say and
 worth being exact about:
@@ -241,7 +255,7 @@ worth being exact about:
 - **Importing the package root loads its whole dependency tree**, including the advisory-bearing LangChain modules. They are in the process.
 - **Nothing here invokes them.** This package uses `ActionGate`, `AuditLog` and `GATE_ACTION_SEVERITY`. No script calls LangChain, calls a model through it, or parses untrusted input with those libraries.
 - **They were checked for load-time side effects.** The advisory-bearing modules were verified not to patch `fs`, `http` or `fetch` on import.
-- **None is fixable here** without forking the runtime. They resolve upstream when kaiban-distributed bumps kaibanjs. Re-run `npm audit` after any version bump.
+- **Overrides are the only lever this package has** short of forking the runtime; they are pinned exactly and listed above. Re-run `npm audit` after any version bump.
 - **How they are handled while the package is parked** is the policy below: GitHub raises a security pull request, the CI byte-diff gate proves nothing in `results/` moved, and only then does the owner merge. The `advisories` CI job re-runs `npm audit` monthly for information and never blocks.
 
 ## Version and dependency policy — pinned and parked
@@ -257,6 +271,7 @@ has already proved harmless.
 | Node | `engines` in `package.json`, `.nvmrc`, the CI matrix; `.npmrc` `engine-strict` makes the wrong Node fail at install | `>=22.9`; tested on 22 and 24 (22.22.3 and 24.18.0 on 2026-09-03, byte-identical results on both) |
 | Runtime dependency | exact version in `package.json`; every package in `package-lock.json` with an integrity hash; CI installs with `npm ci` | `kaiban-distributed@2.0.0` |
 | Development tool | exact `devDependency` | `madge@8.0.0` (import-graph check only) |
+| Transitive packages with advisories | exact `overrides` in `package.json` (see "Dependency advisories" above) | nine packages, each at its first patched version |
 | GitHub Actions | commit SHA, tag in the comment; runner image by version | `checkout` v5.1.0, `setup-node` v5.0.0, `ubuntu-24.04` |
 | Anything added later | `.npmrc` `save-exact` | `npm install x` pins exactly, never `^` |
 | Routine update pull requests | `.github/dependabot.yml` | switched off; **security** updates still raised |

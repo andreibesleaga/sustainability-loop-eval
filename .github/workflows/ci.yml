@@ -58,12 +58,13 @@ jobs:
       # Import graph: no circular imports (madge is a pinned devDependency).
       - run: npm run arch
 
-  # Informational only — never blocks. Advisories live in the transitive tree of
-  # the one runtime dependency and are handled by the policy in docs/DEVELOPMENT.md.
+  # A real gate since v1.5.0: zero advisories at release, closed by the pinned
+  # overrides in package.json. A red run here means a NEW upstream advisory of high
+  # severity or above — handled by the policy in docs/DEVELOPMENT.md (Dependabot
+  # security PR, CI byte-diff, owner merges). Never edit results/ to get past it.
   advisories:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
-    continue-on-error: true
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:

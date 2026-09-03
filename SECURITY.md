@@ -24,7 +24,7 @@ it is merged only when CI proves nothing in `results/` moved.
 
 | Version | Status |
 |---|---|
-| `master` (1.1.0 + additive work, this repository) | supported: security fixes only, proved by CI |
+| **v1.5.0** — `master`, the complete and parked package | supported: security fixes only, proved by CI; zero advisories at release |
 | tag `v1.0.0` (the article's snapshot; Zenodo 10.5281/zenodo.22056634) | frozen forever, never patched — replication material, not a product |
 
 ## What this package is, in security terms
@@ -62,14 +62,14 @@ covered. "F-n" are the fitness functions in
 
 ## Known issues, stated plainly
 
-- **Advisories in the dependency tree.** `npm audit` reports advisories, all in
-  transitive dependencies of `kaiban-distributed` (LangChain, langsmith,
-  OpenTelemetry, uuid, fast-xml-parser and similar). Importing the package root
-  loads that tree into the process; nothing in this package calls those modules,
-  parses untrusted input with them, and they were checked for load-time side
-  effects. None is fixable here without changing the artifact under test.
-  Dependabot security pull requests are raised for them, CI proves each harmless,
-  and the owner merges. Details and the dated count:
+- **Advisories in the dependency tree: zero at v1.5.0.** Every advisory that
+  existed sat in transitive dependencies of `kaiban-distributed` (LangChain,
+  langsmith, OpenTelemetry, uuid, fast-xml-parser, expr-eval) that this package
+  never calls. They are closed by pinned `overrides` in `package.json` that move
+  only those packages to their patched versions; the gate itself is unchanged and
+  every result still regenerates byte for byte. New advisories will surface as
+  Dependabot security pull requests and in the CI `advisories` job, which now
+  blocks on high severity. Details and the dated history:
   [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md#dependency-advisories).
 - **The data-plane consumer has seventeen pinned findings** (FINDING 1–17 in
   `dataplane/chaos.test.js`): sixteen behavioural weaknesses and one testability

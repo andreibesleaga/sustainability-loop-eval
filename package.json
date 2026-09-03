@@ -1,6 +1,6 @@
 {
   "name": "sustainability-loop-eval",
-  "version": "1.1.0",
+  "version": "1.5.0",
   "private": true,
   "description": "Evaluation package for 'The Cybernetic Sustainability Loop: Governed Agentic Systems on a Sustainability Data Plane' (IEEE Software submission, 2026): architecture fitness functions, live data-plane measurements, and trace-driven simulation of the Carbon-Verdict Governor.",
   "author": "Andrei N. Besleaga (https://orcid.org/0009-0001-3464-5283)",
@@ -51,5 +51,16 @@
   },
   "devDependencies": {
     "madge": "8.0.0"
+  },
+  "overrides": {
+    "langsmith": "0.6.3",
+    "uuid": "11.1.1",
+    "fast-xml-parser": "5.11.1",
+    "@opentelemetry/propagator-jaeger": "2.11.0",
+    "langchain": "1.5.10",
+    "expr-eval": "npm:expr-eval-fork@3.0.3",
+    "@langchain/community": "1.1.18",
+    "@langchain/core": "1.2.9",
+    "@langchain/openai": "1.5.11"
   }
 }
