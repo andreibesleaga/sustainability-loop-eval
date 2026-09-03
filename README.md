@@ -14,7 +14,7 @@ you can check them or re-run them yourself.
 > grid-carbon data, real published documents, a live-captured workflow trace — and
 > every number in every page is machine-checked against the results it came from.
 > >
-> **Start with the plain-words page: [OVERVIEW](docs/OVERVIEW.md) and [EEXECUTIVE-CASE](docs/EXECUTIVE-CASE.md) - one page honest numbers, why it is new, why it can pay, who it serves.** The
+> **Start with the plain-words page: [OVERVIEW](docs/OVERVIEW.md) and [EXECUTIVE-CASE](docs/EXECUTIVE-CASE.md) - one page honest numbers, why it is new, why it can pay, who it serves.** The
 > full reference write-up is [RESEARCH.md](RESEARCH.md); what changed and newer
 > is [docs/AFTER-SUBMISSION.md](docs/AFTER-SUBMISSION.md).
 
