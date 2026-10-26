@@ -7,6 +7,12 @@ submitted to *IEEE Software* on 22 August 2026 — preprint DOI
 the code, the data and the results behind every number the article states, so
 you can check them or re-run them yourself.
 
+The article takes its criteria for what a budget should be from the author's
+*Sustainability-First Consensus* framework, whose engineering profile is now SFC
+profile 2.0
+([SFC_COMPLIANCE.md](https://github.com/andreibesleaga/awesome-blockchain-greentech/blob/main/Innovative%20Projects/SFC_COMPLIANCE.md)).
+This package does not depend on it.
+
 > **At a glance.** This package is the first measured *closed cybernetic loop*
 > between organisations for sustainability: systems publish what they used at a
 > well-known address, and other systems govern their own actions on what they read.

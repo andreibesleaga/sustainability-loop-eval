@@ -273,7 +273,7 @@ none needed by anything that produces a number — is in
 
 The article's normative layer — the criteria a budget is judged against — comes from
 the author's *Sustainability-First Consensus* framework (Communications of the ACM,
-in press), generalized in the article from ledgers to any long-running software
+Opinion, in press, doi:10.1145/3809296), generalized in the article from ledgers to any long-running software
 system. This package evaluates the loop beneath that layer (signal plane, governor,
 gate, actuation); it does not evaluate or reproduce the framework itself, and the
 criteria themselves are designed, not built. The framework's engineering profile is now SFC profile 2.0 (https://github.com/andreibesleaga/awesome-blockchain-greentech/blob/main/Innovative%20Projects/SFC_COMPLIANCE.md); this package does not depend on it.

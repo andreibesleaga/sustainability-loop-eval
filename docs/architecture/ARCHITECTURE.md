@@ -107,7 +107,7 @@ careful about that line, and section 11 lists what it means for the results.
 
 ---
 
-**Outside the repo, above the loop:** the article's normative criteria (the author's Sustainability-First Consensus framework, Communications of the ACM, in press) decide what a budget should be; this package takes a budget as an input and evaluates what the loop does with it.
+**Outside the repo, above the loop:** the article's normative criteria (the author's Sustainability-First Consensus framework, Communications of the ACM, Opinion, in press, doi:10.1145/3809296) decide what a budget should be; this package takes a budget as an input and evaluates what the loop does with it.
 
 ## 4. Solution strategy
 
