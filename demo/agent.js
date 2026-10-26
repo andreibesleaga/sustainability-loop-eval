@@ -25,7 +25,7 @@ import { createInterface } from "node:readline/promises";
 import { createCarbonGovernor } from "../governor/carbon-governor.js";
 import { makeGate, gated } from "../governor/gate.js";
 import { execute } from "../governor/harness.js";
-import { MEANING, DEMO_ACTION, clean } from "./meaning.js";
+import { MEANING, DEMO_ACTION, clean, periodText } from "./meaning.js";
 
 const SUBJECT = "cloudflare.com";
 const URL_LIVE = `https://sustainability.up.railway.app/${SUBJECT}/.well-known/sustainability-data`;
@@ -90,7 +90,7 @@ async function main() {
 
   const { doc, source } = await loadDocument();
   const target = clean(doc.target, 80);
-  const period = clean(doc["reporting-period"], 40);
+  const period = clean(periodText(doc), 60);
   const published = doc["carbon-intensity-gCO2e-per-kWh"];
   const intensity = Number.isFinite(published) ? published : FALLBACK_INTENSITY;
   const remainingG = BUDGET_G - SPENT_G;

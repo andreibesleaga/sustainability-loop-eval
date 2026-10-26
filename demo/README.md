@@ -72,6 +72,8 @@ Then it prints `audit.verify()`. Model: `OPENROUTER_MODEL` if set, otherwise
   insufficient credits, 429 → rate limited) and exit 1. If the model's reply is not
   parseable JSON, the raw reply is printed and the run stops.
 
+**Document shape:** the offline fixture fallback is the revision-05 shape (`reporting-period` string); a live document is revision 10 (`period` object). Both print.
+
 **Labels:** one real document, one real model call, the real gate; the budget is
 illustrative and the proposed task is the model's, not a measurement of anything.
 

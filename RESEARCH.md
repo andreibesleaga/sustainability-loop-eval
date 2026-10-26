@@ -137,6 +137,8 @@ that go with them.
 > conformance as **"not measured"** — never as 0%. See
 > [ADR-017](docs/adr/ADR-017-consumer-library-optional.md).
 
+> **Note (2026-10-26).** After this package was frozen, the Internet-Draft moved to revision 10 and the live gateway now serves that shape (a `period` object, `tCO2e`, closed methods), so `cloudflare.com` and `microsoft.com` no longer resolve. Every number here still regenerates offline from the committed revision-05 captures; see the [README note](README.md#run-the-evaluation) before re-running `npm run dataplane`.
+
 ## What this could mean — by the numbers (indicative, not a forecast)
 
 All of this comes from `results/simulation.json` and `results/charging.json`. It
@@ -274,7 +276,7 @@ the author's *Sustainability-First Consensus* framework (Communications of the A
 in press), generalized in the article from ledgers to any long-running software
 system. This package evaluates the loop beneath that layer (signal plane, governor,
 gate, actuation); it does not evaluate or reproduce the framework itself, and the
-criteria themselves are designed, not built.
+criteria themselves are designed, not built. The framework's engineering profile is now SFC profile 2.0 (https://github.com/andreibesleaga/awesome-blockchain-greentech/blob/main/Innovative%20Projects/SFC_COMPLIANCE.md); this package does not depend on it.
 
 ## What is real and what is simulated — read this first
 

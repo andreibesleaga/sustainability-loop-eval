@@ -39,3 +39,15 @@ export function clean(value, max = 300) {
   const s = String(value ?? "").replace(ANSI_RE, "").replace(CONTROL_RE, " ").replace(/\s+/g, " ").trim();
   return s.length > max ? `${s.slice(0, max)}...` : s;
 }
+
+/**
+ * The reporting period of a fetched document, whichever shape it has: a string
+ * `reporting-period` (revision 05, the committed fixtures) or a `period` object with
+ * `start` and `end` (revision 10, the live gateway). Untrusted: pass through clean().
+ */
+export function periodText(doc) {
+  if (typeof doc["reporting-period"] === "string") return doc["reporting-period"];
+  const p = doc.period;
+  if (p && typeof p === "object") return `${p.start} to ${p.end}`;
+  return "(none)";
+}

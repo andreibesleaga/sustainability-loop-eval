@@ -19,7 +19,7 @@ import { readFileSync } from "node:fs";
 import { createCarbonGovernor } from "../governor/carbon-governor.js";
 import { makeGate, gated } from "../governor/gate.js";
 import { execute } from "../governor/harness.js";
-import { MEANING, clean } from "./meaning.js";
+import { MEANING, clean, periodText } from "./meaning.js";
 
 const SUBJECT_RE = /^[a-z0-9.-]+$/i;
 const SUBJECT = process.env.DEMO_SUBJECT ?? "cloudflare.com";
@@ -70,7 +70,7 @@ async function main() {
   console.log(`Document : ${source}`);
   // The document is untrusted third-party JSON: every member printed goes through clean().
   const target = clean(doc.target, 80);
-  console.log(`Subject  : ${target} — period ${clean(doc["reporting-period"], 40)}, updated ${clean(doc.updated, 40)}`);
+  console.log(`Subject  : ${target} — period ${clean(periodText(doc), 60)}, updated ${clean(doc.updated, 40)}`);
   console.log(`Published: carbon-footprint ${clean(doc["carbon-footprint"] ?? "(none)", 40)} ${clean(doc["carbon-unit"], 20)}, carbon-intensity ${Number.isFinite(published) ? published : `(${published == null ? "none published" : `unusable value ${clean(published, 40)}`})`} gCO2e/kWh`);
   console.log(`Intensity used: ${intensity} gCO2e/kWh ${Number.isFinite(published) ? "(from the document)" : "(ILLUSTRATIVE default — this document publishes no carbon-intensity member)"}`);
   console.log(`Budget   : ILLUSTRATIVE ${budgetG.toFixed(0)} gCO2e/day (= ${BUDGET_KWH_EQUIV} kWh at that intensity)`);

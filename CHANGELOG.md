@@ -6,6 +6,10 @@ is named, and the article's own numbers never changed. Dates are ISO. The one th
 exists to make unambiguous is **which numbers changed and which did not** — see the
 section of that name under each release.
 
+## Unreleased — 2026-10-26 — note only, no number changed
+
+Added a dated note to `README.md` and `RESEARCH.md`: the Internet-Draft is now at revision 10 and the live gateway serves that shape, while every number here still comes from the committed revision-05 captures. The demos now read both period shapes (`demo/meaning.js` `periodText`). No fixture, test, pin or result changed.
+
 ## [1.5.0] — 2026-09-03 — the complete and parked package
 
 Everything from 2026-08-31 to 2026-09-03: the audit pass, every work package, the

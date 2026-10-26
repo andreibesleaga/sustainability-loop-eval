@@ -109,6 +109,8 @@ reproduce `results/` byte for byte; only the live data-plane run varies. All
 commands, keys and environment details: [RESEARCH.md](RESEARCH.md#run-the-evaluation)
 and [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
 
+> **Note (2026-10-26).** After this package was frozen, the Internet-Draft moved to revision 10 (24 October 2026) and the live gateway began serving that shape on 25 October 2026: a `period` object replaces `reporting-period`, `carbon-unit` is `tCO2e`, and the set of measurement methods is closed. The gateway's subject list has also changed, so `cloudflare.com` and `microsoft.com` no longer resolve. Every number in `results/` comes from the committed captures under `data/` (gateway fetch of 2026-08-22, revision 05) and regenerates offline with `npm test`. To reproduce the E1 conformance figure, use consumer 0.5.2 against those captures. Do not re-run `npm run dataplane` if you want the published figures: it fetches the live gateway and overwrites them. The demos read both shapes; see `demo/README.md`.
+
 ## All the research, one hop each
 
 | Page | What it answers |
